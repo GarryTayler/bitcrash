@@ -1,24 +1,27 @@
 <template>
-  <div class="bit-crash-table-wrapper">
-    <table class="bit-crash-table">
-      <thead>
-        <th v-for="element in fields" :key="element.id">
-          {{ element.label }}
-        </th>
-      </thead>
-      <tbody>
-        <tr v-for="item in items" :key="item.id">
-          <td v-for="field in fields" :key="field.id">
-            <user-profile v-if="field.type == 'profile'" :user="item[field.key]" />
-            <coin-label v-if="field.type=='bet'" :bet="item[field.key]" />
-            <div v-if="field.type=='text'">
-              {{ item[field.key] }}
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+    <div class="bit-crash-table-wrapper">
+      <table class="bit-crash-table">
+        <thead>
+          <th v-for="element in fields" :key="element.id">
+            {{element.label}}
+          </th>
+        </thead>
+        <tbody>
+          <tr v-if="items.length <= 0">
+            <td colspan="20" style="text-align: center;line-height: 40px;">Empty</td>
+          </tr>
+          <tr v-for="item in items" :key="item.id">
+            <td v-for="field in fields" :key="field.id">
+              <user-profile :user='item[field.key]' v-if="field.type == 'profile'"></user-profile>
+              <coin-label :bet='item[field.key]' v-if="field.type=='bet'"></coin-label>
+              <div v-if="field.type=='text'">
+                {{item[field.key]}}
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 </template>
 
 <script>

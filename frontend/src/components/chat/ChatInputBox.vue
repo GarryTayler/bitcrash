@@ -1,15 +1,14 @@
 <template>
   <div class="bg flex-space-between-vc" style="">
-    <input
-      v-model="currentValue"
+      <input
       class="text"
       name="quantity"
+      v-model="currentValue"
       :disabled="disabled"
       @focus="handleFocus"
       @blur="handleBlur"
-      @input="handleInput"
-    >
-    <img src="@/assets/img/submit.png">
+      @input="handleInput"/>
+      <img src="@/assets/img/submit.png">
   </div>
 </template>
 
@@ -17,8 +16,6 @@
 
 export default {
   name: 'CrashBetButton',
-  components: {
-  },
   props: {
     label: {
       type: String,
@@ -30,6 +27,8 @@ export default {
     },
     value: [String, Number],
     disabled: Boolean
+  },
+  components: {
   },
   data() {
     return {

@@ -1,7 +1,7 @@
 <template>
   <div class="flex-row-hl-vc">
-    <img src="@/assets/img/avatar_mark.png" class="p-r-10">
-    {{ bet }}
+    <img src="@/assets/img/avatar_mark.png" class="p-r-10"/>
+    {{bet}}
   </div>
 </template>
 

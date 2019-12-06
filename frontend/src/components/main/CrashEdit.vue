@@ -1,22 +1,21 @@
 <template>
   <div>
-    <div v-if="label == ''" class="caption">
-      {{ label }}
+    <div class="caption" v-if="label == ''">
+      {{label}}
     </div>
     <div class="bg flex-space-between-vc">
-      <input
-        v-model="currentValue"
+        <input
         class="text"
         type="number"
         name="quantity"
         min="0"
         max="10000000"
+        v-model="currentValue"
         :disabled="disabled"
         @focus="handleFocus"
         @blur="handleBlur"
-        @input="handleInput"
-      >
-      <span class="sup">{{ sup }}</span>
+        @input="handleInput"/>
+        <span class="sup">{{sup}}</span>
     </div>
   </div>
 
@@ -26,8 +25,6 @@
 
 export default {
   name: 'CrashBetButton',
-  components: {
-  },
   props: {
     label: {
       type: String,
@@ -39,6 +36,8 @@ export default {
     },
     value: [String, Number],
     disabled: Boolean
+  },
+  components: {
   },
   data() {
     return {

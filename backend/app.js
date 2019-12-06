@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var userRouter = require('./routes/user');
 var crashRouter = require('./routes/crash');
+var chatRouter = require('./routes/chat');
 
 // require('./src/game/crash');
 
@@ -37,6 +38,7 @@ app.use(function (req, res, next) {
 
 app.use('/api/user', userRouter);
 app.use('/api/crash', crashRouter);
+// app.use('/api/chat', chatRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

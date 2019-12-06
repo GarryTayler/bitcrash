@@ -3,6 +3,7 @@ var path = require('path');
 var config = {
     debug: true,
     crash_port: 4202,
+    chat_port : 4201,
 	mysql : {
 		host : 'localhost',
 		user : 'root',

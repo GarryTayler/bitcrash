@@ -12,17 +12,17 @@
         secure your business success where others simply manage risk.
       </p>
 
-      <contact-button />
+      <contact-button></contact-button>
     </div>
   </div>
 </template>
 
 <script>
-import ContactButton from '@/components/ContactButton.vue'
+import ContactButton from '@/components/ContactButton.vue';
 
 export default {
   components: {
-    ContactButton
-  }
-}
+    ContactButton,
+  },
+};
 </script>

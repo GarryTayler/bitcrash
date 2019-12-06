@@ -17,16 +17,16 @@
       </p>
     </div>
 
-    <app-sidebar class="left" section="together" />
+    <app-sidebar class="left" section="together"></app-sidebar>
   </div>
 </template>
 
 <script>
-import AppSidebar from '@/components/layouts/Sidebar.vue'
+import AppSidebar from '@/components/layouts/Sidebar.vue';
 
 export default {
   components: {
-    AppSidebar
-  }
-}
+    AppSidebar,
+  },
+};
 </script>

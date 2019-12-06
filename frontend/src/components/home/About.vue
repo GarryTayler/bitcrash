@@ -3,7 +3,7 @@
     <div class="content">
       <b-row no-gutters class="position-relative">
         <div class="image">
-          <div class="line" />
+          <div class="line"></div>
         </div>
 
         <h3 class="text-light">
@@ -16,7 +16,7 @@
         <p class="text-light">
           Since 2004, we have become a <b>reputable</b> name in the industry especially
           known for our <b>breadth of knowledge</b>, <b>our ability to listen intently and
-            accurately assess the needs of our clients</b>, and our commitment to
+          accurately assess the needs of our clients</b>, and our commitment to
           implement the best-fit solutions at highly competitive rates.
         </p>
 
@@ -24,16 +24,16 @@
       </b-row>
     </div>
 
-    <app-sidebar class="right" section="about" />
+    <app-sidebar class="right" section="about"></app-sidebar>
   </div>
 </template>
 
 <script>
-import AppSidebar from '@/components/layouts/Sidebar.vue'
+import AppSidebar from '@/components/layouts/Sidebar.vue';
 
 export default {
   components: {
-    AppSidebar
-  }
-}
+    AppSidebar,
+  },
+};
 </script>

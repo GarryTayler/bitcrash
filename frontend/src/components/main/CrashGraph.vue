@@ -1,20 +1,22 @@
 <template>
   <div class="graph" :class="{ 'crashed': status == 3, 'animate': status == 2 }">
-    <div class="bg" />
-    <canvas ref="canvas" height="400" />
+    <div  class="bg">
+
+    </div>
+    <canvas ref="canvas" height='400'></canvas>
   </div>
 </template>
 
 <script>
 export default {
   name: 'CrashGraph',
-  components: {},
   props: {
     eventBus: {
       type: Object,
       required: true
     }
   },
+  components: {},
   data() {
     return {
       STATUS_PENDING: 1,
@@ -58,55 +60,6 @@ export default {
       currentTime: 0,
       currentGamePayout: 0
     }
-  },
-  watch: {
-    eventBus: {
-      deep: true,
-      handler(val) {
-        var payload = this.eventBus.payload
-        switch (this.eventBus.msg) {
-          case 'game-created':
-            this.status = this.STATUS_PENDING
-            this.duration = (payload.duration / 1000).toFixed(1)
-            break
-          case 'game-started':
-            // console.log('game-started')
-            //  i modified code below to set real start time
-            this.crash = payload.crash
-            if (this.status !== this.STATUS_STARTED) {
-              this.status = this.STATUS_STARTED
-              this.start_time = Date.now() - Math.ceil(this.inverseGrowth(this.crash + 1))
-              // console.log('start-time reset', this.start_time)
-            }
-            break
-          case 'game-finished':
-            // console.log('game-finished')
-            this.status = this.STATUS_FINISHED
-            if (payload.crash === 100) {
-              //  in case that game finishes when it starts,
-              this.start_time = Date.now() - Math.ceil(this.inverseGrowth(this.crash + 1))
-            }
-            this.crash = payload.crash
-            break
-          case 'resize':
-            this.onWindowResizeBinded()
-            break
-          case 'game-error':
-            //  when error occures...
-            this.rendering = false
-            break
-        }
-      }
-    }
-    // 'eventBus.msg': function() {
-
-    // }
-  },
-  destroyed() {
-    this.stopRendering()
-  },
-  mounted() {
-    this.startRendering()
   },
   methods: {
     growth(ms) {
@@ -386,6 +339,55 @@ export default {
         )
       }
     }
+  },
+  destroyed() {
+    this.stopRendering()
+  },
+  mounted() {
+    this.startRendering()
+  },
+  watch: {
+    eventBus: {
+      deep: true,
+      handler(val) {
+        var payload = this.eventBus.payload
+        switch (this.eventBus.msg) {
+          case 'game-created':
+            this.status = this.STATUS_PENDING
+            this.duration = (payload.duration / 1000).toFixed(1)
+            break
+          case 'game-started':
+            // console.log('game-started')
+            //  i modified code below to set real start time
+            this.crash = payload.crash
+            if (this.status !== this.STATUS_STARTED) {
+              this.status = this.STATUS_STARTED
+              this.start_time = Date.now() - Math.ceil(this.inverseGrowth(this.crash + 1))
+              // console.log('start-time reset', this.start_time)
+            }
+            break
+          case 'game-finished':
+            // console.log('game-finished')
+            this.status = this.STATUS_FINISHED
+            if (payload.crash === 100) {
+              //  in case that game finishes when it starts,
+              this.start_time = Date.now() - Math.ceil(this.inverseGrowth(this.crash + 1))
+            }
+            this.crash = payload.crash
+            break
+          case 'resize':
+            this.onWindowResizeBinded()
+            break
+          case 'game-error':
+            //  when error occures...
+            this.rendering = false
+            break
+        }
+      }
+    }
+    // 'eventBus.msg': function() {
+
+    // }
   }
 }
 </script>

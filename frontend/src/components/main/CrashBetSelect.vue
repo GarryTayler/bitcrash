@@ -1,15 +1,15 @@
 <template>
-  <div class="dropdown">
-    <button class="dropbtn flex-space-between-vc text" @click="showDropDown()">
-      {{ items[activeItem].lbl }}
-      <font-awesome-icon icon="chevron-down" />
-    </button>
-    <div id="crashBetDropdown" class="dropdown-content">
-      <div v-for="item in items" :key="item.id" class="dropdown-item" @click="onItemClick(item.id)">
-        {{ item.lbl }}
-      </div>
+    <div class="dropdown">
+        <button class="dropbtn flex-space-between-vc text" @click="showDropDown()">
+            {{items[activeItem].lbl}}
+            <font-awesome-icon icon="chevron-down"/>
+        </button>
+        <div id="crashBetDropdown" class="dropdown-content">
+            <div v-for="item in items" :key="item.id" class="dropdown-item" @click="onItemClick(item.id)">
+                {{item.lbl}}
+            </div>
+        </div>
     </div>
-  </div>
 </template>
 
 <script>
@@ -28,8 +28,6 @@ window.onclick = function(event) {
 }
 export default {
   name: 'CrashBetSelect',
-  components: {
-  },
   props: {
     activeItem: {
       type: Number,
@@ -51,6 +49,8 @@ export default {
     }
   },
   computed: {
+  },
+  components: {
   },
   methods: {
     showDropDown() {

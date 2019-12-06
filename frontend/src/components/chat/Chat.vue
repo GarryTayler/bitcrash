@@ -1,21 +1,21 @@
 <template>
   <div ref="chat" :class="{show:show}" class="chat-container">
-    <div class="chat-background" />
+    <div class="chat-background"/>
     <div class="chat">
       <div class="handle-button" :style="{'top':buttonTop+'px'}" @click="show=!show">
         <font-awesome-icon :icon="show?'chevron-right' : 'chevron-left'" />
       </div>
       <div class="chat-header flex-space-between-vc">
         Chat
-        <nation-group-flag />
+        <nation-group-flag></nation-group-flag>
       </div>
       <div class="chat-items">
         <div class="drawer-container">
-          <chat-item v-for="message in messages" :key="message.id" :data="message" />
+          <chat-item v-for="message in messages" :key="message.id" :data="message"></chat-item>
         </div>
       </div>
       <div class="chat-footer flex-space-between-vc">
-        <chat-input-box />
+        <chat-input-box></chat-input-box>
       </div>
     </div>
   </div>

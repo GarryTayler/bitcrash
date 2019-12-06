@@ -4,7 +4,7 @@
       <b-col class="text" cols="12" md="8" order="2" order-md="1">
         <h2 class="text-warning">
           INDUSTRIES
-          <span class="spacer" />
+          <span class="spacer"></span>
           WE WORK WITH
         </h2>
 
@@ -23,7 +23,7 @@
       </b-col>
 
       <b-col class="image" cols="12" md="4" order="1" order-md="2">
-        <img src="@/assets/img/IMAGE_D.png">
+        <img src="@/assets/img/IMAGE_D.png" />
       </b-col>
     </b-row>
 
@@ -31,31 +31,31 @@
       <b-col cols="12" md="6">
         <div class="d-flex align-items-center mb-3">
           <div class="icon">
-            <img src="@/assets/img/ICON_FINANCE.svg">
+            <img src="@/assets/img/ICON_FINANCE.svg" />
           </div>
           FINANCE
         </div>
         <div class="d-flex align-items-center mb-3">
           <div class="icon">
-            <img src="@/assets/img/ICON_LEGAL.svg">
+            <img src="@/assets/img/ICON_LEGAL.svg" />
           </div>
           LEGAL
         </div>
         <div class="d-flex align-items-center mb-3">
           <div class="icon">
-            <img src="@/assets/img/ICON_RETAIL.svg" class="sm">
+            <img src="@/assets/img/ICON_RETAIL.svg" class="sm" />
           </div>
           RETAIL
         </div>
         <div class="d-flex align-items-center mb-3">
           <div class="icon">
-            <img src="@/assets/img/ICON_MANU.svg" class="sm">
+            <img src="@/assets/img/ICON_MANU.svg" class="sm" />
           </div>
           MANUFACTURING
         </div>
         <div class="d-flex align-items-center mb-3">
           <div class="icon">
-            <img src="@/assets/img/ICON_TRANSPORT.svg" class="sm">
+            <img src="@/assets/img/ICON_TRANSPORT.svg" class="sm" />
           </div>
           TRANSPORT
         </div>
@@ -63,41 +63,41 @@
       <b-col cols="12" md="6">
         <div class="d-flex align-items-center mb-3">
           <div class="icon">
-            <img src="@/assets/img/ICON_HEALTHCARE.svg">
+            <img src="@/assets/img/ICON_HEALTHCARE.svg" />
           </div>
           HEALTHCARE
         </div>
         <div class="d-flex align-items-center mb-3">
           <div class="icon">
-            <img src="@/assets/img/ICON_EDU.svg">
+            <img src="@/assets/img/ICON_EDU.svg" />
           </div>
           EDUCATION
         </div>
         <div class="d-flex align-items-center mb-3">
           <div class="icon">
-            <img src="@/assets/img/ICON_ENERGY.svg">
+            <img src="@/assets/img/ICON_ENERGY.svg" />
           </div>
           ENERGY/<br class="d-sm-none">GAS/MINING
         </div>
         <div class="d-flex align-items-center mb-3">
           <div class="icon">
-            <img src="@/assets/img/ICON_HOSP.svg">
+            <img src="@/assets/img/ICON_HOSP.svg" />
           </div>
           HOSPITALITY/<br class="d-sm-none">HOTEL
         </div>
       </b-col>
     </b-row>
 
-    <app-sidebar class="right bottom" section="industry" />
+    <app-sidebar class="right bottom" section="industry"></app-sidebar>
   </div>
 </template>
 
 <script>
-import AppSidebar from '@/components/layouts/Sidebar.vue'
+import AppSidebar from '@/components/layouts/Sidebar.vue';
 
 export default {
   components: {
-    AppSidebar
-  }
-}
+    AppSidebar,
+  },
+};
 </script>

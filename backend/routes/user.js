@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var MD5 = require('md5');
+var MD5 = require('md5.js');
 
 var userModel = require('./model/user');
 router.post('/login', function (req, res) {

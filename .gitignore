@@ -20,8 +20,12 @@ backend/node_modules/.bin/nopt.cmd
 backend/node_modules/.bin/opencollective-postinstall
 backend/node_modules/.bin/opencollective-postinstall.cmd
 backend/node_modules/.bin/rc
+backend/node_modules/.bin/rc.cmd
+backend/node_modules/.bin/semver
+backend/node_modules/.bin/semver.cmd
 backend/node_modules/.bin/sshpk-conv
 backend/node_modules/.bin/sshpk-conv.cmd
+backend/node_modules/.bin/sshpk-sign
 backend/node_modules/.bin/sshpk-sign.cmd
 backend/node_modules/.bin/sshpk-verify.cmd
 backend/node_modules/.bin/sshpk-verify

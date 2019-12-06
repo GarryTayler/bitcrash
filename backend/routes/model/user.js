@@ -1,4 +1,4 @@
-var MD5 = require('md5');
+var MD5 = require('md5.js');
 var db = require('./../../utils/database');
 
 var bet_available = function (userID, betAmount) {

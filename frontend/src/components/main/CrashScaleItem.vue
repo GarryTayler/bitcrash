@@ -1,9 +1,9 @@
 <template>
   <div class="root flex-space-between-vc">
     <b-row>
-      <b-col v-for="item in list" :key="item.id" sm="6" md="3" lg="3" xl="3">
+      <b-col sm="6" md="3" lg="3" xl="3" v-for="item in list" :key="item.id">
         <button class="item" @click="itemClick(item)">
-          {{ item.lbl }}
+          {{item.lbl}}
         </button>
       </b-col>
     </b-row>
@@ -14,9 +14,9 @@
 
 export default {
   name: 'CrashBetButton',
-  components: {
-  },
   props: {
+  },
+  components: {
   },
   data() {
     return {

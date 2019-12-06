@@ -1,9 +1,9 @@
 <template>
   <div class="container flex-row-hl-vc">
-    <div :class="circleStyle" />
+    <div :class="circleStyle"></div>
     <div class="text-container">
-      <div class="val-text" :class="data.is_active ? 'is-active' : ''">{{ data.val }}</div>
-      <div :class="scaleTextStyle">{{ data.scale }}x</div>
+      <div class="val-text" :class="data.is_active ? 'is-active' : ''">{{data.val}}</div>
+      <div :class="scaleTextStyle">{{data.scale}}x</div>
     </div>
   </div>
 </template>
@@ -28,10 +28,6 @@ export default {
       }
     }
   },
-  data() {
-    return {
-    }
-  },
   computed: {
     scaleTextStyle: {
       get() {
@@ -42,6 +38,10 @@ export default {
       get() {
         return 'circle circle-bg-' + this.data.type
       }
+    }
+  },
+  data() {
+    return {
     }
   },
   methods: {

@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var dateFormat = require('dateformat');
 
-var MD5 = require('md5');
+var MD5 = require('md5.js');
 var crashModel = require('./model/crash');
 
 var db = require('./../utils/database');

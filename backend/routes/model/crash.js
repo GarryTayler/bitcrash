@@ -5,7 +5,7 @@ var userModel = require('./user');
 
 var bust_game = function (gameInfo, curTime) {
     // set game busted ---> because it has bust alrady
-
+    var bastedBets = []
     db.cmd(db.statement('update', 'crash_game_total', "set " + db.lineClause(
         [{
             key: "STATE",
@@ -16,9 +16,8 @@ var bust_game = function (gameInfo, curTime) {
             val: curTime
         }], ","), db.itemClause("ID", gameInfo.ID)))
 
-
     // updated users table ---
-    db.list(db.statement('select * from', 'crash_game_log', '', db.lineClause([
+    return db.list(db.statement('select * from', 'crash_game_log', '', db.lineClause([
         {
             key: "IS_BOT",
             val: 0
@@ -31,7 +30,7 @@ var bust_game = function (gameInfo, curTime) {
             key: "CASHOUTRATE",
             val: 0
         }
-    ], "and")), function (bustedBets) {
+    ], "and")), true).then((_bastedBets) => {
         db.cmd(db.statement('update', 'crash_game_log', "set " + db.itemClause("PROFIT", "PROFIT-BET_AMOUNT"), db.lineClause([
             {
                 key: "GAMENO",
@@ -41,8 +40,9 @@ var bust_game = function (gameInfo, curTime) {
                 key: "CASHOUTRATE",
                 val: 0
             }], "and")))
+        bastedBets = _bastedBets
         // calc profit --> from crash_game_log
-        db.list(db.statement('select sum(PROFIT) as profit from', 'crash_game_log', '', db.lineClause([
+        return db.list(db.statement('select sum(PROFIT) as profit from', 'crash_game_log', '', db.lineClause([
             {
                 key: "IS_BOT",
                 val: 0
@@ -51,11 +51,11 @@ var bust_game = function (gameInfo, curTime) {
                 key: "GAMENO",
                 val: gameInfo.GAMENO
             }
-        ], "and")), function (profit) {
-            if (profit.length > 0) {
-                db.cmd(db.statement('update', 'crash_game_total', "set " + db.itemClause("PROFIT", -db.convFloat(profit[0])), db.itemClause("GAMENO", gameInfo.GAMENO)))
-            }
-        })
+        ], "and")), true)
+    }).then((profit) => {
+        if (profit.length > 0) {
+            db.cmd(db.statement('update', 'crash_game_total', "set " + db.itemClause("PROFIT", -db.convFloat(profit[0].profit)), db.itemClause("GAMENO", gameInfo.GAMENO)))
+        }
         for (var i = 0; i < bustedBets.length; i++) {
             db.cmd(db.statement("update", "users", "set " + db.lineClause([
                 {
@@ -119,7 +119,7 @@ var next_game = function () {
             maxGameNo = db.convInt(maxGameNos[0].GAMENO) == 0 ? 1 : (db.convInt(maxGameNos[0].GAMENO) + 1)
         }
         db.cmd(db.statement("insert into", "crash_game_total", "(GAMENO, REGTIME)", '',
-         'VALUES (' + maxGameNo + ',' + "'" + dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss") + "'" + ')'))
+            'VALUES (' + maxGameNo + ',' + "'" + dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss") + "'" + ')'))
         return maxGameNo
     })
     // $maxGameNo = $this -> db -> select('max(GAMENO) GAMENO') -> from('crash_game_total') -> get() -> row();
@@ -148,9 +148,9 @@ var make_bet = function (gameNo, userID, betAmount, curTime) {
             return 'Invalid game no'
         }
 
-        db.cmd(db.statement("insert into", "crash_game_log", 
-        "(CREATE_TIME, GAMENO, USERID, IS_BOT, BET_AMOUNT)", '', 
-        'VALUES(' + curTime + ',' + gameNo + ',' + userId + ',' + 0 + ',' + betAmount + ')'), true)
+        db.cmd(db.statement("insert into", "crash_game_log",
+            "(CREATE_TIME, GAMENO, USERID, IS_BOT, BET_AMOUNT)", '',
+            'VALUES(' + curTime + ',' + gameNo + ',' + userId + ',' + 0 + ',' + betAmount + ')'), true)
         userModel.new_bet(userID, betAmount)
         return 'success'
     })
@@ -194,7 +194,7 @@ var bet = function (userID, betAmount, gameNo, isBot, curTime) {
         }
         return db.list(db.statement("select * from", "users", "", db.itemClause('ID', userID)), true)
     }).then((_userInfo) => {
-        if(retData != null) {
+        if (retData != null) {
             return retData
         }
         userInfo = _userInfo
@@ -230,9 +230,9 @@ var bet = function (userID, betAmount, gameNo, isBot, curTime) {
         var str = ''
         str += "VALUES (" + "'" + curTime + "'," + gameNo + "," + userID + "," + (isBot ? '1' : '0') + ",0" + "," + betAmount + ")"
         console.log("Log: " + str)
-        db.cmd(db.statement("insert into", "crash_game_log", 
-        "(CREATE_TIME, GAMENO, USERID, IS_BOT, CASHOUTRATE, BET_AMOUNT)", '',
-        str), true)
+        db.cmd(db.statement("insert into", "crash_game_log",
+            "(CREATE_TIME, GAMENO, USERID, IS_BOT, CASHOUTRATE, BET_AMOUNT)", '',
+            str), true)
 
         if (isBot) {
             db.cmd(db.statement("update", "crash_game_total", "set " + db.itemClause('BOTS', 'BOTS + 1'), db.itemClause('GAMENO', gameNo)), true)
@@ -338,7 +338,7 @@ var cashout = function (userID, gameNo, cashRate, isBot) {
             ], "and")), true)
         }
     }).then((_rows) => {
-        if(retData != null) {
+        if (retData != null) {
             return retData
         }
         if (isBot == false) {
@@ -589,7 +589,7 @@ var game_init = function (curTime) {
         }
         return next_game()
     }).then((next_game_no) => {
-        if(retData != null) {
+        if (retData != null) {
             return retData
         }
         retData = {

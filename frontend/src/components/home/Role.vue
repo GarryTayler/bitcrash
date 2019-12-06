@@ -6,7 +6,7 @@
 
         <h3>
           Becoming an integral part of your business
-          <span class="spacer" />
+          <span class="spacer"></span>
           starts with a deep understanding of it.
         </h3>
 
@@ -17,22 +17,22 @@
           recommendations that best fit your environment and needs.
         </p>
 
-        <contact-button />
+        <contact-button></contact-button>
       </b-col>
 
       <b-col class="image" cols="12" md="6" order="1" order-md="2">
-        <img src="@/assets/img/IMAGE_C.png">
+        <img src="@/assets/img/IMAGE_C.png" />
       </b-col>
     </b-row>
   </div>
 </template>
 
 <script>
-import ContactButton from '@/components/ContactButton.vue'
+import ContactButton from '@/components/ContactButton.vue';
 
 export default {
   components: {
-    ContactButton
-  }
-}
+    ContactButton,
+  },
+};
 </script>

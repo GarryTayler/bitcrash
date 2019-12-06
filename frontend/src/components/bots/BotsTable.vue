@@ -1,15 +1,15 @@
 <template>
   <div>
     <bit-crash-card>
-      <div slot="header" class="card-header flex-space-between-vc" :class="type == 0 ? 'progress-user' : 'cashout-user'">
-        <span>
-          {{ bots.length }} {{ type==0? 'in Game' : 'Cashed out' }}
-        </span>
-        <coin-label />
-      </div>
-      <div class="card-content">
-        <bit-crash-table :fields="fields" :items="items" />
-      </div>
+        <div slot="header" class="card-header flex-space-between-vc" :class="type == 0 ? 'progress-user' : 'cashout-user'">
+            <span>
+              {{items.length}} {{type==0? 'in Game' : 'Cashed out'}}
+            </span>
+            <coin-label :bet="sum"></coin-label>
+        </div>
+        <div class="card-content">
+            <bit-crash-table :fields="fields" :items="items"></bit-crash-table>
+        </div>
     </bit-crash-card>
   </div>
 </template>
@@ -18,24 +18,14 @@
 import BitCrashCard from '@/components/crashTable/BitCrashCard.vue'
 import BitCrashTable from '@/components/crashTable/BitCrashTable.vue'
 import CoinLabel from '@/components/crashTable/CoinLabel.vue'
+import { getFloat2Decimal } from '@/utils/index'
 
 export default {
   name: 'BotsTable',
-  components: {
-    BitCrashCard,
-    BitCrashTable,
-    CoinLabel
-  },
   props: {
     type: {
       type: Number,
       default: 0
-    },
-    bots: {
-      type: Array,
-      default() {
-        return []
-      }
     },
     fields: {
       type: Array,
@@ -51,6 +41,19 @@ export default {
     }
   },
   computed: {
+    sum: function() {
+      var sum = 0
+      for (var i = 0; i < this.items.length; i += 1) {
+        sum += this.items[i].bet * (this.type === 0 ? 1 : (this.items[i].option === undefined ? 1 : this.items[i].option / 100))
+      }
+
+      return getFloat2Decimal(sum)
+    }
+  },
+  components: {
+    BitCrashCard,
+    BitCrashTable,
+    CoinLabel
   }
 }
 </script>

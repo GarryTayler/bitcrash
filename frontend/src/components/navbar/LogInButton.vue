@@ -1,7 +1,7 @@
 <template>
   <div class="root">
     <div class="bg flex-row-hc-vc" @click="btnClick">
-      <span class="text">{{ text }}</span>
+        <span class="text">{{text}}</span>
     </div>
   </div>
 </template>

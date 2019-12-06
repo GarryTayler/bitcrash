@@ -446,10 +446,10 @@ function startGame() {
 
 function intervalFunc() 
 {
-	//console.log('intervalFunc() : start');
+	console.log('intervalFunc() : start');
 	elapsed_time = Date.now() - startTime;
 	tick = Math.floor(100 * Math.pow(Math.E, 0.00006 * elapsed_time));
-	//console.log("Interval Func " + tick)
+	console.log("Interval Func " + tick)
 	io.emit('onMessage',
 		{
 			code: 'Tick',
