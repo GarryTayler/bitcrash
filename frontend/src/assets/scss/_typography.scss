@@ -1,0 +1,42 @@
+h1 {
+  font-family: Avenir-Heavy;
+  font-size: 2.5rem;
+  line-height: 1.1;
+
+  @include media-breakpoint-up(md) {
+    font-size: 5vw;
+  }
+}
+
+h2 {
+  font-family: Avenir-Heavy;
+  font-size: 2rem;
+  letter-spacing: 0.35rem;
+
+  @include media-breakpoint-up(md) {
+    font-size: 3vw;
+    letter-spacing: 0.5rem;
+  }
+}
+
+h3 {
+  font-family: Avenir-Heavy;
+  font-size: 1.25rem;
+  line-height: 1.35;
+
+  @include media-breakpoint-up(md) {
+    font-size: 1.25vw;
+  }
+}
+
+p {
+  font-family: Avenir-Light;
+
+  @include media-breakpoint-up(md) {
+    font-size: 1.08vw;
+  }
+}
+
+.underline {
+  text-decoration: underline;
+}
