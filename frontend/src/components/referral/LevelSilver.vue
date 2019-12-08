@@ -5,7 +5,7 @@
     </div>
     <div class="level-balance ml-5">
       <span style="vertical-align: center;">Your Balance</span>
-      <div class="flex-row-hl-vc bitcoin-content-logo">
+      <div class="flex-row-hl-vc bitcoin-content-logo mt-5 ml-4">
           <img src="@/assets/img/ic_bitcoin_col.png" width="25px"/>
           <span class="label ml-2">0</span>
       </div>

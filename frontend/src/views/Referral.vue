@@ -33,7 +33,7 @@
               </div>
             </b-col>
           </b-row>
-          <b-row class="mt-4" style="width: 100%;">
+          <b-row class="mt-4 w-100">
             <b-col sm="12" md="12" lg="12" xl="12">
               <bit-crash-card :bodyStyle="1" :noHeader="true" class="link-content">
                 <b-row>
@@ -76,7 +76,7 @@
               </bit-crash-card>
             </b-col>
           </b-row>
-          <b-row class="mt-4" style="width: 100%;">
+          <b-row class="mt-4 w-100">
             <b-col sm="12" md="5" lg="5" xl="5">
               <bit-crash-card :bodyStyle="1" :noHeader="true" class="link-content">
                 <b-row>
@@ -92,20 +92,32 @@
               </bit-crash-card>
             </b-col>
             <b-col sm="12" md="7" lg="7" xl="7">
-              <bit-crash-card :bodyStyle="1" :noHeader="true" class="link-content">
+              <bit-crash-card :bodyStyle="1" :noHeader="true" class="link-content h-100">
                <b-row>
                   <b-col sm="12" md="12" lg="12" xl="12">
                     <div class="card-content">
-                      <span style="margin: 20px;">
-                        Your level silver (10%)
-                      </span><br>
+                      <div>
+                        <b-nav tabs fill>
+                          <b-nav-item active>TODAY</b-nav-item>
+                          <b-nav-item>7 DAYS</b-nav-item>
+                          <b-nav-item>30 DAYS</b-nav-item>
+                          <b-nav-item>ALL TIME</b-nav-item>
+                        </b-nav>
+                      </div>
                     </div>
+                  </b-col>
+                  <b-col sm="12" md="12" lg="12" xl="12">
+                    <b-row align-h="between" class="text-center">
+                      <b-col sm="4" md="4" lg="4" xl="4" class="ml-md-auto p-3" v-for="item in option_types" :key="item">
+                        <wallet-sect :type="item"/>
+                      </b-col>
+                    </b-row>
                   </b-col>
                 </b-row>
               </bit-crash-card>
             </b-col>
           </b-row>
-          <b-row class="mt-4 ml-1" style="width: 100%;">
+          <b-row class="mt-4 ml-1 w-100">
             <b-col sm="12" md="9" lg="9" xl="9">
                 <h4>Groups</h4>
             </b-col>
@@ -115,49 +127,88 @@
                 </div>
             </b-col>
           </b-row>
-          <b-row class="mt-4" style="width: 100%;">
+          <b-row class="mt-4 w-100">
             <b-col sm="12" md="12" lg="12" xl="12">
               <bit-crash-card :bodyStyle="0" :noHeader="false" class="link-content">
-                <div slot="header" class="card-header flex-space-between-vc all-bets">
-                  <span>
-                    All Bets
-                  </span>
+                <div slot="header" class="card-header flex-space-between-vc">
+                  <b-row class="w-100">
+                    <b-col sm="6" md="3" lg="3" xl="3">
+                      <span class="subtitle">
+                        Name
+                      </span><br>
+                      <span>
+                        REF_6879555
+                      </span>
+                    </b-col>
+                    <b-col sm="6" md="3" lg="3" xl="3">
+                      <span class="subtitle">
+                        Url
+                      </span><br>
+                      <span>
+                        ..dfew
+                      </span>
+                    </b-col>
+                    <b-col sm="6" md="3" lg="3" xl="3">
+                      <span class="subtitle">
+                        Created
+                      </span><br>
+                      <span>
+                        20-09-2019
+                      </span>
+                    </b-col>
+                    <b-col sm="6" md="3" lg="3" xl="3">
+                      <span class="subtitle">
+                        Your income
+                      </span><br>
+                      <div class="flex-row-hl-vc">
+                        <img src="@/assets/img/ic_bitcoin_col.png" width="25px"/>
+                        <span class="label ml-2">0</span>
+                     </div>
+                    </b-col>
+                  </b-row>
                 </div>
                 <div class="card-content">
-                  <b-col sm="12" md="6" lg="6" xl="6">
-                      <span style="margin: 20px;">
-                        You referral link
-                      </span><br>
-                      <div class="bg flex-space-between-vc" style="margin-top: 10px;margin-bottom: 10px">
-                          <input
-                          class="text"
-                          @focus="handleFocus"
-                          @blur="handleBlur"
-                          @input="handleInput"/>
-                          <crash-button text="Copy" @click="handleBlur"/>
-                      </div>
-                      <span style="margin: 20px;">
-                        You referral code
-                      </span><br>
-                      <div class="bg flex-space-between-vc" style="margin-top: 10px">
-                          <input
-                          class="text"
-                          @focus="handleFocus"
-                          @blur="handleBlur"
-                          @input="handleInput"/>
-                          <crash-button text="Change" :disabled="true" @click="handleBlur"/>
-                      </div>
-                  </b-col>
-                  <b-col sm="12" md="6" lg="6" xl="6">
-                  </b-col>
+                  <b-row align-h="center">
+                    <b-col sm="12" md="6" lg="6" xl="6">
+                        <span style="margin: 20px;">
+                          You referral link
+                        </span><br>
+                        <div class="bg flex-space-between-vc" style="margin-top: 10px;margin-bottom: 10px">
+                            <input
+                            class="text"
+                            @focus="handleFocus"
+                            @blur="handleBlur"
+                            @input="handleInput"/>
+                            <crash-button text="Copy" @click="handleBlur"/>
+                        </div>
+                        <span style="margin: 20px;">
+                          You referral code
+                        </span><br>
+                        <div class="bg flex-space-between-vc" style="margin-top: 10px">
+                            <input
+                            class="text"
+                            @focus="handleFocus"
+                            @blur="handleBlur"
+                            @input="handleInput"/>
+                            <crash-button text="Change" :disabled="true" @click="handleBlur"/>
+                        </div>
+                    </b-col>
+                    <b-col sm="12" md="6" lg="6" xl="6">
+                      <b-row align-h="between" class="text-center">
+                        <b-col sm="4" md="4" lg="4" xl="4" class="ml-md-auto p-3" v-for="item in option_types" :key="item">
+                          <wallet-sect :type="item"/>
+                        </b-col>
+                      </b-row>
+                    </b-col>
+                  </b-row>
                 </div>
               </bit-crash-card>
             </b-col>
           </b-row>
-          <b-row class="mt-4" style="width: 100%;">
+          <b-row class="mt-4 w-100">
             <crash-button text="CREATE GROUP" :disabled="false" class="m-auto"/>
           </b-row>
-          <b-row class="mt-4" style="width: 100%;">
+          <b-row class="mt-4 w-100">
             <b-col sm="12" md="12" lg="12" xl="12">
               <bit-crash-card :bodyStyle="0" :noHeader="false" class="link-content">
                 <div slot="header" class="card-header flex-space-between-vc all-bets">
@@ -171,7 +222,7 @@
               </bit-crash-card>
             </b-col>
           </b-row>
-          <b-row class="mt-4" style="width: 100%;">
+          <b-row class="mt-4 w-100">
             <crash-button text="Get Banners" :disabled="false" class="m-auto"/>
           </b-row>
       </b-row>
@@ -180,10 +231,12 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import BitCrashCard from '@/components/crashTable/BitCrashCard.vue'
 import CrashButton from '@/components/ui/CrashButton.vue'
 import BitCrashTable from '@/components/crashTable/BitCrashTable.vue'
 import LevelSilver from '@/components/referral/LevelSilver.vue'
+import WalletSect from '@/components/referral/WalletSect.vue'
 
 export default {
   name: 'Home',
@@ -191,7 +244,24 @@ export default {
     BitCrashCard,
     CrashButton,
     BitCrashTable,
-    LevelSilver
+    LevelSilver,
+    WalletSect
+  },
+  computed: {
+    ...mapGetters([
+      'is_logged_in',
+      'wallet',
+      'avatar',
+      'crash_server_url',
+      'user_id',
+      'name',
+      'token'
+    ]),
+    option_types: {
+      get() {
+        return ['user', 'bet', 'income']
+      }
+    }
   },
   data() {
     return {
@@ -293,6 +363,9 @@ export default {
     background: -moz-radial-gradient(circle, #3c4b7c, #1e2843, #1e2843); /* Firefox 3.6 to 15 */
     background: radial-gradient(circle, #3c4b7c, #1e2843, #1e2843); /* Standard syntax */
   }
+  .subtitle {
+    color: #c9d6e4;
+  }
 }
 .card-content {
   padding: 35px;
@@ -307,7 +380,7 @@ export default {
   padding-right: calc(250px + #{$chat-width});
   padding-bottom: 250px;
   @include media-breakpoint-down(md) {
-    padding-right: 250px;
+    padding-right: 20px;
     padding-left: 50px;
   }
 }
@@ -342,6 +415,22 @@ export default {
     font-size: 18px;
     color: $control-sup-text-color;
     font-weight: bold;
+  }
+}
+
+.nav-tabs .nav-link.active {
+  color: white;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid #62a0fe;
+}
+
+.nav-tabs .nav-link {
+  color: white;
+  border: none;
+  border-bottom: 1px solid #485992;
+  & :hover {
+    border: none;
   }
 }
 </style>

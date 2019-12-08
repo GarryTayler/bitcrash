@@ -63,6 +63,7 @@ export default {
   // padding-right: 10px;
   display: block;
   width: 100%;
+  overflow: auto;
 
   .bit-crash-table {
     font-size: $user-tbl-header-text-size;
