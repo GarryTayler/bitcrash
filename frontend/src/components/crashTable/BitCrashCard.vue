@@ -1,5 +1,5 @@
 <template>
-  <div class="bit-crash-card" :class="shadow ? 'is-shadow' : 'is-none-shadow'">
+  <div class="bit-crash-card" :class="customStyle">
       <div class="bit-crash-header" v-if="$slots.header || header">
         <slot name="header">{{ header }}</slot>
         <!-- <b-col md="8" lg="8" sm="6" class="bit-crash-title">4 in games</b-col>
@@ -7,7 +7,7 @@
           <coin-label></coin-label>
         </b-col> -->
       </div>
-      <div class="bit-crash-content" :style="bodyStyle">
+      <div :class="contentStyle">
         <slot></slot>
       </div>
   </div>
@@ -21,10 +21,39 @@ export default {
   name: 'BitCrashCard',
   props: {
     header: {},
-    bodyStyle: {},
+    bodyStyle: {
+      type: Number,
+      default: 0
+    },
     shadow: {
       type: Boolean,
       default: true
+    },
+    hoverBorder: {
+      type: Boolean,
+      default: false
+    },
+    noHeader: {
+      type: Boolean,
+      default: false
+    }
+  },
+  computed: {
+    customStyle: {
+      get() {
+        var ret = this.shadow ? 'is-shadow' : 'is-none-shadow'
+        ret += this.hoverBorder ? ' hover-bordered' : ''
+        return ret
+      }
+    },
+    contentStyle: {
+      get() {
+        var ret = 'bit-crash-content'
+        ret += this.shadow ? ' is-shadow' : ' is-none-shadow'
+        ret += this.bodyStyle === 0 ? ' normal-content' : ' special-content'
+        ret += !this.noHeader ? '' : ' top-left-border-radius'
+        return ret
+      }
     }
   },
   components: {
@@ -46,12 +75,18 @@ export default {
     .bit-crash-content{
       border-bottom-left-radius: $card-border-radius;
       border-bottom-right-radius: $card-border-radius;
-      background-color: #313d67;
+      width: 100%;
+      height: 100%;
       // min-height: 200px;
       // max-height: 360px;
       // overflow-y: auto;
     }
-
+    .normal-content {
+      background-color: #313d67;
+    }
+    .special-content {
+      background: linear-gradient(180deg, #333f6c, #2a355a)
+    }
     // .bit-crash-title {
     //   padding-top:9px;
     // }
@@ -60,5 +95,26 @@ export default {
     box-shadow: 0 10px 16px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
   }
   .is-none-shadow {
+  }
+  .top-left-border-radius {
+    border-top-left-radius: $card-border-radius;
+    border-top-right-radius: $card-border-radius;
+  }
+  .hover-bordered {
+    border-color: transparent;
+    border-style: solid;
+    border-width: 1px;
+
+    .bit-crash-content{
+      border-top-left-radius: $card-border-radius;
+      border-top-right-radius: $card-border-radius;
+      // min-height: 200px;
+      // max-height: 360px;
+      // overflow-y: auto;
+    }
+
+    &:hover {
+      border-color: #62a1fe;
+    }
   }
 </style>

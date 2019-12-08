@@ -165,24 +165,25 @@ export default {
         this.canvas.width,
         0
       )
-      gradient.addColorStop(0, '#2077e4')
-      gradient.addColorStop(1, '#ff4a74')
+      gradient.addColorStop(0, '#954ce9')
+      gradient.addColorStop(0.5, '#7470ec')
+      gradient.addColorStop(1, '#2abaec')
 
       this.ctx.setLineDash([])
-      //  this.ctx.strokeStyle = gradient
+      this.ctx.strokeStyle = gradient
       //  check if game finished, then color is same as axes color
       //  else if growth is bigger than 15x, then color is more bright ...
-      if (this.status === this.STATUS_FINISHED) {
-        this.ctx.strokeStyle = '#7247b3'
-      } else {
-        if (this.currentGamePayout >= 15) {
-          this.ctx.strokeStyle = '#ff5f8f'
-        } else {
-          this.ctx.strokeStyle = '#ffdf0f'
-        }
-      }
+      // if (this.status === this.STATUS_FINISHED) {
+      //   this.ctx.strokeStyle = '#7247b3'
+      // } else {
+      //   if (this.currentGamePayout >= 15) {
+      //     this.ctx.strokeStyle = '#ff5f8f'
+      //   } else {
+      //     this.ctx.strokeStyle = '#ffdf0f'
+      //   }
+      // }
 
-      this.ctx.lineWidth = 2.5
+      this.ctx.lineWidth = 5
 
       this.ctx.beginPath()
 

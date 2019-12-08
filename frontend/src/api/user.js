@@ -22,3 +22,11 @@ export function logout() {
     method: 'post'
   })
 }
+
+export function signup(data) {
+  return request({
+    url: 'api/user/signup',
+    method: 'post',
+    data
+  })
+}

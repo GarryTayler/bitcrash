@@ -1,12 +1,18 @@
 <template>
   <div>
     <!-- <app-navbar /> -->
-    <gal-navbar />
+    <gal-navbar/>
 
     <div class="app-container">
-      <router-view />
+      <div class="flex-row" style="position: relative;">
+        <router-view style="width: 100%"/>
+        <chat></chat>
+      </div>
       <app-footer />
     </div>
+
+    <log-in-form></log-in-form>
+    <sign-up-form></sign-up-form>
   </div>
 </template>
 
@@ -14,11 +20,17 @@
 // import AppNavbar from '@/components/layouts/Navbar.vue';
 import AppFooter from '@/components/layouts/Footer.vue'
 import GalNavbar from '@/components/layouts/GalNavbar.vue'
+import LogInForm from '@/components/user/LogInForm.vue'
+import SignUpForm from '@/components/user/SignUpForm.vue'
+import Chat from '@/components/chat/Chat.vue'
 
 export default {
   components: {
     AppFooter,
-    GalNavbar
+    GalNavbar,
+    LogInForm,
+    SignUpForm,
+    Chat
   }
 }
 </script>

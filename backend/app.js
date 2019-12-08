@@ -38,7 +38,7 @@ app.use(function (req, res, next) {
 
 app.use('/api/user', userRouter);
 app.use('/api/crash', crashRouter);
-// app.use('/api/chat', chatRouter);
+app.use('/api/chat', chatRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

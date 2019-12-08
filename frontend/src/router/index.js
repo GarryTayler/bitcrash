@@ -12,6 +12,14 @@ const routes = [
       {
         path: '/home',
         component: () => import('../views/Home.vue')
+      },
+      {
+        path: '/deposit',
+        component: () => import('../views/deposit.vue')
+      },
+      {
+        path: '/referral',
+        component: () => import('../views/Referral.vue')
       }
     ]
   }

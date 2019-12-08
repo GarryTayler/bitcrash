@@ -15,17 +15,20 @@
         </div>
       </div>
       <div class="chat-footer flex-space-between-vc">
-        <chat-input-box></chat-input-box>
+        <chat-input-box :value="current_chat" :disabled="!is_logged_in" @sendMsg="sendMsg"></chat-input-box>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 // import { addClass, removeClass } from '@/utils'
 import NationGroupFlag from '@/components/chat/NationGroupFlag.vue'
 import ChatItem from '@/components/chat/ChatItem.vue'
 import ChatInputBox from '@/components/chat/ChatInputBox.vue'
+import io from 'socket.io-client/dist/socket.io.js'
+import { emit, list } from '@/api/chat'
 
 export default {
   name: 'Chat',
@@ -43,6 +46,19 @@ export default {
       default: 250,
       type: Number
     }
+  },
+  computed: {
+    ...mapGetters([
+      'is_logged_in',
+      'chat_server_url',
+      'user_id',
+      'name',
+      'ipaddress',
+      'token',
+      'crash_chat',
+      'avatar_small',
+      'avatar_medium'
+    ])
   },
   data() {
     return {
@@ -72,7 +88,8 @@ export default {
           user_id: 1,
           message: 'how are you all?'
         }
-      ]
+      ],
+      current_chat: ''
     }
   },
   watch: {
@@ -80,11 +97,11 @@ export default {
       if (value && !this.clickNotClose) {
         this.addEventClick()
       }
-    //   if (value) {
-    //     addClass(document.body, 'showChat')
-    //   } else {
-    //     removeClass(document.body, 'showChat')
-    //   }
+      //   if (value) {
+      //     addClass(document.body, 'showChat')
+      //   } else {
+      //     removeClass(document.body, 'showChat')
+      //   }
     }
   },
   mounted() {
@@ -104,21 +121,64 @@ export default {
         this.show = false
         window.removeEventListener('click', this.closeSidebar)
       }
-    }
+    },
     // insertToBody() {
     //   const elx = this.$refs.chat
     //   const body = document.querySelector('body')
     //   body.insertBefore(elx, body.firstChild)
     // }
+    addChatItem(item) {
+      // const { msg, username, curtime, type, avatar } = item
+
+      // if (item.type === this.crash_chat) {
+      // }
+    },
+    reload() {
+      list({ type: this.crash_chat }).then(response => {
+        if (response.data != null && response.data.length > 0) {
+          this.messages = response.data
+        }
+      })
+    },
+    sendMsg(msg) {
+      var emitData = {
+        CHAT_TYPE: this.crash_chat,
+        MSG: msg,
+        IPADDRESS: this.ipaddress,
+        USERID: this.user_id,
+        AVATAR_MEDIUM: this.avatar_medium,
+        AVATAR_SMALL: this.avatar_small,
+        USERNAME: this.name
+      }
+      emit(emitData).then(response => {
+        if (response.code !== 20000) {
+          // Error
+        } else {
+          console.log(response.data)
+          this.reload()
+        }
+      })
+
+      this.current_chat = ''
+    }
+  },
+  created: function() {
+    var self = this
+    this.chat_socket = io.connect(this.chat_server_url)
+    // socket reference
+    this.chat_socket.on('chat_message', function(item) {
+      self.reload()
+      // self.addChatItem(item)
+    })
   }
 }
 </script>
 
 <style>
 /* .showChat {
-  overflow: hidden;
-  position: relative;
-  width: calc(100% - 15px);
+  overflow: hidden
+  position: relative
+  width: calc(100% - 15px)
 } */
 </style>
 
@@ -147,9 +207,10 @@ export default {
   width: 100%;
   width: calc(#{$chat-width} + #{$scrollbar-width});
   height: 100%;
-  position: absolute;
-  top: 0;
+  // position: absolute;
   right: 0;
+  position: fixed !important;
+
   @include media-breakpoint-down(md) {
     transition: all 0.25s cubic-bezier(0.7, 0.3, 0.1, 1);
     transform: translate(100%);
@@ -204,14 +265,15 @@ export default {
 }
 .chat-header {
   padding: 15px;
-  background: #2f3a66;
+  background: $sidebar-header-bg-color;
   color: white;
   font-weight: bold;
 }
-
 .chat-items {
   padding-right: $scrollbar-width;
-  height: 87%;
+  height: calc(100% - 202px);
+  overflow-y: auto;
+  padding-bottom: 10px;
 }
 .drawer-container {
   padding: 24px;
@@ -221,13 +283,13 @@ export default {
 
   .drawer-title {
     margin-bottom: 12px;
-    color: rgba(0, 0, 0, .85);
+    color: rgba(0, 0, 0, 0.85);
     font-size: 14px;
     line-height: 22px;
   }
 
   .drawer-item {
-    color: rgba(0, 0, 0, .65);
+    color: rgba(0, 0, 0, 0.65);
     font-size: 14px;
     padding: 12px 0;
   }
@@ -235,5 +297,9 @@ export default {
   .drawer-switch {
     float: right;
   }
+}
+.chat-footer {
+  padding-left: 20px;
+  padding-right: 20px;
 }
 </style>

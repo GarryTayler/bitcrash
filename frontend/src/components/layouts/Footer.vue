@@ -1,38 +1,30 @@
 <template>
-  <b-container fluid class="bg-dark py-4 footer" style="background-color: #384779;">
+  <b-container fluid class="py-4 footer" style="background-color: #1b2132;">
     <b-row no-gutters align-v="end" class="content">
-      <div class="brand">
-        <img src="@/assets/img/brand_logo.png" class="d-none d-lg-inline logo mr-lg-3">
-        <img src="@/assets/img/brand_text.png" class="d-none d-lg-inline text">
-      </div>
-
-      <b-row no-gutters class="ml-lg-auto link-list">
-        <div v-show="false" class="link">
-          <a href="#" class="text-light mr-lg-4 mr-xl-5" @click.prevent="scrollTo('section-about')">WHO ARE WE</a>
-          <a href="#" class="text-light mr-lg-4 mr-xl-5" @click.prevent="scrollTo('section-together')">WORKING WITH US</a>
-          <a href="#" class="text-light mr-lg-4 mr-xl-5" @click.prevent="scrollTo('section-industry')">INDUSTRY PARTNERS</a>
-          <a href="#" class="text-light mr-lg-4 mr-xl-5" @click.prevent="contactUs()">CONTACT US</a>
-        </div>
-
-        <div class="social">
-          <a href="#" class="text-light mr-3">
-            <img src="@/assets/img/iconmonstr-linkedin.svg">
-          </a>
-          <a href="#" class="text-light mr-3">
-            <img src="@/assets/img/iconmonstr-instagram.svg">
-          </a>
-          <a href="#" class="text-light mr-3">
-            <img src="@/assets/img/iconmonstr-twitter.svg">
-          </a>
-          <a href="#" class="text-light">
-            <img src="@/assets/img/iconmonstr-facebook.svg">
-          </a>
+      <b-row no-gutters class="m-auto link-list">
+        <div class="link">
+          <a href="#" class="text-link mr-lg-4 mr-xl-5 active" @click.prevent="scrollTo('section-about')">PRIVACY AND SECURITY</a>
+          <a href="#" class="text-link mr-lg-4 mr-xl-5" @click.prevent="scrollTo('section-together')">RESPONSIBLE GAMING</a>
+          <a href="#" class="text-link mr-lg-4 mr-xl-5" @click.prevent="scrollTo('section-industry')">TERMS AND SERVICE</a>
+          <a href="#" class="text-link mr-lg-4 mr-xl-5" @click.prevent="contactUs()">AFFILIATE</a>
         </div>
       </b-row>
     </b-row>
-
-    <div class="copyright">2019 &copy; BITCRASH SYSTEMS</div>
-    <div class="copyright">ALL RIGHTS RESERVED</div>
+    <b-row no-gutters align-v="end" class="content mb-3">
+      <b-row class="m-auto link-list">
+        <div class="link">
+          <a href="#" class="text-link mr-lg-4 mr-xl-5" @click.prevent="scrollTo('section-about')">FAQ</a>
+          <a href="#" class="text-link mr-lg-4 mr-xl-5" @click.prevent="scrollTo('section-together')">LEGAL</a>
+          <a href="#" class="text-link mr-lg-4 mr-xl-5" @click.prevent="scrollTo('section-industry')">PRAVABLY FAIR</a>
+          <a href="#" class="text-link mr-lg-4 mr-xl-5" @click.prevent="contactUs()">ABOUT</a>
+        </div>
+      </b-row>
+    </b-row>
+    <b-row no-gutters align-v="end" class="content copyright1">
+      <b-row class="m-auto link-list">
+        Copyright &copy; 2019 bitcrash.com. All rights reserved. This site is not associated with Valve Corp.
+      </b-row>
+    </b-row>
   </b-container>
 </template>
 
@@ -43,3 +35,22 @@ export default {
   mixins: [navigation]
 }
 </script>
+
+<style lang="scss" scoped>
+  .copyright1 {
+    border-top: 1px solid #252c41;
+    color: #6f778c;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  .footer {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+  .text-link {
+    color: #6f778c;
+  }
+  .active{
+    color: #ffffff;
+  }
+</style>

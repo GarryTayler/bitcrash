@@ -6,7 +6,6 @@
     <div class="bg flex-space-between-vc">
         <input
         class="text"
-        type="number"
         name="quantity"
         min="0"
         max="10000000"
@@ -91,6 +90,9 @@ export default {
     background: none;
     width: 100%;
     margin-right: 10px;
+    &:focus{
+      outline-color: transparent;
+    }
   }
   .sup {
     font-size: 18px;

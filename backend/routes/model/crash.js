@@ -5,7 +5,7 @@ var userModel = require('./user');
 
 var bust_game = function (gameInfo, curTime) {
     // set game busted ---> because it has bust alrady
-    var bastedBets = []
+    var bustedBets = []
     db.cmd(db.statement('update', 'crash_game_total', "set " + db.lineClause(
         [{
             key: "STATE",
@@ -30,7 +30,7 @@ var bust_game = function (gameInfo, curTime) {
             key: "CASHOUTRATE",
             val: 0
         }
-    ], "and")), true).then((_bastedBets) => {
+    ], "and")), true).then((_bustedBets) => {
         db.cmd(db.statement('update', 'crash_game_log', "set " + db.itemClause("PROFIT", "PROFIT-BET_AMOUNT"), db.lineClause([
             {
                 key: "GAMENO",
@@ -40,7 +40,7 @@ var bust_game = function (gameInfo, curTime) {
                 key: "CASHOUTRATE",
                 val: 0
             }], "and")))
-        bastedBets = _bastedBets
+        bustedBets = _bustedBets
         // calc profit --> from crash_game_log
         return db.list(db.statement('select sum(PROFIT) as profit from', 'crash_game_log', '', db.lineClause([
             {
@@ -648,16 +648,23 @@ var get_profit_rate = function () {
     })
 }
 var game_finish_start = function (gameNo, gameBust, curTime) {
-
-    return db.list(db.statement("select * from", "crash_game_total", "", db.itemClause('GAMENO', gameNo)), true).then((gameInfo) => {
-        if (gameInfo == null || gameInfo.length <= 0 || gameInfo[0].STATE != 'WAITING') {
-            return {
+    var retData = null
+    var gameInfo = []
+    return db.list(db.statement("select * from", "crash_game_total", "", db.itemClause('GAMENO', gameNo)), true).then((_gameInfo) => {
+        if (_gameInfo == null || _gameInfo.length <= 0 || _gameInfo[0].STATE != 'WAITING') {
+            retData = {
                 status: false,
                 error: 'Invalid game no or state',
                 data: null
             }
+            return retData
         }
-        var nextGameNo = start_game(gameInfo[0], gameBust)
+        gameInfo = _gameInfo
+        return start_game(gameInfo[0], gameBust)
+    }).then((nextGameNo) => {
+        if (retData != null) {
+            return retData
+        }
         bust_game(gameInfo[0], curTime)
         return {
             status: true,

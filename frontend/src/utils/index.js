@@ -1,7 +1,7 @@
 /**
  * Created by PanJiaChen on 16/11/18.
  */
-
+var sprintf = require('sprintf-js').sprintf
 /**
  * Parse the time to string
  * @param {(Object|string|number)} time
@@ -368,6 +368,10 @@ export function getNumberFormat(_num) {
   return result
 }
 
+export function getFloat2Decimal(f_val) {
+  var val = parseFloat(f_val)
+  return sprintf('%.2f', val)
+}
 // export function showToast(type, message, position = 'top-right') {
 //   var heading = ''
 //   if (type === 'error') heading = 'Error'

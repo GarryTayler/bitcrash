@@ -9,6 +9,12 @@ function isEdge() {
 
 export default {
   methods: {
+    login() {
+      this.$bvModal.show('login-form')
+    },
+    signup() {
+      this.$bvModal.show('signup-form')
+    },
     contactUs(submit) {
       if (!submit) {
         this.$bvModal.show('contact-form')

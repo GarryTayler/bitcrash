@@ -15,11 +15,11 @@
     <b-collapse id="nav-collapse" is-nav>
       <div class="navbar-nav-wrapper">
         <b-navbar-nav>
-          <b-nav-item>
+          <b-nav-item href="/home">
             <img src="@/assets/img/ic_bits2usd.png" class="mr-sm" />
             Crash
           </b-nav-item>
-          <b-nav-item>
+          <b-nav-item href="/deposit">
             <img src="@/assets/img/ic_leaderboard.png" class="mr-sm" />
             Deposit
           </b-nav-item>
@@ -31,9 +31,9 @@
             <img src="@/assets/img/ic_faq.png" class="mr-sm" />
             FAQ
           </b-nav-item>
-          <b-nav-item>
+          <b-nav-item href="/referral">
             <img src="@/assets/img/ic_referral.png" class="mr-sm" />
-            REFERRAL
+            Referral
           </b-nav-item>
           <b-nav-item>
             <img src="@/assets/img/ic_referral.png" class="mr-sm" />
@@ -82,27 +82,10 @@ export default {
   },
   methods: {
     logIn() {
-      console.log('LogIn')
-      // this.$refs.loginForm.validate(valid => {
-      //   if (valid) {
-      //     this.loading = true
-      this.$store.dispatch('user/login', this.loginForm)
-        .then(() => {
-          // this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
-          this.$store.dispatch('user/getInfo', this.token)
-          this.loading = false
-        })
-        .catch(() => {
-          this.loading = false
-        })
-      //   } else {
-      //     console.log('error submit!!')
-      //     return false
-      //   }
-      // })
+      this.$bvModal.show('login-form')
     },
     signUp() {
-      console.log('Signup')
+      this.$bvModal.show('signup-form')
     }
   }
 }

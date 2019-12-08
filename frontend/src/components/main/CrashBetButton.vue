@@ -44,7 +44,7 @@ export default {
   padding-right: $control-padding-left-right;
   background: linear-gradient(90deg, #ffcc00, #ffa914);
   border-radius: $control-border-radius;
-  box-shadow: 0 10px 16px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19) !important;
+  box-shadow: $crash-box-shadow;
   &:hover {
     background: linear-gradient(90deg, #cca300, #cc8710);
   }

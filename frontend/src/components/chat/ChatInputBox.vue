@@ -1,34 +1,33 @@
 <template>
   <div class="bg flex-space-between-vc" style="">
       <input
-      class="text"
+      class="text flex1"
       name="quantity"
       v-model="currentValue"
       :disabled="disabled"
+      @keyup.enter="sendMsg"
       @focus="handleFocus"
       @blur="handleBlur"
       @input="handleInput"/>
-      <img src="@/assets/img/submit.png">
+      <crash-button :icon="text.length > 0 ? '' : 'paper-plane'" @click="sendMsg" :disabled="disabled" :text="text"/>
   </div>
 </template>
 
 <script>
+import CrashButton from '@/components/ui/CrashButton'
 
 export default {
   name: 'CrashBetButton',
   props: {
-    label: {
-      type: String,
-      default: ''
-    },
-    sup: {
-      type: String,
-      default: ''
-    },
     value: [String, Number],
-    disabled: Boolean
+    disabled: Boolean,
+    text: {
+      type: String,
+      default: ''
+    }
   },
   components: {
+    CrashButton
   },
   data() {
     return {
@@ -54,6 +53,9 @@ export default {
     handleBlur(event) {
       this.focus = false
       this.$emit('blur', event)
+    },
+    sendMsg() {
+      this.$emit('sendMsg', this.currentValue)
     }
   }
 }
@@ -72,9 +74,7 @@ export default {
   width: 100%;
   padding-left: $control-padding-left-right;
   background: #1e2742;
-  border-radius: 3px;
-  margin-left: 20px;
-  margin-right: 20px;
+  border-radius: $control-border-radius;
 
   .text {
     font-size: 18px;
@@ -83,6 +83,9 @@ export default {
     background: none;
     width: 100%;
     margin-right: 10px;
+    &:focus {
+      outline-color: transparent;
+    }
   }
   .sup {
     font-size: 18px;

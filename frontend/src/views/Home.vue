@@ -3,54 +3,54 @@
     <div class="flex-row root">
       <b-row align-v="start" class="flex1 content-padding main-content">
         <b-col sm="12" md="4" lg="4" xl="4" class="p-none m-b">
-          <bots-table :type="0" :fields="bots_tbl_fields" :items="bots_tbl_progress_items" class="m-b" />
-          <bots-table :type="1" :fields="bots_tbl_fields" :items="bots_tbl_cashout_items" />
+          <bots-table :type='0' :fields="bots_tbl_fields" :items="current_users" class="m-b"></bots-table>
+          <bots-table :type='1' :fields="bots_tbl_fields" :items="cashout_list"></bots-table>
         </b-col>
         <b-col sm="12" md="8" lg="8" xl="8" class="p-none p-l">
           <bit-crash-card class="m-b">
-            <div slot="header" class="card-header">
-              <div class="flex-space-between-vc" style="overflow: hidden">
-                <crash-header-item v-for="element in headerList" :key="element.id" :data="element" />
+              <div slot="header" class="card-header">
+                <div class="flex-space-between-vc" style="overflow: hidden">
+                  <crash-header-item v-for="element in headerList" :key="element.id" :data="element"></crash-header-item>
+                </div>
               </div>
-            </div>
-            <div class="card-content">
-              <b-row>
-                <crash-graph :event-bus="eventBus" />
-              </b-row>
-              <b-row>
-                <b-col sm="12" md="4" lg="4" xl="4" class="m-b">
-                  <crash-edit v-model="bet_input" label="BET" sup="BTC" />
-                </b-col>
-                <b-col sm="12" md="4" lg="4" xl="4" class="m-b">
-                  <crash-edit v-model="auto_cashout" label="AUTO CASHOUT" sup="X" />
-                </b-col>
-                <b-col sm="12" md="4" lg="4" xl="4">
-                  <crash-bet-button :is-disabled="!is_logged_in" :text="betBtnText" :size="betBtnSize" @click="do_action" />
-                </b-col>
-              </b-row>
-              <b-row>
-                <b-col sm="12" md="8" lg="8" xl="8">
-                  <crash-scale-item @click="scaleItemClick" />
-                </b-col>
-                <b-col sm="12" md="4" lg="4" xl="4">
-                  <crash-bet-select />
-                </b-col>
-              </b-row>
-            </div>
+              <div class="card-content">
+                <b-row>
+                  <crash-graph :event-bus="eventBus"></crash-graph>
+                </b-row>
+                <b-row>
+                  <b-col sm="12" md="4" lg="4" xl="4" class="m-b">
+                    <crash-edit label="BET" sup="BTC" v-model="bet_input"></crash-edit>
+                  </b-col>
+                  <b-col sm="12" md="4" lg="4" xl="4" class="m-b">
+                    <crash-edit label="AUTO CASHOUT" sup="X" v-model="auto_cashout"></crash-edit>
+                  </b-col>
+                  <b-col sm="12" md="4" lg="4" xl="4">
+                    <crash-bet-button :is-disabled="!is_logged_in" :text="betBtnText" :size="betBtnSize" @click="do_action"></crash-bet-button>
+                  </b-col>
+                </b-row>
+                <b-row>
+                  <b-col sm="12" md="8" lg="8" xl="8">
+                    <crash-scale-item @click="scaleItemClick"></crash-scale-item>
+                  </b-col>
+                  <b-col sm="12" md="4" lg="4" xl="4">
+                    <crash-bet-select></crash-bet-select>
+                  </b-col>
+                </b-row>
+              </div>
           </bit-crash-card>
           <bit-crash-card>
             <div slot="header" class="card-header flex-space-between-vc all-bets">
-              <span>
-                All Bets
-              </span>
+                <span>
+                  All Bets
+                </span>
             </div>
             <div class="card-content">
-              <bit-crash-table :fields="all_tbl_fields" :items="all_tbl_items" />
+              <bit-crash-table :fields="all_tbl_fields" :items="all_tbl_items"></bit-crash-table>
             </div>
           </bit-crash-card>
         </b-col>
       </b-row>
-      <chat />
+      <!-- <chat></chat> -->
     </div>
   </div>
 </template>
@@ -65,13 +65,12 @@ import CrashBetButton from '@/components/main/CrashBetButton.vue'
 import CrashBetSelect from '@/components/main/CrashBetSelect.vue'
 import CrashEdit from '@/components/main/CrashEdit.vue'
 import CrashScaleItem from '@/components/main/CrashScaleItem.vue'
-import Chat from '@/components/chat/Chat.vue'
+// import Chat from '@/components/chat/Chat.vue'
 import CrashGraph from '@/components/main/CrashGraph.vue'
 
 import io from 'socket.io-client/dist/socket.io.js'
 // import { getNumberFormat, showToast } from '@/utils'
-import { getNumberFormat } from '@/utils'
-
+import { getNumberFormat, getFloat2Decimal } from '@/utils'
 export default {
   name: 'Home',
   components: {
@@ -83,40 +82,58 @@ export default {
     CrashBetSelect,
     CrashEdit,
     CrashScaleItem,
-    Chat,
+    // Chat,
     CrashGraph
   },
   computed: {
-    ...mapGetters(['is_logged_in', 'wallet', 'avatar', 'crash_server_url', 'user_id', 'name', 'token']),
+    ...mapGetters([
+      'is_logged_in',
+      'wallet',
+      'avatar',
+      'crash_server_url',
+      'user_id',
+      'name',
+      'token'
+    ]),
     betting_time: function() {
       return Math.floor(this.timeLeft / 100) / 10
-    },
-    bet_sum: function() {
-      var sum = 0
-      for (var i = 0; i < this.current_users.length; i += 1) {
-        sum += this.current_users[i].bet * 1
-      }
-
-      return sum
-    },
-    cashout_sum: function() {
-      var sum = 0
-      for (var i = 0; i < this.cashout_list.length; i += 1) {
-        sum += this.cashout_list[i].bet * this.cashout_list[i].option / 100
-      }
-
-      return sum
     }
   },
   watch: {
     current_users: {
       deep: true,
       handler(val) {
+        var temp = val
+        for (var i = 0; i < temp.length; i++) {
+          temp[i]['show_user'] = {
+            name: temp[i]['name'],
+            url:
+              temp[i]['avatar_small'] === undefined ||
+              temp[i]['avatar_small'] === null
+                ? ''
+                : temp[i]['avatar_small']
+          }
+          temp[i]['id'] = temp[i]['user_id']
+        }
+        this.updateAllBets()
       }
     },
     cashout_list: {
       deep: true,
       handler(val) {
+        var temp = val
+        for (var i = 0; i < temp.length; i++) {
+          temp[i]['show_user'] = {
+            name: temp[i]['name'],
+            url:
+              temp[i]['avatar_small'] === undefined ||
+              temp[i]['avatar_small'] === null
+                ? ''
+                : temp[i]['avatar_small']
+          }
+          temp[i]['id'] = temp[i]['user_id']
+        }
+        this.updateAllBets()
       }
     }
   },
@@ -127,81 +144,13 @@ export default {
           id: 1,
           label: 'User Name',
           type: 'profile',
-          key: 'user'
+          key: 'show_user'
         },
         {
           id: 2,
           label: 'Bet Amount',
           type: 'bet',
           key: 'bet'
-        }
-      ],
-      bots_tbl_progress_items: [
-        {
-          id: 0,
-          user: {
-            name: 'Dickerson',
-            url: '/assets/img/IMAGE_C.png'
-          },
-          bet: 3000
-        },
-        {
-          id: 1,
-          user: {
-            name: 'Larsen',
-            url: '/assets/img/IMAGE_C.png'
-          },
-          bet: 2660
-        },
-        {
-          id: 2,
-          user: {
-            name: 'Geneva',
-            url: '/assets/img/IMAGE_C.png'
-          },
-          bet: 2342
-        },
-        {
-          id: 3,
-          user: {
-            name: 'Jami',
-            url: '/assets/img/IMAGE_C.png'
-          },
-          bet: 1100
-        }
-      ],
-      bots_tbl_cashout_items: [
-        {
-          id: 0,
-          user: {
-            name: 'Dickerson',
-            url: '/assets/img/IMAGE_C.png'
-          },
-          bet: 3000
-        },
-        {
-          id: 1,
-          user: {
-            name: 'Larsen',
-            url: '/assets/img/IMAGE_C.png'
-          },
-          bet: 2660
-        },
-        {
-          id: 2,
-          user: {
-            name: 'Geneva',
-            url: '/assets/img/IMAGE_C.png'
-          },
-          bet: 2342
-        },
-        {
-          id: 3,
-          user: {
-            name: 'Jami',
-            url: '/assets/img/IMAGE_C.png'
-          },
-          bet: 1100
         }
       ],
       all_tbl_fields: [
@@ -237,61 +186,8 @@ export default {
         }
       ],
       all_tbl_items: [
-        {
-          id: 0,
-          user: {
-            name: 'Dickerson',
-            url: '/assets/img/IMAGE_C.png'
-          },
-          type: '-',
-          mybet: '-',
-          bonus: '-',
-          profit: '-'
-        }
       ],
       headerList: [
-        {
-          id: 0,
-          scale: 1.5,
-          val: 978513,
-          type: 0,
-          is_active: true
-        },
-        {
-          id: 1,
-          scale: 1.5,
-          val: 978513,
-          type: 0,
-          is_active: false
-        },
-        {
-          id: 2,
-          scale: 1.5,
-          val: 978513,
-          type: 1,
-          is_active: false
-        },
-        {
-          id: 3,
-          scale: 1.5,
-          val: 978513,
-          type: 0,
-          is_active: false
-        },
-        {
-          id: 4,
-          scale: 1.5,
-          val: 978513,
-          type: 0,
-          is_active: false
-        },
-        {
-          id: 5,
-          scale: 1.5,
-          val: 978513,
-          type: 0,
-          is_active: false
-        }
       ],
       interval: 10,
       betBtnText: 'BET',
@@ -325,90 +221,12 @@ export default {
       eventBus: {}
     }
   },
-  created: function() {
-    var self = this
-    this.crash_socket = io.connect(this.crash_server_url)
-    // socket reference
-
-    this.crash_socket.on('onMessage', function(data) {
-      switch (data.code) {
-        case 'GameRule': // i don't know what to do here ...
-          break
-        case 'ReloadPlayers':
-          console.log('ReloadPlayers')
-          self.reload(data)
-          // recalc bet_sum, cashout_sum, and add count-up/down animation ...
-          break
-        case 'WaitGame':
-          // $('title').html('Crash | Tarobet')
-          // game-created
-          self.sendEvent('game-created', { duration: 0 })
-
-          self.on_wait(data)
-          break
-        case 'GameStart':
-          // emit game-started
-          self.start(data)
-          break
-        case 'Tick':
-          // from server
-          if (Date.now() - self.time_stamp > 500) {
-            // $('title').html(
-            //   parseFloat(data.tick / 100).toFixed(2) + 'x - Crash | Tarobet'
-            // )
-            self.time_stamp = Date.now()
-          }
-          self.do_tick(data.tick)
-          break
-        case 'GameCrash':
-          // game finished
-          self.crash(data)
-          break
-        case 'GameStartCrash':
-          data.finish = 1
-          self.start(data)
-
-          self.sendEvent('game-finished', { crash: data.crash })
-
-          self.close_timer()
-          self.state = 'CRASHED'
-
-          self.tick = data.crash
-          self.update_btn()
-          break
-        case 'BetResult':
-          if (data.status) {
-            // update_wallet()
-            self.$store.dispatch('user/getInfo', self.token)
-          } else {
-            // showToast('error', data.error)
-          }
-          break
-        case 'Cashout':
-          // the result of cashout
-          if (data.status) {
-            // update_wallet()
-            self.$store.dispatch('user/getInfo', self.token)
-          } else {
-            // showToast('error', data.error)
-          }
-          break
-        default:
-          console.log('unknown code: ' + data.code)
-      }
-    })
-
-    this.crash_socket.on('disconnect', function() {
-      // showToast('error', 'Game server might have network problem. Please check  your interent connection.')
-      // stop game
-      self.stop()
-    })
-  },
   methods: {
     scaleItemClick(item) {
       if (this.bet_input == null) {
         this.bet_input = 0
       }
+      this.bet_input = parseFloat(this.bet_input)
       switch (item.id) {
         case 0:
           this.bet_input = 0
@@ -612,7 +430,132 @@ export default {
         msg: msg,
         payload: data
       }
+    },
+    updateAllBets() {
+      this.all_tbl_items = []
+      for (var i = 0; i < this.current_users.length + this.cashout_list.length; i++) {
+        var list = []
+        var index = 0
+        if (i < this.current_users.length) {
+          list = this.current_users
+          index = i
+        } else {
+          list = this.cashout_list
+          index = i - this.current_users.length
+        }
+        var data = {}
+        data['id'] = list[index]['user_id']
+        data['user'] = {
+          name: list[index]['name'],
+          url:
+            list[index]['avatar_small'] === undefined ||
+            list[index]['avatar_small'] === null
+              ? ''
+              : list[index]['avatar_small']
+        }
+        data['type'] = isNaN(parseFloat(list[index]['cashout'])) ? '-' : getFloat2Decimal(parseFloat(list[index]['cashout']))
+        data['mybet'] = list[index]['bet']
+        data['bonus'] = '-'
+        data['profit'] = isNaN(parseFloat(list[index].option)) ? '-' : getFloat2Decimal((parseFloat(list[index].option) / 100 - 1) * data.mybet)
+        this.all_tbl_items.push(data)
+      }
+    },
+    addHistory(data) {
+      if (data.cur_cashout !== undefined && data.cur_cashout != null && data.cur_cashout.user_id === this.user_id) {
+        var bet = isNaN(parseFloat(data.cur_cashout.bet)) ? 0 : parseFloat(data.cur_cashout.bet)
+        var option = isNaN(parseFloat(data.cur_cashout.option)) ? 0 : parseFloat(data.cur_cashout.option)
+
+        this.headerList.push(
+          {
+            id: this.headerList.length,
+            scale: getFloat2Decimal(option / 100),
+            val: getFloat2Decimal(bet / 100 * option),
+            type: 0,
+            is_active: true
+          }
+        )
+      }
     }
+  },
+  created: function() {
+    var self = this
+    this.crash_socket = io.connect(this.crash_server_url)
+    // socket reference
+
+    this.crash_socket.on('onMessage', function(data) {
+      switch (data.code) {
+        case 'GameRule': // i don't know what to do here ...
+          break
+        case 'ReloadPlayers':
+          console.log('ReloadPlayers')
+          self.reload(data)
+          self.addHistory(data)
+          // recalc bet_sum, cashout_sum, and add count-up/down animation ...
+          break
+        case 'WaitGame':
+          // $('title').html('Crash | Tarobet')
+          // game-created
+          self.sendEvent('game-created', { duration: 0 })
+
+          self.on_wait(data)
+          break
+        case 'GameStart':
+          // emit game-started
+          self.start(data)
+          break
+        case 'Tick':
+          // from server
+          if (Date.now() - self.time_stamp > 500) {
+            // $('title').html(
+            //   parseFloat(data.tick / 100).toFixed(2) + 'x - Crash | Tarobet'
+            // )
+            self.time_stamp = Date.now()
+          }
+          self.do_tick(data.tick)
+          break
+        case 'GameCrash':
+          // game finished
+          self.crash(data)
+          break
+        case 'GameStartCrash':
+          data.finish = 1
+          self.start(data)
+
+          self.sendEvent('game-finished', { crash: data.crash })
+
+          self.close_timer()
+          self.state = 'CRASHED'
+
+          self.tick = data.crash
+          self.update_btn()
+          break
+        case 'BetResult':
+          if (data.status) {
+            // update_wallet()
+            self.$store.dispatch('user/getInfo', self.token)
+          } else {
+            // showToast('error', data.error)
+          }
+          break
+        case 'Cashout':
+          // the result of cashout
+          if (data.status) {
+            // update_wallet()
+            self.$store.dispatch('user/getInfo', self.token)
+          } else {
+            // showToast('error', data.error)
+          }
+          break
+        default:
+          console.log('unknown code: ' + data.code)
+      }
+    })
+
+    this.crash_socket.on('disconnect', function() {
+      // showToast('error', 'Game server might have network problem. Please check  your interent connection.')
+      // stop game
+      self.stop()
+    })
   }
 }
 </script>
@@ -622,6 +565,7 @@ export default {
 @import "~bootstrap-vue/src/index";
 .root {
   position: relative;
+  width: 100%;
 }
 .main-content {
   width: 100%;
@@ -629,7 +573,7 @@ export default {
 .content-padding {
   padding-left: 50px;
   padding-top: 50px;
-  padding-right: calc(50px + #{$chat-width});
+  padding-right: calc(50px + #{$chat-width} + #{$scrollbar-width});
   @include media-breakpoint-down(md) {
     padding-right: 50px;
   }
@@ -658,6 +602,6 @@ export default {
   margin-bottom: $normal-margin-bottom-sm;
 }
 .all-bets {
-  color:white;
+  color: white;
 }
 </style>

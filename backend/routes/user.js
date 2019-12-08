@@ -4,9 +4,20 @@ var MD5 = require('md5.js');
 
 var userModel = require('./model/user');
 router.post('/login', function (req, res) {
-  const { username, email, password } = req.body
-
-  userModel.getUserInfo({ email: email, password: password }, function (rows) {
+  const { search_key, password, token } = req.body
+  var data = {}
+  if (token !== undefined && token != null && token.length > 0) {
+    data = {
+      token: token
+    }
+  } else {
+    data = {
+      search_key: search_key,
+      password: password
+    }
+  }
+  console.log(token)
+  userModel.getUserInfo(data, function (rows) {
     var token = null
     if(rows.length < 1) {
       return res.json({
@@ -53,7 +64,25 @@ router.post('/info', function (req, res) {
     });
   });
 });
+router.post('/signup', async function (req, res) {
+  const { username, email, password } = req.body
 
+  var ret = await userModel.signup({ username: username, email: email, password: password })
+  if (ret.code == false) {
+    return res.json({
+      code: 50000,
+      data: 'Signup Failed'
+    });
+  } else {
+    return res.json({
+      code: 20000,
+      data: {
+        user_id: ret.insert_id,
+        token: ret.token
+      }
+    });
+  }
+});
 router.post('/logout', function (req, res) {
   return res.json({
     code: 20000,

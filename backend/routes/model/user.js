@@ -1,5 +1,6 @@
 var MD5 = require('md5.js');
 var db = require('./../../utils/database');
+var rn = require('random-number');
 
 var bet_available = function (userID, betAmount) {
     return db.list(db.statement("select * from", "users", '', db.itemClause('ID', userID)), true).then((userInfo) => {
@@ -57,7 +58,7 @@ var lose_game = function (userID, betAmount) {
 }
 
 var win_game = function (
-    userID, 
+    userID,
     betAmount, // his bet amount
     totalProfit // that game's total bet --> his total profit
 ) {
@@ -93,13 +94,18 @@ var getUserInfo = function (query, callback) {
     var sql = "select * from users"
     var whereClause = ''
     var query_cnt = 0
-    if (query.username != undefined) {
-        whereClause += (query_cnt != 0 ? "and " : " ") + "username='" + query.username + "'"
+    if (query.search_key != undefined) {
+        whereClause += "(username='" + query.search_key + "'" + " or " + "email='" + query.search_key + "')"
         query_cnt++
-    }
-    if (query.email != undefined) {
-        whereClause += (query_cnt != 0 ? "and " : " ") + "email='" + query.email + "'"
-        query_cnt++
+    } else {
+        if (query.username != undefined) {
+            whereClause += (query_cnt != 0 ? "and " : " ") + "username='" + query.username + "'"
+            query_cnt++
+        }
+        if (query.email != undefined) {
+            whereClause += (query_cnt != 0 ? "and " : " ") + "email='" + query.email + "'"
+            query_cnt++
+        }
     }
     if (query.password != undefined) {
         whereClause += (query_cnt != 0 ? " and " : " ") + "PASSWORD='" + pwdStr + "'"
@@ -126,8 +132,73 @@ var getUserInfo = function (query, callback) {
         callback(rows)
     });
 }
+var generateRandomString = function (length = 25) {
+    characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    charactersLength = characters.length;
+    randomString = '';
+
+    var options = {
+        min: 0
+        , max: charactersLength - 1
+        , integer: true
+    }
+    
+    for (var i = 0; i < length; i++) {
+        randomString += characters[rn(options)];
+    }
+    return randomString;
+}
+var signup = function (data) {
+    return new Promise((resolve, reject) => {
+        if (data.username == undefined || data.username == null || data.username == '') {
+            resolve({
+                code: false
+            })
+            return
+        }
+        if (data.email == undefined || data.email == null || data.email == '') {
+            resolve({
+                code: false
+            })
+            return
+        }
+        if (data.password == undefined || data.password == null || data.password == '') {
+            resolve({
+                code: false
+            })
+            return
+        }
+        var token = generateRandomString()
+
+        var pwdStr = ""
+        var md5stream = new MD5()
+        md5stream.end(data.password)
+        pwdStr = md5stream.read().toString('hex')
+
+        var values = "(" + "'" + data.username + "', "
+        values += "'" + pwdStr + "', "
+        values += "'" + data.email + "', "
+        values += "'" + token + "'" + ")"
+        var statement = db.statement("insert into", "users", "(USERNAME, PASSWORD, EMAIL, API_TOKEN)", "", "VALUES " + values)
+        console.log(statement)
+
+        db.con.query(statement, function (err, results, fields) {
+            if (err) {
+                reject(err)
+                throw err
+            }
+            resolve({
+                code: true,
+                insert_id: results.insertId,
+                token: token
+            })
+        });
+    })
+}
 var userModel = {
     getUserInfo: getUserInfo,
+    signup: signup,
+
     bet_available: bet_available,
     new_bet: new_bet,
     lose_game: lose_game,

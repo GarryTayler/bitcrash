@@ -7,7 +7,9 @@ const state = {
   },
   device: 'desktop',
   size: Cookies.get('size') || 'medium',
-  crash_server_url: 'http://45.76.180.140:4202'
+  crash_server_url: 'http://localhost:4202',
+  chat_server_url: 'http://localhost:4204',
+  crash_chat: 'crash_chat'
 }
 
 const mutations = {
