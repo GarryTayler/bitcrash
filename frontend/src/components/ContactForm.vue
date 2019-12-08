@@ -1,10 +1,14 @@
 <template>
-  <b-modal id="contact-form" centered hide-footer
-           modal-class="contact-form"
-           header-class="border-bottom-0 rounded-0"
-           header-border-variant="dark"
-           header-bg-variant="dark"
-           body-bg-variant="dark">
+  <b-modal
+    id="contact-form"
+    centered
+    hide-footer
+    modal-class="contact-form"
+    header-class="border-bottom-0 rounded-0"
+    header-border-variant="dark"
+    header-bg-variant="dark"
+    body-bg-variant="dark"
+  >
 
     <h2 class="text-warning">GET IN TOUCH</h2>
 
@@ -16,10 +20,10 @@
           </label>
         </b-col>
         <b-col md="7" lg="8" xl="9">
-          <a :href="contact.link" class="text-warning underline" v-if="contact.link">
+          <a v-if="contact.link" :href="contact.link" class="text-warning underline">
             {{ contact.value }}
           </a>
-          <label class="text-warning" v-if="!contact.link">
+          <label v-if="!contact.link" class="text-warning">
             {{ contact.value }}
           </label>
         </b-col>
@@ -38,9 +42,11 @@
             label="FIRST NAME"
             label-for="form-firstname"
           >
-            <b-form-input id="form-firstname" v-model="form.firstname"
-                          placeholder="Your first name here">
-            </b-form-input>
+            <b-form-input
+              id="form-firstname"
+              v-model="form.firstname"
+              placeholder="Your first name here"
+            />
           </b-form-group>
         </b-col>
         <b-col md="6">
@@ -48,9 +54,11 @@
             label="LAST NAME"
             label-for="form-lastname"
           >
-            <b-form-input id="form-lastname" v-model="form.lastname"
-                          placeholder="Your last name here">
-            </b-form-input>
+            <b-form-input
+              id="form-lastname"
+              v-model="form.lastname"
+              placeholder="Your last name here"
+            />
           </b-form-group>
         </b-col>
       </b-row>
@@ -61,9 +69,11 @@
             label="TELEPHONE"
             label-for="form-telephone"
           >
-            <b-form-input id="form-telephone" v-model="form.phone"
-                          placeholder="Your phone number here">
-            </b-form-input>
+            <b-form-input
+              id="form-telephone"
+              v-model="form.phone"
+              placeholder="Your phone number here"
+            />
           </b-form-group>
         </b-col>
         <b-col md="6">
@@ -71,9 +81,11 @@
             label="EMAIL"
             label-for="form-email"
           >
-            <b-form-input id="form-email" v-model="form.email"
-                          placeholder="Your email here">
-            </b-form-input>
+            <b-form-input
+              id="form-email"
+              v-model="form.email"
+              placeholder="Your email here"
+            />
           </b-form-group>
         </b-col>
       </b-row>
@@ -82,35 +94,38 @@
         label="MESSAGE"
         label-for="form-message"
       >
-        <b-form-textarea id="form-message" rows="5" v-model="form.message"
-                         placeholder="Your message here...">
-        </b-form-textarea>
+        <b-form-textarea
+          id="form-message"
+          v-model="form.message"
+          rows="5"
+          placeholder="Your message here..."
+        />
       </b-form-group>
 
-      <contact-button :submit="true" @submitted="onSubmit"></contact-button>
+      <contact-button :submit="true" @submitted="onSubmit" />
     </form>
   </b-modal>
 </template>
 
 <script>
-import ContactButton from '@/components/ContactButton.vue';
+import ContactButton from '@/components/ContactButton.vue'
 
 export default {
+  components: {
+    ContactButton
+  },
   data: () => ({
     contacts: [
       { name: 'General Inquiries', value: 'info@honeytek.com', link: '#' },
       { name: 'Phone', value: '(416) 620-5535', link: '#' },
-      { name: 'Address', value: '5535 Eglinton Ave W #220, Etobicoke, ON M9C 5K5', link: false },
+      { name: 'Address', value: '5535 Eglinton Ave W #220, Etobicoke, ON M9C 5K5', link: false }
     ],
-    form: {},
+    form: {}
   }),
   methods: {
     onSubmit() {
       // console.log('api has not been implemented yet.', this.form);
-    },
-  },
-  components: {
-    ContactButton,
-  },
-};
+    }
+  }
+}
 </script>

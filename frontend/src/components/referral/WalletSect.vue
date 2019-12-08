@@ -1,24 +1,30 @@
 <template>
   <div class="level-balance ml-5" :class="customStyle">
-      <span style="vertical-align: center;">{{text}}</span>
-      <div v-if="type=='user'" class="flex-row-hl-vc mt-4">
-          <img src="@/assets/img/ic_user.png" width="25px"/>
-          <span class="label ml-2">0</span>
-      </div>
-      <div v-if="type=='bet'" class="flex-row-hl-vc mt-4">
-          <img src="@/assets/img/ic_bets.png" width="25px"/>
-          <span class="label ml-2">0</span>
-      </div>
-      <div v-if="type=='income'" class="flex-row-hl-vc mt-4">
-          <img src="@/assets/img/ic_income.png" width="25px"/>
-          <span class="label ml-2">0</span>
-      </div>
+    <span style="vertical-align: center;">{{ text }}</span>
+    <div v-if="type=='user'" class="flex-row-hl-vc mt-4">
+      <img src="@/assets/img/ic_user.png" width="25px">
+      <span class="label ml-2">0</span>
     </div>
+    <div v-if="type=='bet'" class="flex-row-hl-vc mt-4">
+      <img src="@/assets/img/ic_bets.png" width="25px">
+      <span class="label ml-2">0</span>
+    </div>
+    <div v-if="type=='income'" class="flex-row-hl-vc mt-4">
+      <img src="@/assets/img/ic_income.png" width="25px">
+      <span class="label ml-2">0</span>
+    </div>
+  </div>
 </template>
 
 <script>
 export default {
   name: 'WalletSect',
+  props: {
+    type: {
+      type: String,
+      default: 'user'
+    }
+  },
   computed: {
     customStyle: {
       get() {
@@ -39,12 +45,6 @@ export default {
             return ''
         }
       }
-    }
-  },
-  props: {
-    type: {
-      type: String,
-      default: 'user'
     }
   }
 }

@@ -1,44 +1,44 @@
 <template>
   <div ref="menu" :class="{show:show}" class="menu-container">
-    <div class="menu-background"/>
+    <div class="menu-background" />
     <div class="menu">
       <div class="handle-button" :style="{'top':buttonTop+'px'}" @click="showOrHide">
         <font-awesome-icon :icon="show?'chevron-left' : 'chevron-right'" />
       </div>
       <div class="menu-header flex-space-between-vc">
-        <menu-header-btn :type="0" @click="showOrHide"></menu-header-btn>
-        <menu-header-btn :type="1"></menu-header-btn>
+        <menu-header-btn :type="0" @click="showOrHide" />
+        <menu-header-btn :type="1" />
       </div>
       <div class="menu-content">
-        <user-info-sect class="user-sect"/>
+        <user-info-sect class="user-sect" />
         <div class="flex-space-between-vc m-b">
-          <deposit-btn type="deposit"></deposit-btn>
-          <deposit-btn type="withdraw"></deposit-btn>
+          <deposit-btn type="deposit" />
+          <deposit-btn type="withdraw" />
         </div>
-        <div class="menu-seperator m-b"></div>
+        <div class="menu-seperator m-b" />
         <div>
           <div class="menu-item-row flex-row-hl-vc">
-            <menu-item class="menu-item-col" type="settings"></menu-item>
-            <div class="menu-vert-seperator"></div>
-            <menu-item class="menu-item-col" type="referrals"></menu-item>
+            <menu-item class="menu-item-col" type="settings" />
+            <div class="menu-vert-seperator" />
+            <menu-item class="menu-item-col" type="referrals" />
           </div>
-          <div class="menu-seperator"></div>
+          <div class="menu-seperator" />
           <div class="menu-item-row flex-row-hl-vc">
-            <menu-item class="menu-item-col" type="ranking"></menu-item>
-            <div class="menu-vert-seperator"></div>
-            <menu-item class="menu-item-col" type="rewards"></menu-item>
+            <menu-item class="menu-item-col" type="ranking" />
+            <div class="menu-vert-seperator" />
+            <menu-item class="menu-item-col" type="rewards" />
           </div>
-          <div class="menu-seperator"></div>
+          <div class="menu-seperator" />
           <div class="menu-item-row flex-row-hl-vc">
-            <menu-item class="menu-item-col" type="my games"></menu-item>
-            <div class="menu-vert-seperator"></div>
-            <menu-item class="menu-item-col" type="message"></menu-item>
+            <menu-item class="menu-item-col" type="my games" />
+            <div class="menu-vert-seperator" />
+            <menu-item class="menu-item-col" type="message" />
           </div>
-          <div class="menu-seperator"></div>
+          <div class="menu-seperator" />
           <div class="menu-item-row flex-row-hl-vc">
-            <menu-item class="menu-item-col" type="help center"></menu-item>
-            <div class="menu-vert-seperator"></div>
-            <div class="menu-item-col"></div>
+            <menu-item class="menu-item-col" type="help center" />
+            <div class="menu-vert-seperator" />
+            <div class="menu-item-col" />
           </div>
         </div>
       </div>
@@ -109,6 +109,8 @@ export default {
     const elx = this.$refs.menu
     elx.remove()
   },
+  created: function() {
+  },
   methods: {
     addEventClick() {
       window.addEventListener('click', this.closeSidebar)
@@ -130,8 +132,6 @@ export default {
     //   const body = document.querySelector('body')
     //   body.insertBefore(elx, body.firstChild)
     // }
-  },
-  created: function() {
   }
 }
 </script>

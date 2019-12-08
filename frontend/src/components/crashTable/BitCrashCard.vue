@@ -1,15 +1,15 @@
 <template>
   <div class="bit-crash-card" :class="customStyle">
-      <div class="bit-crash-header" v-if="$slots.header || header">
-        <slot name="header">{{ header }}</slot>
-        <!-- <b-col md="8" lg="8" sm="6" class="bit-crash-title">4 in games</b-col>
+    <div v-if="$slots.header || header" class="bit-crash-header">
+      <slot name="header">{{ header }}</slot>
+      <!-- <b-col md="8" lg="8" sm="6" class="bit-crash-title">4 in games</b-col>
         <b-col md="4" lg="4" sm="6" class="bit-crash-title">
           <coin-label></coin-label>
         </b-col> -->
-      </div>
-      <div :class="contentStyle">
-        <slot></slot>
-      </div>
+    </div>
+    <div :class="contentStyle">
+      <slot />
+    </div>
   </div>
 </template>
 
@@ -19,6 +19,10 @@
 
 export default {
   name: 'BitCrashCard',
+  components: {
+    // BitCrashTable,
+    // CoinLabel,
+  },
   props: {
     header: {},
     bodyStyle: {
@@ -55,10 +59,6 @@ export default {
         return ret
       }
     }
-  },
-  components: {
-    // BitCrashTable,
-    // CoinLabel,
   }
 }
 </script>

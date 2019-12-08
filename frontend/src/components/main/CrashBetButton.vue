@@ -1,6 +1,6 @@
 <template>
   <div class="bg flex-space-between-vc" :class="isDisabled ? 'disabled' : ''" @click="click">
-    <span class="text" :class="'text-' + size">{{text}}</span>
+    <span class="text" :class="'text-' + size">{{ text }}</span>
     <img src="@/assets/img/ic_bet.png">
   </div>
 </template>
@@ -9,6 +9,8 @@
 
 export default {
   name: 'CrashBetButton',
+  components: {
+  },
   props: {
     text: {
       type: String,
@@ -22,8 +24,6 @@ export default {
       type: String,
       default: 'large'
     }
-  },
-  components: {
   },
   methods: {
     click() {

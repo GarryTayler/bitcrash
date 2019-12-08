@@ -1,7 +1,5 @@
 var express = require('express');
 var router = express.Router();
-var MD5 = require('md5.js');
-
 var userModel = require('./model/user');
 router.post('/login', function (req, res) {
   const { search_key, password, token } = req.body
@@ -16,7 +14,6 @@ router.post('/login', function (req, res) {
       password: password
     }
   }
-  console.log(token)
   userModel.getUserInfo(data, function (rows) {
     var token = null
     if(rows.length < 1) {
@@ -47,10 +44,7 @@ router.post('/login', function (req, res) {
 
 router.post('/info', function (req, res) {
   const { token } = req.body
-
-  console.log(token)
   userModel.getUserInfo({ token: token }, function (rows) {
-    console.log(rows)
     if(rows.length < 1 || rows[0]['STATE'] != 0) {
       return res.json({
         code: 50008,

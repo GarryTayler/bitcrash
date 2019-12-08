@@ -34,12 +34,26 @@ const createRouter = () => new VueRouter({
   // // mode: 'history', // require service support
   // scrollBehavior: () => ({ y: 0 }),
   // routes: constantRoutes
-  mode: 'history',
+  mode: 'hash',
   base: process.env.BASE_URL,
   routes
 })
 
 const router = createRouter()
+
+router.beforeResolve((to, from, next) => {
+  // If this isn't an initial page load.
+  // eslint-disable-next-line no-undef
+  NProgress.start()
+  next()
+})
+
+// eslint-disable-next-line no-unused-vars
+router.afterEach((to, from) => {
+  // Complete the animation of the route progress bar.
+  // eslint-disable-next-line no-undef
+  NProgress.done()
+})
 
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {

@@ -1,173 +1,172 @@
 <template>
   <div class="root content-padding" :class="{'with-menu': menu}">
     <b-row align-v="start">
-        <b-col sm="12" md="6" lg="3" xl="3" class="m-b flex-row-hc-vc" v-for="item in pay_types" :key="item">
-            <pay-btn :type="item" @click="payClick(item)"></pay-btn>
-        </b-col>
-        <div class="w-h m-b-sm">
-            <bit-crash-card :bodyStyle="1" :noHeader="true">
-                <div class="bitcoin-card-content">
-                    <b-row align-v="center">
-                        <b-col sm="12" md="6" lg="6" xl="6">
-                            <div class="flex-row-hl-vc bitcoin-content-logo">
-                                <img src="@/assets/img/ic_bitcoin_col.png"/>
-                                <span class="label">Bitcoin</span>
-                            </div>
-                        </b-col>
-                        <b-col sm="12" md="6" lg="6" xl="6">
-                            <div class="flex-row-hc-vc bitcoin-content">
-                                <span class="label label-high">-3.68253000 BTC</span>
-                                <span class="label m-l">Total Balance</span>
-                            </div>
-                        </b-col>
-                    </b-row>
+      <b-col v-for="item in pay_types" :key="item" sm="12" md="6" lg="3" xl="3" class="m-b flex-row-hc-vc">
+        <pay-btn :type="item" @click="payClick(item)" />
+      </b-col>
+      <div class="w-h m-b-sm">
+        <bit-crash-card :body-style="1" :no-header="true">
+          <div class="bitcoin-card-content">
+            <b-row align-v="center">
+              <b-col sm="12" md="6" lg="6" xl="6">
+                <div class="flex-row-hl-vc bitcoin-content-logo">
+                  <img src="@/assets/img/ic_bitcoin_col.png">
+                  <span class="label">Bitcoin</span>
                 </div>
-            </bit-crash-card>
+              </b-col>
+              <b-col sm="12" md="6" lg="6" xl="6">
+                <div class="flex-row-hc-vc bitcoin-content">
+                  <span class="label label-high">-3.68253000 BTC</span>
+                  <span class="label m-l">Total Balance</span>
+                </div>
+              </b-col>
+            </b-row>
+          </div>
+        </bit-crash-card>
+      </div>
+      <div class="w-h m-b-sm">
+        <div class="bitcoin-lbl-card-content">
+          <b-row align-v="center">
+            <b-col sm="12" md="6" lg="6" xl="6">
+              <div />
+            </b-col>
+            <b-col sm="12" md="6" lg="6" xl="6">
+              <div class="flex-row-hc-vc price-content">
+                <span class="label-high">-22,244,275</span>
+                <span class="label m-l">Total Price (KVR)</span>
+              </div>
+            </b-col>
+          </b-row>
         </div>
-        <div class="w-h m-b-sm">
-            <div class="bitcoin-lbl-card-content">
-                <b-row align-v="center">
-                    <b-col sm="12" md="6" lg="6" xl="6">
-                        <div>
-                        </div>
-                    </b-col>
-                    <b-col sm="12" md="6" lg="6" xl="6">
-                        <div class="flex-row-hc-vc price-content">
-                            <span class="label-high">-22,244,275</span>
-                            <span class="label m-l">Total Price (KVR)</span>
-                        </div>
-                    </b-col>
-                </b-row>
-            </div>
-        </div>
-        <div class="w-h m-b">
-            <bit-crash-card :bodyStyle="1" :noHeader="true">
-                <div class="btc-content bitcoin-tbl-card-content">
-                    <b-row align-v="center">
-                        <b-col sm="12" md="6" lg="6" xl="6" class="p-l-r">
-                            <div class="flex-space-between-vc m-b">
-                                <span class="label-1">Daily withdrawal limit  </span>
-                                <span class="label-1">150.00000000 BTC</span>
-                            </div>
-                            <div class="flex-space-between-vc m-b-sm">
-                                <span class="label-2">Withdrawal amount today </span>
-                                <span class="label-3">150.00000000 BTC</span>
-                            </div>
-                            <div class="flex-space-between-vc m-b-sm">
-                                <span class="label-2">-Min, withdrawal amount</span>
-                                <span class="label-3">150.00000000 BTC</span>
-                            </div>
-                            <div class="flex-space-between-vc m-b-sm">
-                                <span class="label-2">-Min, withdrawal amount</span>
-                                <span class="label-3">150.00000000 BTC</span>
-                            </div>
-                        </b-col>
-                        <b-col sm="12" md="6" lg="6" xl="6" class="p-l-r">
-                            <div class="flex-space-between-vc m-b">
-                                <span class="label-1">On exchange (Open Order) Total sum</span>
-                                <span class="label-1">150.00000000 BTC</span>
-                            </div>
-                            <div class="flex-space-between-vc m-b-sm">
-                                <span class="label-2">- On buy</span>
-                                <span class="label-3">150.00000000 BTC</span>
-                            </div>
-                            <div class="flex-space-between-vc m-b-sm">
-                                <span class="label-2">- On sell</span>
-                                <span class="label-3">150.00000000 BTC</span>
-                            </div>
-                            <div class="flex-space-between-vc m-b-sm">
-                                <span class="label-2">- On withdrawal</span>
-                                <span class="label-3">150.00000000 BTC</span>
-                            </div>
-                        </b-col>
-                    </b-row>
-                    <div class="seperator m-b-sm"></div>
-                    <b-row align-v="center">
-                        <b-col sm="12" md="6" lg="6" xl="6" class="p-l-r">
-                            <div class="flex-space-between-vc m-b-sm">
-                                <span class="label-1">Daily withdrawal limit  </span>
-                                <span class="label-1">150.00000000 BTC</span>
-                            </div>
-                        </b-col>
-                        <b-col sm="12" md="6" lg="6" xl="6" class="p-l-r">
-                            <div class="flex-space-between-vc m-b-sm">
-                                <span class="label-1">On exchange (Open Order) Total sum</span>
-                                <span class="label-1">150.00000000 BTC</span>
-                            </div>
+      </div>
+      <div class="w-h m-b">
+        <bit-crash-card :body-style="1" :no-header="true">
+          <div class="btc-content bitcoin-tbl-card-content">
+            <b-row align-v="center">
+              <b-col sm="12" md="6" lg="6" xl="6" class="p-l-r">
+                <div class="flex-space-between-vc m-b">
+                  <span class="label-1">Daily withdrawal limit  </span>
+                  <span class="label-1">150.00000000 BTC</span>
+                </div>
+                <div class="flex-space-between-vc m-b-sm">
+                  <span class="label-2">Withdrawal amount today </span>
+                  <span class="label-3">150.00000000 BTC</span>
+                </div>
+                <div class="flex-space-between-vc m-b-sm">
+                  <span class="label-2">-Min, withdrawal amount</span>
+                  <span class="label-3">150.00000000 BTC</span>
+                </div>
+                <div class="flex-space-between-vc m-b-sm">
+                  <span class="label-2">-Min, withdrawal amount</span>
+                  <span class="label-3">150.00000000 BTC</span>
+                </div>
+              </b-col>
+              <b-col sm="12" md="6" lg="6" xl="6" class="p-l-r">
+                <div class="flex-space-between-vc m-b">
+                  <span class="label-1">On exchange (Open Order) Total sum</span>
+                  <span class="label-1">150.00000000 BTC</span>
+                </div>
+                <div class="flex-space-between-vc m-b-sm">
+                  <span class="label-2">- On buy</span>
+                  <span class="label-3">150.00000000 BTC</span>
+                </div>
+                <div class="flex-space-between-vc m-b-sm">
+                  <span class="label-2">- On sell</span>
+                  <span class="label-3">150.00000000 BTC</span>
+                </div>
+                <div class="flex-space-between-vc m-b-sm">
+                  <span class="label-2">- On withdrawal</span>
+                  <span class="label-3">150.00000000 BTC</span>
+                </div>
+              </b-col>
+            </b-row>
+            <div class="seperator m-b-sm" />
+            <b-row align-v="center">
+              <b-col sm="12" md="6" lg="6" xl="6" class="p-l-r">
+                <div class="flex-space-between-vc m-b-sm">
+                  <span class="label-1">Daily withdrawal limit  </span>
+                  <span class="label-1">150.00000000 BTC</span>
+                </div>
+              </b-col>
+              <b-col sm="12" md="6" lg="6" xl="6" class="p-l-r">
+                <div class="flex-space-between-vc m-b-sm">
+                  <span class="label-1">On exchange (Open Order) Total sum</span>
+                  <span class="label-1">150.00000000 BTC</span>
+                </div>
 
-                        </b-col>
-                    </b-row>
-                    <div class="seperator m-b-sm"></div>
-                    <b-row align-v="center">
-                        <b-col sm="12" md="6" lg="6" xl="6" class="p-l-r">
-                            <div class="flex-space-between-vc m-b-sm">
-                                <span class="label-1">Daily withdrawal limit  </span>
-                                <span class="label-1">150.00000000 BTC</span>
-                            </div>
-                        </b-col>
-                        <b-col sm="12" md="6" lg="6" xl="6" class="p-l-r">
-                            <div class="flex-space-between-vc m-b-sm">
-                                <span class="label-4">On exchange (Open Order) Total sum</span>
-                                <span class="label-4">150.00000000 BTC</span>
-                            </div>
+              </b-col>
+            </b-row>
+            <div class="seperator m-b-sm" />
+            <b-row align-v="center">
+              <b-col sm="12" md="6" lg="6" xl="6" class="p-l-r">
+                <div class="flex-space-between-vc m-b-sm">
+                  <span class="label-1">Daily withdrawal limit  </span>
+                  <span class="label-1">150.00000000 BTC</span>
+                </div>
+              </b-col>
+              <b-col sm="12" md="6" lg="6" xl="6" class="p-l-r">
+                <div class="flex-space-between-vc m-b-sm">
+                  <span class="label-4">On exchange (Open Order) Total sum</span>
+                  <span class="label-4">150.00000000 BTC</span>
+                </div>
 
-                        </b-col>
-                    </b-row>
+              </b-col>
+            </b-row>
+          </div>
+        </bit-crash-card>
+      </div>
+      <div class="w-h m-b">
+        <bit-crash-card :body-style="1" :no-header="true">
+          <div class="de-with-card-content">
+            <b-row align-v="center">
+              <b-col sm="12" md="6" lg="6" xl="6">
+                <div class="flex-row-hl-vc">
+                  <span class="label">BTC Price = $5735.00</span>
                 </div>
-            </bit-crash-card>
-        </div>
-        <div class="w-h m-b">
-            <bit-crash-card :bodyStyle="1" :noHeader="true">
-                <div class="de-with-card-content">
-                    <b-row align-v="center">
-                        <b-col sm="12" md="6" lg="6" xl="6">
-                            <div class="flex-row-hl-vc">
-                                <span class="label">BTC Price = $5735.00</span>
-                            </div>
-                        </b-col>
-                        <b-col sm="12" md="6" lg="6" xl="6">
-                            <div class="flex-row-hr-vc">
-                                <deposit-btn type="deposit" style="margin-right: 15px;"></deposit-btn>
-                                <deposit-btn type="withdraw"></deposit-btn>
-                            </div>
-                        </b-col>
-                    </b-row>
+              </b-col>
+              <b-col sm="12" md="6" lg="6" xl="6">
+                <div class="flex-row-hr-vc">
+                  <deposit-btn type="deposit" style="margin-right: 15px;" />
+                  <deposit-btn type="withdraw" />
                 </div>
-            </bit-crash-card>
-        </div>
-        <div class="w-h m-b">
-            <bit-crash-card :bodyStyle="1" :noHeader="true">
-                <div class="qr-card-content">
-                    <b-row align-v="center">
-                        <b-col sm="12" md="3" lg="3" xl="3">
-                            <div class="flex-row-hc-vc m-b-sm">
-                                <img src="@/assets/img/ic_qr_code.png"/>
-                            </div>
-                        </b-col>
-                        <b-col sm="0" md="1" lg="1" xl="1" class="seperator-1">
-                            <div class="flex-row-hc-vc">
-                                <div style="width: 1px;height: 70px;background-color: #485992;"></div>
-                            </div>
-                        </b-col>
-                        <b-col sm="12" md="8" lg="8" xl="8">
-                            <div>
-                                <div class="label m-b-sm">
-                                    Please use the following bitcoin address or scan OR
-                                    <br/>
-                                    code to complete your transaction:
-                                </div>
-                                <chat-input-box text="Copy Address" class="m-b-sm"></chat-input-box>
-                                <div class="label-1 flex-row-hr-vc">
-                                    $1 = 1500 Taro Coins
-                                </div>
-                            </div>
-                        </b-col>
-                    </b-row>
+              </b-col>
+            </b-row>
+          </div>
+        </bit-crash-card>
+      </div>
+      <div class="w-h m-b">
+        <bit-crash-card :body-style="1" :no-header="true">
+          <div class="qr-card-content">
+            <b-row align-v="center">
+              <b-col sm="12" md="3" lg="3" xl="3">
+                <div class="flex-row-hc-vc m-b-sm">
+                  <img src="@/assets/img/ic_qr_code.png">
                 </div>
-            </bit-crash-card>
-        </div>
+              </b-col>
+              <b-col sm="0" md="1" lg="1" xl="1" class="seperator-1">
+                <div class="flex-row-hc-vc">
+                  <div style="width: 1px;height: 70px;background-color: #485992;" />
+                </div>
+              </b-col>
+              <b-col sm="12" md="8" lg="8" xl="8">
+                <div>
+                  <div class="label m-b-sm">
+                    Please use the following bitcoin address or scan OR
+                    <br>
+                    code to complete your transaction:
+                  </div>
+                  <chat-input-box text="Copy Address" class="m-b-sm" />
+                  <div class="label-1 flex-row-hr-vc">
+                    $1 = 1500 Taro Coins
+                  </div>
+                </div>
+              </b-col>
+            </b-row>
+          </div>
+        </bit-crash-card>
+      </div>
     </b-row>
-    <menu-bar @showOrHide="menuShowed"></menu-bar>
+    <menu-bar @showOrHide="menuShowed" />
   </div>
 </template>
 
@@ -210,14 +209,14 @@ export default {
       menu: true
     }
   },
+  created: function() {
+  },
   methods: {
     payClick(type) {
     },
     menuShowed(show) {
       this.menu = show
     }
-  },
-  created: function() {
   }
 }
 </script>

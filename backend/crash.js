@@ -78,7 +78,6 @@ request.post(
     function (error, response, body) {
         var ret = JSON.parse(body);
         if (ret.status) {
-			console.log("init() : gameID = " + gameId)
             gameId = ret.game_no;
             if (ret.bots) bots_list = ret.bots;
             if (ret.game_player_list) game_play_list = ret.game_player_list;
@@ -91,9 +90,6 @@ function generateBustValue(currentHash)
 {
 	currentHash = genGameHash(currentHash);   
 	finalBust = Math.floor(gameResult(clientSeed , currentHash) * 100);
-
-	console.log(finalBust);
-
 	return {"hash": currentHash ,  "crash": finalBust};  
 }
 
@@ -105,14 +101,11 @@ io.on('connection', function(socket){
     if(globalVariable == 0) {
         clearInterval(firstTimerHandler);
 		next_gameId = gameId;
-		console.log('a new user connected : gameId = ' + gameId);
-		console.log('a new user connected : waitGame()');
         waitGame();
 	} 
 	else {
 		// send socket current game status
 		if (status == 2) {
-			console.log('a new user connected : Send WaitGame State');
 			// when game is waiting
 			socket.emit('onMessage', {
 				code:'WaitGame',
@@ -121,7 +114,6 @@ io.on('connection', function(socket){
 				time_left: (resetGameTime + 5000 - Date.now())
 			});
 		} else if (status == 3) {
-			console.log('a new user connected : Send GameStart State');
 			// when game started
 			// we send current game id, next game id (for bet)
 			socket.emit('onMessage', {
@@ -129,7 +121,6 @@ io.on('connection', function(socket){
 				game_id: gameId,
 				tick: tick
 			});
-			console.log('a new user connected : Send ReloadPlayers State');
 			// we send who's the game players bet
 			socket.emit('onMessage', {
 				code: 'ReloadPlayers',
@@ -160,7 +151,6 @@ io.on('connection', function(socket){
         switch(data.code) {
             //when you click bet button
 			case 'addBet':
-				console.log('a new user connected : Receive addBet State');
 				request.post({
                      url:    mainServerUrl + 'bet',
                     form: {
@@ -201,7 +191,6 @@ io.on('connection', function(socket){
                 break;
 			//when you click cashout button
 			case 'CashOut':
-				console.log('a new user connected : Receive cashout State');
 				if (data.stopped_at > tick) {
 					// error
 					socket.emit('onMessage',
@@ -264,7 +253,6 @@ io.on('connection', function(socket){
                 break;
             // reload at first
 			case 'Reload':
-				console.log('a new user connected : Receive reload State');
                 // when new socket tries to connect
                 // remove old socket, previously registered to socket_list
                 var run_time = 0;
@@ -285,7 +273,6 @@ io.on('connection', function(socket){
                 socket.emit('onMessage' , obj);
                 break;
             default:
-                console.log('unknown code', data.code);
                 break;
         }
     });
@@ -356,7 +343,6 @@ function startGame() {
 	crash_obj = generateBustValue(hash);
 	crash = crash_obj['crash'];
 	hash = crash_obj['hash'];
-	console.log('startGame() : started');
 	if (crash == 100) {
 
 		// we don't need to start game, because it finishes when it starts
@@ -370,9 +356,7 @@ function startGame() {
 			},
 			function(eror, response, body) {
 				var ret = JSON.parse(body);
-				console.log('startGame() : game_finish_start');
 				if (ret.status) {
-					console.log('startGame() : game_finish_start ; success');
 					next_gameId = ret.next_game_no;
 					cashout_list = [];
 					game_play_list = [];
@@ -396,8 +380,6 @@ function startGame() {
 		);
 		return;
 	}
-	console.log("startGame " + gameId)
-	console.log("startGame " + crash)
 	request.post(
 		{
 			url: mainServerUrl + "game_start",
@@ -408,9 +390,7 @@ function startGame() {
 		},
 		function(error, response, body) {
 			var ret = JSON.parse(body);
-			console.log("startGame() : game_start ")
 			if (ret.status) {
-				console.log("startGame() : game_start ; success")
 				next_gameId = ret.next_game_no;
 				cashout_list = []; // clear cashout list
 				startTime = Date.now();
@@ -419,14 +399,11 @@ function startGame() {
 				for(var i = 0; i < game_play_list.length; i ++ ) {
 					game_play_list[i].new = '0';
 				}
-		
 				setTimeout(function() {
-					console.log('timeout -- 200');
 					elapsed_time = 0;
 					startTime = Date.now();
 					firstTimerHandler = setInterval(intervalFunc, timeInterval);
 				} , 200);
-				
 				io.emit('onMessage',
 					{
 						code: 'GameStart',
@@ -446,10 +423,8 @@ function startGame() {
 
 function intervalFunc() 
 {
-	console.log('intervalFunc() : start');
 	elapsed_time = Date.now() - startTime;
 	tick = Math.floor(100 * Math.pow(Math.E, 0.00006 * elapsed_time));
-	console.log("Interval Func " + tick)
 	io.emit('onMessage',
 		{
 			code: 'Tick',
@@ -474,7 +449,6 @@ function intervalFunc()
 					is_bot: 1
 				}
 			}, function(error, response, body) {
-				console.log(body);
 				var ret = JSON.parse(body);
 				if (ret.status) {
 					// server side done ...
@@ -510,7 +484,6 @@ function intervalFunc()
 					hash_value: hash
 				}
 		}, function(error, response, body){
-			console.log(body);
 			var ret = JSON.parse(body);
 			if(ret.status) {
 				game_play_list = [];
@@ -536,7 +509,6 @@ function intervalFunc()
 }
 
 function waitGame() {
-	console.log('waitGame()');
 	// start game after 5 seconds
 	resetGameTime = Date.now();
 	status = 2;
@@ -569,10 +541,8 @@ function waitGame() {
 		startGame();
 	}, 5000);
 }
-
 //For wait time synchronize
 function sendWaitTime() {
-	console.log('sendWaitTime()');
 	wait_time_left -= 500;
 	io.emit('onMessage',
 		{

@@ -229,7 +229,6 @@ var bet = function (userID, betAmount, gameNo, isBot, curTime) {
         }
         var str = ''
         str += "VALUES (" + "'" + curTime + "'," + gameNo + "," + userID + "," + (isBot ? '1' : '0') + ",0" + "," + betAmount + ")"
-        console.log("Log: " + str)
         db.cmd(db.statement("insert into", "crash_game_log",
             "(CREATE_TIME, GAMENO, USERID, IS_BOT, CASHOUTRATE, BET_AMOUNT)", '',
             str), true)
@@ -370,10 +369,7 @@ var cashout = function (userID, gameNo, cashRate, isBot) {
             }
             return retData
         }
-        console.log("cashRate: " + cashRate)
         var cashout = db.convFloat(betInfo[0].BET_AMOUNT) * cashRate
-        console.log("BET_AMOUNT: " + betInfo[0].BET_AMOUNT)
-        console.log("cashOut: " + cashout)
         db.cmd(db.statement("update", "crash_game_log", "set " + db.lineClause([
             {
                 key: 'CASHOUTRATE',

@@ -1,7 +1,7 @@
 <template>
   <div class="menu-header-btn flex-row-hc-vc" @click="btnClick">
-    <img src="@/assets/img/ic_left.png" v-if="type == 0">
-    <img src="@/assets/img/ic_bell.png" v-if="type == 1">
+    <img v-if="type == 0" src="@/assets/img/ic_left.png">
+    <img v-if="type == 1" src="@/assets/img/ic_bell.png">
   </div>
 </template>
 

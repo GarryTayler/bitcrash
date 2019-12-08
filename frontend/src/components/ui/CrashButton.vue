@@ -1,8 +1,8 @@
 <template>
   <div class="root">
-    <div class="bg flex-row-hc-vc" @click="btnClick" :class="{ 'disabled' : disabled, 'non-disabled' : !disabled }">
-        <font-awesome-icon :icon="icon" v-if="icon != ''"/>
-        <span class="text" v-if="text != ''">{{text}}</span>
+    <div class="bg flex-row-hc-vc" :class="{ 'disabled' : disabled, 'non-disabled' : !disabled }" @click="btnClick">
+      <font-awesome-icon v-if="icon != ''" :icon="icon" />
+      <span v-if="text != ''" class="text">{{ text }}</span>
     </div>
   </div>
 </template>

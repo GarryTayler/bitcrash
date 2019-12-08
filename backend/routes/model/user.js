@@ -1,4 +1,5 @@
-var MD5 = require('md5.js');
+//var MD5 = require('md5.js');
+var md5 = require('md5');
 var db = require('./../../utils/database');
 var rn = require('random-number');
 
@@ -85,12 +86,14 @@ var win_game = function (
 }
 var getUserInfo = function (query, callback) {
     var pwdStr = ''
-    if (query.password != undefined) {
+    /*if (query.password != undefined) {
         var md5stream = new MD5()
         md5stream.end(query.password)
         pwdStr = md5stream.read().toString('hex')
+    }*/
+    if (query.password != undefined) {
+        pwdStr = md5(query.password);
     }
-
     var sql = "select * from users"
     var whereClause = ''
     var query_cnt = 0
@@ -120,7 +123,6 @@ var getUserInfo = function (query, callback) {
         return;
     }
     sql = sql + (whereClause == '' ? '' : ' where ' + whereClause)
-    console.log(sql)
     db.con.query(sql, function (err, rows, fields) {
         if (err) {
             if (callback != null) {
@@ -128,7 +130,6 @@ var getUserInfo = function (query, callback) {
             }
             throw err
         }
-        console.log(rows)
         callback(rows)
     });
 }
@@ -171,17 +172,16 @@ var signup = function (data) {
         var token = generateRandomString()
 
         var pwdStr = ""
-        var md5stream = new MD5()
+        /*var md5stream = new MD5()
         md5stream.end(data.password)
-        pwdStr = md5stream.read().toString('hex')
+        pwdStr = md5stream.read().toString('hex')*/
+        pwdStr = md5(data.password);
 
         var values = "(" + "'" + data.username + "', "
         values += "'" + pwdStr + "', "
         values += "'" + data.email + "', "
         values += "'" + token + "'" + ")"
         var statement = db.statement("insert into", "users", "(USERNAME, PASSWORD, EMAIL, API_TOKEN)", "", "VALUES " + values)
-        console.log(statement)
-
         db.con.query(statement, function (err, results, fields) {
             if (err) {
                 reject(err)

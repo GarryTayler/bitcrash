@@ -1,5 +1,5 @@
 h1 {
-  font-family: Avenir-Heavy;
+  font-family: OpenSans;
   font-size: 2.5rem;
   line-height: 1.1;
 
@@ -9,7 +9,7 @@ h1 {
 }
 
 h2 {
-  font-family: Avenir-Heavy;
+  font-family: OpenSans;
   font-size: 2rem;
   letter-spacing: 0.35rem;
 
@@ -20,7 +20,7 @@ h2 {
 }
 
 h3 {
-  font-family: Avenir-Heavy;
+  font-family: OpenSans;
   font-size: 1.25rem;
   line-height: 1.35;
 
@@ -30,7 +30,7 @@ h3 {
 }
 
 p {
-  font-family: Avenir-Light;
+  font-family: OpenSans;
 
   @include media-breakpoint-up(md) {
     font-size: 1.08vw;

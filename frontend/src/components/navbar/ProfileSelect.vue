@@ -1,11 +1,11 @@
 <template>
   <div class="flex-row-hl-vc p-l-r">
-      <img class="profile-img" alt="avatar" src="@/assets/img/IMAGE_C.png"/>
-      <div class="m-l">
-          <div class="profile-name">{{avatarName}}</div>
-          <div class="bit-text">bits {{avatarBits}}</div>
-      </div>
-      <font-awesome-icon class="down m-l" icon="chevron-down" />
+    <img class="profile-img" alt="avatar" src="@/assets/img/IMAGE_C.png">
+    <div class="m-l">
+      <div class="profile-name">{{ avatarName }}</div>
+      <div class="bit-text">bits {{ avatarBits }}</div>
+    </div>
+    <font-awesome-icon class="down m-l" icon="chevron-down" />
   </div>
 </template>
 

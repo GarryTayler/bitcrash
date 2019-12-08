@@ -7,7 +7,8 @@ import { faCaretRight, faChevronDown, faChevronLeft, faChevronRight, faChevronUp
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 import App from './App.vue'
-
+import Loading from 'vue-loading-overlay'
+import 'vue-loading-overlay/dist/vue-loading.css'
 import './assets/scss/main.scss'
 // import './registerServiceWorker'
 import router from './router'
@@ -24,6 +25,7 @@ library.add(faPaperPlane)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Vue.use(BootstrapVue)
+Vue.use(Loading)
 
 Vue.config.productionTip = false
 

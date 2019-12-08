@@ -1,30 +1,31 @@
 <template>
   <b-modal
-          centered
-          hide-footer
-          id="signup-form"
-           modal-class="login-signup-form"
-           header-class="border-bottom-0">
+    id="signup-form"
+    centered
+    hide-footer
+    modal-class="login-signup-form"
+    header-class="border-bottom-0"
+  >
 
     <h2>SignUp</h2>
 
     <form>
-        <b-form-group label="UserName" label-for="form-username">
-            <b-form-input id="form-username" v-model="form.username" placeholder="Your name here"></b-form-input>
-        </b-form-group>
-        <b-form-group label="Email" label-for="form-email">
-            <b-form-input id="form-email" v-model="form.email" type="email" placeholder="Your email here"></b-form-input>
-        </b-form-group>
-        <b-form-group label="Password" label-for="form-password">
-            <b-form-input id="form-password" v-model="form.password" type="password" placeholder="Your password here"></b-form-input>
-        </b-form-group>
-        <b-form-group label="Password Confirm" label-for="form-password-confirm">
-          <b-form-input id="form-password-confirm" v-model="form.password_confirm" type="password" placeholder="Type your password again"></b-form-input>
-        </b-form-group>
-        <b-form-checkbox-group class="form-group">
-          <b-form-checkbox id="form-agree" v-model="form.agree">I agree to the terms of service</b-form-checkbox>
-        </b-form-checkbox-group>
-        <log-in-button text="SignUp" @click="onSignup"></log-in-button>
+      <b-form-group label="UserName" label-for="form-username">
+        <b-form-input id="form-username" v-model="form.username" placeholder="Your name here" />
+      </b-form-group>
+      <b-form-group label="Email" label-for="form-email">
+        <b-form-input id="form-email" v-model="form.email" type="email" placeholder="Your email here" />
+      </b-form-group>
+      <b-form-group label="Password" label-for="form-password">
+        <b-form-input id="form-password" v-model="form.password" type="password" placeholder="Your password here" />
+      </b-form-group>
+      <b-form-group label="Password Confirm" label-for="form-password-confirm">
+        <b-form-input id="form-password-confirm" v-model="form.password_confirm" type="password" placeholder="Type your password again" />
+      </b-form-group>
+      <b-form-checkbox-group class="form-group">
+        <b-form-checkbox id="form-agree" v-model="form.agree">I agree to the terms of service</b-form-checkbox>
+      </b-form-checkbox-group>
+      <log-in-button text="SignUp" @click="onSignup" />
     </form>
   </b-modal>
 </template>

@@ -1,15 +1,16 @@
 <template>
   <div class="bg flex-space-between-vc" style="">
-      <input
+    <input
+      v-model="currentValue"
       class="text flex1"
       name="quantity"
-      v-model="currentValue"
       :disabled="disabled"
       @keyup.enter="sendMsg"
       @focus="handleFocus"
       @blur="handleBlur"
-      @input="handleInput"/>
-      <crash-button :icon="text.length > 0 ? '' : 'paper-plane'" @click="sendMsg" :disabled="disabled" :text="text"/>
+      @input="handleInput"
+    >
+    <crash-button :icon="text.length > 0 ? '' : 'paper-plane'" :disabled="disabled" :text="text" @click="sendMsg" />
   </div>
 </template>
 
@@ -18,6 +19,9 @@ import CrashButton from '@/components/ui/CrashButton'
 
 export default {
   name: 'CrashBetButton',
+  components: {
+    CrashButton
+  },
   props: {
     value: [String, Number],
     disabled: Boolean,
@@ -25,9 +29,6 @@ export default {
       type: String,
       default: ''
     }
-  },
-  components: {
-    CrashButton
   },
   data() {
     return {

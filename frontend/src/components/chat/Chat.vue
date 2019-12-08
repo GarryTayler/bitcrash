@@ -1,21 +1,21 @@
 <template>
   <div ref="chat" :class="{show:show}" class="chat-container">
-    <div class="chat-background"/>
+    <div class="chat-background" />
     <div class="chat">
       <div class="handle-button" :style="{'top':buttonTop+'px'}" @click="show=!show">
         <font-awesome-icon :icon="show?'chevron-right' : 'chevron-left'" />
       </div>
       <div class="chat-header flex-space-between-vc">
         Chat
-        <nation-group-flag></nation-group-flag>
+        <nation-group-flag />
       </div>
       <div class="chat-items">
         <div class="drawer-container">
-          <chat-item v-for="message in messages" :key="message.id" :data="message"></chat-item>
+          <chat-item v-for="message in messages" :key="message.id" :data="message" />
         </div>
       </div>
       <div class="chat-footer flex-space-between-vc">
-        <chat-input-box :value="current_chat" :disabled="!is_logged_in" @sendMsg="sendMsg"></chat-input-box>
+        <chat-input-box :value="current_chat" :disabled="!is_logged_in" @sendMsg="sendMsg" />
       </div>
     </div>
   </div>
@@ -46,19 +46,6 @@ export default {
       default: 250,
       type: Number
     }
-  },
-  computed: {
-    ...mapGetters([
-      'is_logged_in',
-      'chat_server_url',
-      'user_id',
-      'name',
-      'ipaddress',
-      'token',
-      'crash_chat',
-      'avatar_small',
-      'avatar_medium'
-    ])
   },
   data() {
     return {
@@ -92,6 +79,19 @@ export default {
       current_chat: ''
     }
   },
+  computed: {
+    ...mapGetters([
+      'is_logged_in',
+      'chat_server_url',
+      'user_id',
+      'name',
+      'ipaddress',
+      'token',
+      'crash_chat',
+      'avatar_small',
+      'avatar_medium'
+    ])
+  },
   watch: {
     show(value) {
       if (value && !this.clickNotClose) {
@@ -110,6 +110,15 @@ export default {
   beforeDestroy() {
     const elx = this.$refs.chat
     elx.remove()
+  },
+  created: function() {
+    var self = this
+    this.chat_socket = io.connect(this.chat_server_url)
+    // socket reference
+    this.chat_socket.on('chat_message', function(item) {
+      self.reload()
+      // self.addChatItem(item)
+    })
   },
   methods: {
     addEventClick() {
@@ -161,15 +170,6 @@ export default {
 
       this.current_chat = ''
     }
-  },
-  created: function() {
-    var self = this
-    this.chat_socket = io.connect(this.chat_server_url)
-    // socket reference
-    this.chat_socket.on('chat_message', function(item) {
-      self.reload()
-      // self.addChatItem(item)
-    })
   }
 }
 </script>

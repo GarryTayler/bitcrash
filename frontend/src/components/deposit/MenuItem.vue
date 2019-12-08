@@ -1,65 +1,65 @@
 <template>
-  <div @click="btnClick" class="flex-row-hc-vc menu-item-wrapper">
+  <div class="flex-row-hc-vc menu-item-wrapper" @click="btnClick">
     <div>
-        <div v-if="type=='settings'" class="flex-row-hc-vc">
-            <div class=" image">
-                <img src="@/assets/img/ic_setting.png">
-            </div>
-            <div class="image-hover">
-                <img src="@/assets/img/ic_setting_hover.png">
-            </div>
+      <div v-if="type=='settings'" class="flex-row-hc-vc">
+        <div class=" image">
+          <img src="@/assets/img/ic_setting.png">
         </div>
-        <div v-if="type=='referrals'" class="flex-row-hc-vc">
-            <div class="image">
-                <img src="@/assets/img/ic_referral_menu.png">
-            </div>
-            <div class="image-hover">
-                <img src="@/assets/img/ic_referral_menu_hover.png">
-            </div>
+        <div class="image-hover">
+          <img src="@/assets/img/ic_setting_hover.png">
         </div>
-        <div v-if="type=='ranking'" class="flex-row-hc-vc">
-            <div class="image">
-                <img src="@/assets/img/ic_ranking.png">
-            </div>
-            <div class="image-hover">
-                <img src="@/assets/img/ic_ranking_hover.png">
-            </div>
+      </div>
+      <div v-if="type=='referrals'" class="flex-row-hc-vc">
+        <div class="image">
+          <img src="@/assets/img/ic_referral_menu.png">
         </div>
-        <div v-if="type=='rewards'" class="flex-row-hc-vc">
-            <div class="image">
-                <img src="@/assets/img/ic_rewards.png">
-            </div>
-            <div class="image-hover">
-                <img src="@/assets/img/ic_rewards_hover.png">
-            </div>
+        <div class="image-hover">
+          <img src="@/assets/img/ic_referral_menu_hover.png">
         </div>
-        <div v-if="type=='my games'" class="flex-row-hc-vc">
-            <div class="image">
-                <img src="@/assets/img/ic_games.png">
-            </div>
-            <div class="image-hover">
-                <img src="@/assets/img/ic_games_hover.png">
-            </div>
+      </div>
+      <div v-if="type=='ranking'" class="flex-row-hc-vc">
+        <div class="image">
+          <img src="@/assets/img/ic_ranking.png">
         </div>
-        <div v-if="type=='message'" class="flex-row-hc-vc">
-            <div class="image">
-                <img src="@/assets/img/ic_msg.png">
-            </div>
-            <div class="image-hover">
-                <img src="@/assets/img/ic_msg_hover.png">
-            </div>
+        <div class="image-hover">
+          <img src="@/assets/img/ic_ranking_hover.png">
         </div>
-        <div v-if="type=='help center'" class="flex-row-hc-vc">
-            <div class="image">
-                <img src="@/assets/img/ic_help.png">
-            </div>
-            <div class="image-hover">
-                <img src="@/assets/img/ic_help_hover.png">
-            </div>
+      </div>
+      <div v-if="type=='rewards'" class="flex-row-hc-vc">
+        <div class="image">
+          <img src="@/assets/img/ic_rewards.png">
         </div>
-        <div class="flex-row-hc-vc text">
-            {{type}}
+        <div class="image-hover">
+          <img src="@/assets/img/ic_rewards_hover.png">
         </div>
+      </div>
+      <div v-if="type=='my games'" class="flex-row-hc-vc">
+        <div class="image">
+          <img src="@/assets/img/ic_games.png">
+        </div>
+        <div class="image-hover">
+          <img src="@/assets/img/ic_games_hover.png">
+        </div>
+      </div>
+      <div v-if="type=='message'" class="flex-row-hc-vc">
+        <div class="image">
+          <img src="@/assets/img/ic_msg.png">
+        </div>
+        <div class="image-hover">
+          <img src="@/assets/img/ic_msg_hover.png">
+        </div>
+      </div>
+      <div v-if="type=='help center'" class="flex-row-hc-vc">
+        <div class="image">
+          <img src="@/assets/img/ic_help.png">
+        </div>
+        <div class="image-hover">
+          <img src="@/assets/img/ic_help_hover.png">
+        </div>
+      </div>
+      <div class="flex-row-hc-vc text">
+        {{ type }}
+      </div>
     </div>
   </div>
 </template>
@@ -70,13 +70,13 @@ export default {
   name: 'MenuItem',
   components: {
   },
-  computed: {
-  },
   props: {
     type: {
       type: String,
       default: 'settings'
     }
+  },
+  computed: {
   },
   methods: {
     btnClick() {

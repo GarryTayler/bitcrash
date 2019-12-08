@@ -1,11 +1,9 @@
-var MD5 = require('md5.js');
 var db = require('./../../utils/database');
 var dateFormat = require('dateformat');
 
 var add = function(data) {
     var statement = db.statement("insert into", "chats", "(CHAT_TYPE, CREATE_TIME, UPDATE_TIME, MSG, IPADDRESS, USERID)", "", 
     "VALUES (" + "'" + data.CHAT_TYPE + "'" + "," + "'" + data.CREATE_TIME + "'" + "," + "'" + data.UPDATE_TIME + "'" + "," + "'" + data.MSG + "'" + "," + "'" + data.IPADDRESS + "'" + "," + data.USERID + ")")
-    console.log(statement)
     db.cmd(statement)
     // $insert_data = array(
     //     'CHAT_TYPE' => $_POST['type'] ,

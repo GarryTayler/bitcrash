@@ -3,49 +3,49 @@
     <div class="flex-row root">
       <b-row align-v="start" class="flex1 content-padding main-content">
         <b-col sm="12" md="4" lg="4" xl="4" class="p-none m-b">
-          <bots-table :type='0' :fields="bots_tbl_fields" :items="current_users" class="m-b"></bots-table>
-          <bots-table :type='1' :fields="bots_tbl_fields" :items="cashout_list"></bots-table>
+          <bots-table :type="0" :fields="bots_tbl_fields" :items="current_users" class="m-b" />
+          <bots-table :type="1" :fields="bots_tbl_fields" :items="cashout_list" />
         </b-col>
         <b-col sm="12" md="8" lg="8" xl="8" class="p-none p-l">
           <bit-crash-card class="m-b">
-              <div slot="header" class="card-header">
-                <div class="flex-space-between-vc" style="overflow: hidden">
-                  <crash-header-item v-for="element in headerList" :key="element.id" :data="element"></crash-header-item>
-                </div>
+            <div slot="header" class="card-header">
+              <div class="flex-space-between-vc" style="overflow: hidden">
+                <crash-header-item v-for="element in headerList" :key="element.id" :data="element" />
               </div>
-              <div class="card-content">
-                <b-row>
-                  <crash-graph :event-bus="eventBus"></crash-graph>
-                </b-row>
-                <b-row>
-                  <b-col sm="12" md="4" lg="4" xl="4" class="m-b">
-                    <crash-edit label="BET" sup="BTC" v-model="bet_input"></crash-edit>
-                  </b-col>
-                  <b-col sm="12" md="4" lg="4" xl="4" class="m-b">
-                    <crash-edit label="AUTO CASHOUT" sup="X" v-model="auto_cashout"></crash-edit>
-                  </b-col>
-                  <b-col sm="12" md="4" lg="4" xl="4">
-                    <crash-bet-button :is-disabled="!is_logged_in" :text="betBtnText" :size="betBtnSize" @click="do_action"></crash-bet-button>
-                  </b-col>
-                </b-row>
-                <b-row>
-                  <b-col sm="12" md="8" lg="8" xl="8">
-                    <crash-scale-item @click="scaleItemClick"></crash-scale-item>
-                  </b-col>
-                  <b-col sm="12" md="4" lg="4" xl="4">
-                    <crash-bet-select></crash-bet-select>
-                  </b-col>
-                </b-row>
-              </div>
+            </div>
+            <div class="card-content">
+              <b-row>
+                <crash-graph :event-bus="eventBus" />
+              </b-row>
+              <b-row>
+                <b-col sm="12" md="4" lg="4" xl="4" class="m-b">
+                  <crash-edit v-model="bet_input" label="BET" sup="BTC" />
+                </b-col>
+                <b-col sm="12" md="4" lg="4" xl="4" class="m-b">
+                  <crash-edit v-model="auto_cashout" label="AUTO CASHOUT" sup="X" />
+                </b-col>
+                <b-col sm="12" md="4" lg="4" xl="4">
+                  <crash-bet-button :is-disabled="!is_logged_in" :text="betBtnText" :size="betBtnSize" @click="do_action" />
+                </b-col>
+              </b-row>
+              <b-row>
+                <b-col sm="12" md="8" lg="8" xl="8">
+                  <crash-scale-item @click="scaleItemClick" />
+                </b-col>
+                <b-col sm="12" md="4" lg="4" xl="4">
+                  <crash-bet-select />
+                </b-col>
+              </b-row>
+            </div>
           </bit-crash-card>
           <bit-crash-card>
             <div slot="header" class="card-header flex-space-between-vc all-bets">
-                <span>
-                  All Bets
-                </span>
+              <span>
+                All Bets
+              </span>
             </div>
             <div class="card-content">
-              <bit-crash-table :fields="all_tbl_fields" :items="all_tbl_items"></bit-crash-table>
+              <bit-crash-table :fields="all_tbl_fields" :items="all_tbl_items" />
             </div>
           </bit-crash-card>
         </b-col>
@@ -220,6 +220,86 @@ export default {
       crash_socket: null,
       eventBus: {}
     }
+  },
+  created: function() {
+    var self = this
+    this.crash_socket = io.connect(this.crash_server_url)
+    // socket reference
+
+    this.crash_socket.on('onMessage', function(data) {
+      switch (data.code) {
+        case 'GameRule': // i don't know what to do here ...
+          break
+        case 'ReloadPlayers':
+          console.log('ReloadPlayers')
+          self.reload(data)
+          self.addHistory(data)
+          // recalc bet_sum, cashout_sum, and add count-up/down animation ...
+          break
+        case 'WaitGame':
+          // $('title').html('Crash | Tarobet')
+          // game-created
+          self.sendEvent('game-created', { duration: 0 })
+
+          self.on_wait(data)
+          break
+        case 'GameStart':
+          // emit game-started
+          self.start(data)
+          break
+        case 'Tick':
+          // from server
+          if (Date.now() - self.time_stamp > 500) {
+            // $('title').html(
+            //   parseFloat(data.tick / 100).toFixed(2) + 'x - Crash | Tarobet'
+            // )
+            self.time_stamp = Date.now()
+          }
+          self.do_tick(data.tick)
+          break
+        case 'GameCrash':
+          // game finished
+          self.crash(data)
+          break
+        case 'GameStartCrash':
+          data.finish = 1
+          self.start(data)
+
+          self.sendEvent('game-finished', { crash: data.crash })
+
+          self.close_timer()
+          self.state = 'CRASHED'
+
+          self.tick = data.crash
+          self.update_btn()
+          break
+        case 'BetResult':
+          if (data.status) {
+            // update_wallet()
+            self.$store.dispatch('user/getInfo', self.token)
+          } else {
+            // showToast('error', data.error)
+          }
+          break
+        case 'Cashout':
+          // the result of cashout
+          if (data.status) {
+            // update_wallet()
+            self.$store.dispatch('user/getInfo', self.token)
+          } else {
+            // showToast('error', data.error)
+          }
+          break
+        default:
+          console.log('unknown code: ' + data.code)
+      }
+    })
+
+    this.crash_socket.on('disconnect', function() {
+      // showToast('error', 'Game server might have network problem. Please check  your interent connection.')
+      // stop game
+      self.stop()
+    })
   },
   methods: {
     scaleItemClick(item) {
@@ -476,86 +556,6 @@ export default {
         )
       }
     }
-  },
-  created: function() {
-    var self = this
-    this.crash_socket = io.connect(this.crash_server_url)
-    // socket reference
-
-    this.crash_socket.on('onMessage', function(data) {
-      switch (data.code) {
-        case 'GameRule': // i don't know what to do here ...
-          break
-        case 'ReloadPlayers':
-          console.log('ReloadPlayers')
-          self.reload(data)
-          self.addHistory(data)
-          // recalc bet_sum, cashout_sum, and add count-up/down animation ...
-          break
-        case 'WaitGame':
-          // $('title').html('Crash | Tarobet')
-          // game-created
-          self.sendEvent('game-created', { duration: 0 })
-
-          self.on_wait(data)
-          break
-        case 'GameStart':
-          // emit game-started
-          self.start(data)
-          break
-        case 'Tick':
-          // from server
-          if (Date.now() - self.time_stamp > 500) {
-            // $('title').html(
-            //   parseFloat(data.tick / 100).toFixed(2) + 'x - Crash | Tarobet'
-            // )
-            self.time_stamp = Date.now()
-          }
-          self.do_tick(data.tick)
-          break
-        case 'GameCrash':
-          // game finished
-          self.crash(data)
-          break
-        case 'GameStartCrash':
-          data.finish = 1
-          self.start(data)
-
-          self.sendEvent('game-finished', { crash: data.crash })
-
-          self.close_timer()
-          self.state = 'CRASHED'
-
-          self.tick = data.crash
-          self.update_btn()
-          break
-        case 'BetResult':
-          if (data.status) {
-            // update_wallet()
-            self.$store.dispatch('user/getInfo', self.token)
-          } else {
-            // showToast('error', data.error)
-          }
-          break
-        case 'Cashout':
-          // the result of cashout
-          if (data.status) {
-            // update_wallet()
-            self.$store.dispatch('user/getInfo', self.token)
-          } else {
-            // showToast('error', data.error)
-          }
-          break
-        default:
-          console.log('unknown code: ' + data.code)
-      }
-    })
-
-    this.crash_socket.on('disconnect', function() {
-      // showToast('error', 'Game server might have network problem. Please check  your interent connection.')
-      // stop game
-      self.stop()
-    })
   }
 }
 </script>

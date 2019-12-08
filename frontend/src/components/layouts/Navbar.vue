@@ -1,14 +1,14 @@
 <template>
   <b-navbar toggleable="lg" type="dark" variant="dark" sticky>
     <b-navbar-brand>
-      <img src="@/assets/img/brand_logo.png" class="logo mr-sm-3" />
-      <img src="@/assets/img/brand_text.png" class="text" />
+      <img src="@/assets/img/brand_logo.png" class="logo mr-sm-3">
+      <img src="@/assets/img/brand_text.png" class="text">
     </b-navbar-brand>
 
     <b-navbar-toggle target="nav-collapse">
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
+      <span class="icon-bar" />
+      <span class="icon-bar" />
+      <span class="icon-bar" />
     </b-navbar-toggle>
 
     <b-collapse id="nav-collapse" is-nav>
@@ -31,9 +31,9 @@
 </template>
 
 <script>
-import navigation from '@/mixins/navigation';
+import navigation from '@/mixins/navigation'
 
 export default {
-  mixins: [navigation],
-};
+  mixins: [navigation]
+}
 </script>

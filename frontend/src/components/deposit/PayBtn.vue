@@ -1,24 +1,24 @@
 <template>
-  <bit-crash-card :hoverBorder="true" :bodyStyle="1" class="bg">
-    <div @click="btnClick" class="flex-row-hc-vc main-content">
-        <div>
-            <div v-if="type=='skins'" class="flex-row-hc-vc">
-                <img src="@/assets/img/ic_pay_skin.png"/>
-            </div>
-            <div v-if="type=='bitcoin'" class="flex-row-hc-vc">
-                <img src="@/assets/img/ic_pay_bitcoin.png"/>
-            </div>
-            <div v-if="type=='alipay'" class="flex-row-hc-vc">
-                <img src="@/assets/img/ic_pay_alipay.png"/>
-            </div>
-            <div v-if="type=='wechat'" class="flex-row-hc-vc">
-                <img src="@/assets/img/ic_pay_wechat.png"/>
-            </div>
-
-            <div class="text-wrapper text-wrapper-hover flex-row-hc-vc">
-                <div>{{text}}</div>
-            </div>
+  <bit-crash-card :hover-border="true" :body-style="1" class="bg">
+    <div class="flex-row-hc-vc main-content" @click="btnClick">
+      <div>
+        <div v-if="type=='skins'" class="flex-row-hc-vc">
+          <img src="@/assets/img/ic_pay_skin.png">
         </div>
+        <div v-if="type=='bitcoin'" class="flex-row-hc-vc">
+          <img src="@/assets/img/ic_pay_bitcoin.png">
+        </div>
+        <div v-if="type=='alipay'" class="flex-row-hc-vc">
+          <img src="@/assets/img/ic_pay_alipay.png">
+        </div>
+        <div v-if="type=='wechat'" class="flex-row-hc-vc">
+          <img src="@/assets/img/ic_pay_wechat.png">
+        </div>
+
+        <div class="text-wrapper text-wrapper-hover flex-row-hc-vc">
+          <div>{{ text }}</div>
+        </div>
+      </div>
     </div>
   </bit-crash-card>
 </template>
@@ -30,6 +30,12 @@ export default {
   name: 'PayBtn',
   components: {
     BitCrashCard
+  },
+  props: {
+    type: {
+      type: String,
+      default: 'skins'
+    }
   },
   computed: {
     text: {
@@ -47,12 +53,6 @@ export default {
             return ''
         }
       }
-    }
-  },
-  props: {
-    type: {
-      type: String,
-      default: 'skins'
     }
   },
   methods: {

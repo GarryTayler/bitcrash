@@ -1,10 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var dateFormat = require('dateformat');
-
-var MD5 = require('md5.js');
 var crashModel = require('./model/crash');
-
 var db = require('./../utils/database');
 // function getRows(res) {
 //     var promise = new Promise((resolve, reject) => {
@@ -48,7 +45,6 @@ router.post('/bet', async function (req, res) {
 })
 router.post('/cashout', async function (req, res) {
     const { user_id, game_no, cash_rate, is_bot } = req.body
-    console.log("cash_rate: " + cash_rate)
     var ret = await crashModel.cashout(user_id, game_no, cash_rate / 100, is_bot)
     return res.json(ret)
     // if (ret.status) {
@@ -67,7 +63,6 @@ router.post('/cashout', async function (req, res) {
 router.post('/game_start', async function (req, res) {
 
     const { game_no, bust } = req.body
-    console.log("game_start " + game_no + " " + bust)
     var ret = await crashModel.game_start(game_no, bust)
 
     return res.json(ret)

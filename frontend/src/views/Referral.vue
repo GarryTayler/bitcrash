@@ -2,229 +2,233 @@
   <div>
     <div class="flex-row root">
       <b-row align-v="start" class="flex-space-between-vc content-padding main-content">
-          <div>
-            <h3>Referral</h3>
-            <span class="description">Invite your friends and earn money</span>
-          </div>
-          <b-row class="ml-1 top-bar"></b-row>
-          <b-row class="ml-1 top-content">
-            <b-col  sm="12" md="6" lg="4" xl="4" class="manual">
-              <img src="@/assets/img/referral_1.png" />
-              <div class="p-15">
-                <span>1</span><br>
-                <span>Share your referral link or code</span><br>
-                <span class="description">Everyone who registers through your link or uses your code becomes your referral. The Code will give your referrals + 5% on their first deposit.</span>
+        <div>
+          <h3>Referral</h3>
+          <span class="description">Invite your friends and earn money</span>
+        </div>
+        <b-row class="ml-1 top-bar" />
+        <b-row class="ml-1 top-content">
+          <b-col sm="12" md="6" lg="4" xl="4" class="manual">
+            <img src="@/assets/img/referral_1.png">
+            <div class="p-15">
+              <span>1</span><br>
+              <span>Share your referral link or code</span><br>
+              <span class="description">Everyone who registers through your link or uses your code becomes your referral. The Code will give your referrals + 5% on their first deposit.</span>
+            </div>
+          </b-col>
+          <b-col sm="12" md="6" lg="4" xl="4" class="manual">
+            <img src="@/assets/img/referral_2.png">
+            <div class="p-15">
+              <span>2</span><br>
+              <span>Earn Money and Rank Points</span><br>
+              <span class="description">You will get up to 40% of our revenue(House Edge) from bets placed by your referrals and Rank Points equal to their first deposit.</span>
+            </div>
+          </b-col>
+          <b-col sm="12" md="6" lg="4" xl="4" class="manual">
+            <img src="@/assets/img/referral_3.png">
+            <div class="p-15">
+              <span>3</span><br>
+              <span>Use earned money for betting or withdrawal</span><br>
+              <span class="description">Simple, isn't it? if you need any help, contact our support.</span>
+            </div>
+          </b-col>
+        </b-row>
+        <b-row class="mt-4 w-100">
+          <b-col sm="12" md="12" lg="12" xl="12">
+            <bit-crash-card :body-style="1" :no-header="true" class="link-content">
+              <b-row>
+                <b-col sm="12" md="6" lg="6" xl="6">
+                  <div class="card-content">
+                    <span style="margin: 20px;">
+                      You referral link
+                    </span><br>
+                    <div class="bg flex-space-between-vc" style="margin-top: 10px">
+                      <input
+                        class="text"
+                        @focus="handleFocus"
+                        @blur="handleBlur"
+                        @input="handleInput"
+                      >
+                      <crash-button text="Copy" @click="handleBlur" />
+                    </div>
+                  </div>
+                </b-col>
+                <b-col sm="12" md="6" lg="6" xl="6">
+                  <div class="card-content">
+                    <span>
+                      You referral code
+                    </span><br>
+                    <div class="bg flex-space-between-vc" style="margin-left: -10px; margin-top: 10px">
+                      <input
+                        v-model="currentValue"
+                        class="text"
+                        @focus="handleFocus"
+                        @blur="handleBlur"
+                        @input="handleInput"
+                      >
+                      <crash-button text="Change" :disabled="true" />
+                    </div>
+                    <br>
+                    <span class="description">
+                      New users will get +5% bonus on their first deposit for using your code.
+                    </span>
+                  </div>
+                </b-col>
+              </b-row>
+            </bit-crash-card>
+          </b-col>
+        </b-row>
+        <b-row class="mt-4 w-100">
+          <b-col sm="12" md="5" lg="5" xl="5">
+            <bit-crash-card :body-style="1" :no-header="true" class="link-content">
+              <b-row>
+                <b-col sm="12" md="12" lg="12" xl="12">
+                  <div class="card-content">
+                    <span style="margin: 20px;">
+                      Your level silver (10%)
+                    </span><br>
+                    <level-silver class="mt-4" />
+                  </div>
+                </b-col>
+              </b-row>
+            </bit-crash-card>
+          </b-col>
+          <b-col sm="12" md="7" lg="7" xl="7">
+            <bit-crash-card :body-style="1" :no-header="true" class="link-content h-100">
+              <b-row>
+                <b-col sm="12" md="12" lg="12" xl="12">
+                  <div class="card-content">
+                    <div>
+                      <b-nav tabs fill>
+                        <b-nav-item active>TODAY</b-nav-item>
+                        <b-nav-item>7 DAYS</b-nav-item>
+                        <b-nav-item>30 DAYS</b-nav-item>
+                        <b-nav-item>ALL TIME</b-nav-item>
+                      </b-nav>
+                    </div>
+                  </div>
+                </b-col>
+                <b-col sm="12" md="12" lg="12" xl="12">
+                  <b-row align-h="between" class="text-center">
+                    <b-col v-for="item in option_types" :key="item" sm="4" md="4" lg="4" xl="4" class="ml-md-auto p-3">
+                      <wallet-sect :type="item" />
+                    </b-col>
+                  </b-row>
+                </b-col>
+              </b-row>
+            </bit-crash-card>
+          </b-col>
+        </b-row>
+        <b-row class="mt-4 ml-1 w-100">
+          <b-col sm="12" md="9" lg="9" xl="9">
+            <h4>Groups</h4>
+          </b-col>
+          <b-col sm="12" md="3" lg="3" xl="3">
+            <div class="flex-row-hc-vc price-content">
+              <span class="label-high">CREATE GROUP+</span>
+            </div>
+          </b-col>
+        </b-row>
+        <b-row class="mt-4 w-100">
+          <b-col sm="12" md="12" lg="12" xl="12">
+            <bit-crash-card :body-style="0" :no-header="false" class="link-content">
+              <div slot="header" class="card-header flex-space-between-vc">
+                <b-row class="w-100">
+                  <b-col sm="6" md="3" lg="3" xl="3">
+                    <span class="subtitle">
+                      Name
+                    </span><br>
+                    <span>
+                      REF_6879555
+                    </span>
+                  </b-col>
+                  <b-col sm="6" md="3" lg="3" xl="3">
+                    <span class="subtitle">
+                      Url
+                    </span><br>
+                    <span>
+                      ..dfew
+                    </span>
+                  </b-col>
+                  <b-col sm="6" md="3" lg="3" xl="3">
+                    <span class="subtitle">
+                      Created
+                    </span><br>
+                    <span>
+                      20-09-2019
+                    </span>
+                  </b-col>
+                  <b-col sm="6" md="3" lg="3" xl="3">
+                    <span class="subtitle">
+                      Your income
+                    </span><br>
+                    <div class="flex-row-hl-vc">
+                      <img src="@/assets/img/ic_bitcoin_col.png" width="25px">
+                      <span class="label ml-2">0</span>
+                    </div>
+                  </b-col>
+                </b-row>
               </div>
-            </b-col>
-            <b-col  sm="12" md="6" lg="4" xl="4" class="manual">
-              <img src="@/assets/img/referral_2.png" />
-              <div class="p-15">
-                <span>2</span><br>
-                <span>Earn Money and Rank Points</span><br>
-                <span class="description">You will get up to 40% of our revenue(House Edge) from bets placed by your referrals and Rank Points equal to their first deposit.</span>
-              </div>
-            </b-col>
-            <b-col  sm="12" md="6" lg="4" xl="4" class="manual">
-              <img src="@/assets/img/referral_3.png" />
-              <div class="p-15">
-                <span>3</span><br>
-                <span>Use earned money for betting or withdrawal</span><br>
-                <span class="description">Simple, isn't it? if you need any help, contact our support.</span>
-              </div>
-            </b-col>
-          </b-row>
-          <b-row class="mt-4 w-100">
-            <b-col sm="12" md="12" lg="12" xl="12">
-              <bit-crash-card :bodyStyle="1" :noHeader="true" class="link-content">
-                <b-row>
+              <div class="card-content">
+                <b-row align-h="center">
                   <b-col sm="12" md="6" lg="6" xl="6">
-                    <div class="card-content">
-                      <span style="margin: 20px;">
-                        You referral link
-                      </span><br>
-                      <div class="bg flex-space-between-vc" style="margin-top: 10px">
-                          <input
-                          class="text"
-                          @focus="handleFocus"
-                          @blur="handleBlur"
-                          @input="handleInput"/>
-                          <crash-button text="Copy" @click="handleBlur"/>
-                      </div>
+                    <span style="margin: 20px;">
+                      You referral link
+                    </span><br>
+                    <div class="bg flex-space-between-vc" style="margin-top: 10px;margin-bottom: 10px">
+                      <input
+                        class="text"
+                        @focus="handleFocus"
+                        @blur="handleBlur"
+                        @input="handleInput"
+                      >
+                      <crash-button text="Copy" @click="handleBlur" />
+                    </div>
+                    <span style="margin: 20px;">
+                      You referral code
+                    </span><br>
+                    <div class="bg flex-space-between-vc" style="margin-top: 10px">
+                      <input
+                        class="text"
+                        @focus="handleFocus"
+                        @blur="handleBlur"
+                        @input="handleInput"
+                      >
+                      <crash-button text="Change" :disabled="true" @click="handleBlur" />
                     </div>
                   </b-col>
-                  <b-col  sm="12" md="6" lg="6" xl="6">
-                      <div class="card-content">
-                        <span>
-                        You referral code
-                        </span><br>
-                        <div class="bg flex-space-between-vc" style="margin-left: -10px; margin-top: 10px">
-                            <input
-                            class="text"
-                            v-model="currentValue"
-                            @focus="handleFocus"
-                            @blur="handleBlur"
-                            @input="handleInput"/>
-                            <crash-button text="Change" :disabled="true"/>
-                        </div>
-                        <br>
-                        <span class="description">
-                          New users will get +5% bonus on their first deposit for using your code.
-                        </span>
-                      </div>
-                  </b-col>
-                </b-row>
-              </bit-crash-card>
-            </b-col>
-          </b-row>
-          <b-row class="mt-4 w-100">
-            <b-col sm="12" md="5" lg="5" xl="5">
-              <bit-crash-card :bodyStyle="1" :noHeader="true" class="link-content">
-                <b-row>
-                  <b-col sm="12" md="12" lg="12" xl="12">
-                    <div class="card-content">
-                      <span style="margin: 20px;">
-                        Your level silver (10%)
-                      </span><br>
-                      <level-silver class="mt-4"></level-silver>
-                    </div>
-                  </b-col>
-                </b-row>
-              </bit-crash-card>
-            </b-col>
-            <b-col sm="12" md="7" lg="7" xl="7">
-              <bit-crash-card :bodyStyle="1" :noHeader="true" class="link-content h-100">
-               <b-row>
-                  <b-col sm="12" md="12" lg="12" xl="12">
-                    <div class="card-content">
-                      <div>
-                        <b-nav tabs fill>
-                          <b-nav-item active>TODAY</b-nav-item>
-                          <b-nav-item>7 DAYS</b-nav-item>
-                          <b-nav-item>30 DAYS</b-nav-item>
-                          <b-nav-item>ALL TIME</b-nav-item>
-                        </b-nav>
-                      </div>
-                    </div>
-                  </b-col>
-                  <b-col sm="12" md="12" lg="12" xl="12">
+                  <b-col sm="12" md="6" lg="6" xl="6">
                     <b-row align-h="between" class="text-center">
-                      <b-col sm="4" md="4" lg="4" xl="4" class="ml-md-auto p-3" v-for="item in option_types" :key="item">
-                        <wallet-sect :type="item"/>
+                      <b-col v-for="item in option_types" :key="item" sm="4" md="4" lg="4" xl="4" class="ml-md-auto p-3">
+                        <wallet-sect :type="item" />
                       </b-col>
                     </b-row>
                   </b-col>
                 </b-row>
-              </bit-crash-card>
-            </b-col>
-          </b-row>
-          <b-row class="mt-4 ml-1 w-100">
-            <b-col sm="12" md="9" lg="9" xl="9">
-                <h4>Groups</h4>
-            </b-col>
-            <b-col sm="12" md="3" lg="3" xl="3">
-                <div class="flex-row-hc-vc price-content">
-                    <span class="label-high">CREATE GROUP+</span>
-                </div>
-            </b-col>
-          </b-row>
-          <b-row class="mt-4 w-100">
-            <b-col sm="12" md="12" lg="12" xl="12">
-              <bit-crash-card :bodyStyle="0" :noHeader="false" class="link-content">
-                <div slot="header" class="card-header flex-space-between-vc">
-                  <b-row class="w-100">
-                    <b-col sm="6" md="3" lg="3" xl="3">
-                      <span class="subtitle">
-                        Name
-                      </span><br>
-                      <span>
-                        REF_6879555
-                      </span>
-                    </b-col>
-                    <b-col sm="6" md="3" lg="3" xl="3">
-                      <span class="subtitle">
-                        Url
-                      </span><br>
-                      <span>
-                        ..dfew
-                      </span>
-                    </b-col>
-                    <b-col sm="6" md="3" lg="3" xl="3">
-                      <span class="subtitle">
-                        Created
-                      </span><br>
-                      <span>
-                        20-09-2019
-                      </span>
-                    </b-col>
-                    <b-col sm="6" md="3" lg="3" xl="3">
-                      <span class="subtitle">
-                        Your income
-                      </span><br>
-                      <div class="flex-row-hl-vc">
-                        <img src="@/assets/img/ic_bitcoin_col.png" width="25px"/>
-                        <span class="label ml-2">0</span>
-                     </div>
-                    </b-col>
-                  </b-row>
-                </div>
-                <div class="card-content">
-                  <b-row align-h="center">
-                    <b-col sm="12" md="6" lg="6" xl="6">
-                        <span style="margin: 20px;">
-                          You referral link
-                        </span><br>
-                        <div class="bg flex-space-between-vc" style="margin-top: 10px;margin-bottom: 10px">
-                            <input
-                            class="text"
-                            @focus="handleFocus"
-                            @blur="handleBlur"
-                            @input="handleInput"/>
-                            <crash-button text="Copy" @click="handleBlur"/>
-                        </div>
-                        <span style="margin: 20px;">
-                          You referral code
-                        </span><br>
-                        <div class="bg flex-space-between-vc" style="margin-top: 10px">
-                            <input
-                            class="text"
-                            @focus="handleFocus"
-                            @blur="handleBlur"
-                            @input="handleInput"/>
-                            <crash-button text="Change" :disabled="true" @click="handleBlur"/>
-                        </div>
-                    </b-col>
-                    <b-col sm="12" md="6" lg="6" xl="6">
-                      <b-row align-h="between" class="text-center">
-                        <b-col sm="4" md="4" lg="4" xl="4" class="ml-md-auto p-3" v-for="item in option_types" :key="item">
-                          <wallet-sect :type="item"/>
-                        </b-col>
-                      </b-row>
-                    </b-col>
-                  </b-row>
-                </div>
-              </bit-crash-card>
-            </b-col>
-          </b-row>
-          <b-row class="mt-4 w-100">
-            <crash-button text="CREATE GROUP" :disabled="false" class="m-auto"/>
-          </b-row>
-          <b-row class="mt-4 w-100">
-            <b-col sm="12" md="12" lg="12" xl="12">
-              <bit-crash-card :bodyStyle="0" :noHeader="false" class="link-content">
-                <div slot="header" class="card-header flex-space-between-vc all-bets">
-                  <span>
-                    Title
-                  </span>
-                </div>
-                <div class="card-content">
-                  <bit-crash-table :fields="title_tbl_fields" :items="title_tbl_items"></bit-crash-table>
-                </div>
-              </bit-crash-card>
-            </b-col>
-          </b-row>
-          <b-row class="mt-4 w-100">
-            <crash-button text="Get Banners" :disabled="false" class="m-auto"/>
-          </b-row>
+              </div>
+            </bit-crash-card>
+          </b-col>
+        </b-row>
+        <b-row class="mt-4 w-100">
+          <crash-button text="CREATE GROUP" :disabled="false" class="m-auto" />
+        </b-row>
+        <b-row class="mt-4 w-100">
+          <b-col sm="12" md="12" lg="12" xl="12">
+            <bit-crash-card :body-style="0" :no-header="false" class="link-content">
+              <div slot="header" class="card-header flex-space-between-vc all-bets">
+                <span>
+                  Title
+                </span>
+              </div>
+              <div class="card-content">
+                <bit-crash-table :fields="title_tbl_fields" :items="title_tbl_items" />
+              </div>
+            </bit-crash-card>
+          </b-col>
+        </b-row>
+        <b-row class="mt-4 w-100">
+          <crash-button text="Get Banners" :disabled="false" class="m-auto" />
+        </b-row>
       </b-row>
     </div>
   </div>

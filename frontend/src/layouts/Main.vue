@@ -1,18 +1,18 @@
 <template>
   <div>
     <!-- <app-navbar /> -->
-    <gal-navbar/>
+    <gal-navbar />
 
     <div class="app-container">
       <div class="flex-row" style="position: relative;">
-        <router-view style="width: 100%"/>
-        <chat></chat>
+        <router-view style="width: 100%" />
+        <chat />
       </div>
       <app-footer />
     </div>
 
-    <log-in-form></log-in-form>
-    <sign-up-form></sign-up-form>
+    <log-in-form />
+    <sign-up-form />
   </div>
 </template>
 

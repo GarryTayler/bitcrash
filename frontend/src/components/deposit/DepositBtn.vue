@@ -1,10 +1,10 @@
 <template>
   <div class="deposit-btn-root">
-    <div class="bg flex-row-hl-vc" @click="btnClick" :class="bodyStyle">
-        <img src="@/assets/img/ic_deposit.png" v-if="type == 'deposit'">
-        <img src="@/assets/img/ic_withdraw.png" v-if="type == 'withdraw'">
-        <div class="seperator"></div>
-        <span class="text">{{text}}</span>
+    <div class="bg flex-row-hl-vc" :class="bodyStyle" @click="btnClick">
+      <img v-if="type == 'deposit'" src="@/assets/img/ic_deposit.png">
+      <img v-if="type == 'withdraw'" src="@/assets/img/ic_withdraw.png">
+      <div class="seperator" />
+      <span class="text">{{ text }}</span>
     </div>
   </div>
 </template>
@@ -14,6 +14,16 @@
 export default {
   name: 'DepositBtn',
   components: {
+  },
+  props: {
+    type: {
+      type: String,
+      default: 'deposit'
+    },
+    disabled: {
+      type: Boolean,
+      default: false
+    }
   },
   computed: {
     bodyStyle: {
@@ -28,16 +38,6 @@ export default {
       get() {
         return this.type === 'deposit' ? 'deposit' : 'withdraw'
       }
-    }
-  },
-  props: {
-    type: {
-      type: String,
-      default: 'deposit'
-    },
-    disabled: {
-      type: Boolean,
-      default: false
     }
   },
   methods: {

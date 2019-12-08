@@ -4,7 +4,6 @@
 @import "~bootstrap-vue/src/index";
 @import "./_navbar-toggler";
 @import "./typography";
-@import "./home";
 @import "./deposit";
 @import "./graph";
 @import "./flex";
@@ -151,7 +150,7 @@ body {
   flex-direction: row;
 	justify-content: flex-start;
   align-items: center;
-  
+
   .mr-sm {
     margin-right: 10px;
   }
@@ -183,7 +182,7 @@ body {
     display: inline-flex;
 
     li {
-      font-family: Avenir-Heavy;
+      font-family: OpenSans;
       font-size: 0.7vw;
       padding: 0.75vw 1vw;
       max-width: 100vw;
@@ -222,7 +221,7 @@ body {
   }
 
   .content {
-    font-family: Avenir-Heavy;
+    font-family: OpenSans;
     @include media-breakpoint-down(md) {
       flex-direction: column;
     }
@@ -312,7 +311,7 @@ body {
 }
 
 .contact-us {
-  font-family: Avenir-Black;
+  font-family: OpenSans;
   font-size: 1.08vw;
   padding: 10px 25px;
 
@@ -480,4 +479,13 @@ body {
       }
     }
   }
+}
+
+.coin_img {
+  width: 30px;
+}
+
+.vld-overlay.is-full-page {
+  z-index: 10001 !important;
+  position: fixed
 }

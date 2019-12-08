@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express.Router();
-var MD5 = require('md5.js');
 var chatModel = require('./model/chat');
 var config = require('./../src/config');
 var dateFormat = require('dateformat');
@@ -23,10 +22,7 @@ router.post('/post_msg', async function (req, res) {
         curtime: curtime,
         type: CHAT_TYPE
     }
-    console.log(data)
-
     var ret = await instance.post("post_msg", data).then(response => {
-        console.log("Backend ret: " + response.data.error_code)
         if(response.data != null && response.data.error_code == 0) {
             return true
         } else {
@@ -43,9 +39,6 @@ router.post('/post_msg', async function (req, res) {
         chat_data["MSG"] = MSG
         chat_data["IPADDRESS"] = IPADDRESS
         chat_data["USERID"] = USERID
-
-        console.log(chat_data)
-
         chatModel.add(chat_data)
         return res.json({
             code: 20000,
@@ -55,8 +48,6 @@ router.post('/post_msg', async function (req, res) {
         })
     }
     else {
-        console.log("fail")
-
         return res.json({
             code: 20000,
             data: {
@@ -101,22 +92,20 @@ router.post('/post_msg', async function (req, res) {
     //     );
 
     //     $this->db->insert('chats' , $insert_data);
-    //     echo json_encode( array('error_code' => 0) );	
+    //     echo json_encode( array('error_code' => 0) );
 
     // }
     // else {
-    //     echo json_encode( array('error_code' => 1) );	
+    //     echo json_encode( array('error_code' => 1) );
     // }
 });
 
 router.post('/list', async function (req, res) {
     var chat_type = req.body.type
-    console.log(chat_type)
     var chats = await chatModel.list(chat_type)
     return res.json({
         code: 20000,
         data: chats
     })
 });
-  
 module.exports = router;

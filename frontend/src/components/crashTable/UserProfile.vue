@@ -1,10 +1,10 @@
 <template>
   <div class="d-flex align-items-center">
     <div class="icon p-r-15">
-      <img src="@/assets/img/IMAGE_C.png"/>
+      <img src="@/assets/img/IMAGE_C.png">
       <!-- <img :src="user.url"/> -->
     </div>
-    {{user.name}}
+    {{ user.name }}
   </div>
 </template>
 

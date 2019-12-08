@@ -70,7 +70,6 @@ const actions = {
       }
       login(data).then(response => {
         const { data } = response
-
         commit('SET_TOKEN', data.token)
         commit('SET_ID', data.id)
         setToken(data.token)
@@ -86,20 +85,15 @@ const actions = {
     return new Promise((resolve, reject) => {
       getInfo({ token: state.token }).then(response => {
         const { data } = response
-
         if (!data) {
           reject('Verification failed, please Login again.')
         }
-
         const { ID, USERNAME, EMAIL, AVATAR, AVATAR_SMALL, AVATAR_MEDIUM, WALLET, IPADDRESS } = data
-
         // roles must be a non-empty array
         // if (!roles || roles.length <= 0) {
         //   reject('getInfo: roles must be a non-null array!')
         // }
-
         commit('SET_ID', ID)
-
         commit('SET_ROLES', '')
         commit('SET_NAME', USERNAME)
         commit('SET_EMAIL', EMAIL)
@@ -109,7 +103,6 @@ const actions = {
         commit('SET_INTRODUCTION', '')
         commit('SET_WALLET', WALLET)
         commit('SET_IPADDRESS', IPADDRESS)
-
         resolve(data)
       }).catch(error => {
         reject(error)

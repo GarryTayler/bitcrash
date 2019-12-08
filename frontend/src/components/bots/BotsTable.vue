@@ -1,15 +1,15 @@
 <template>
   <div>
     <bit-crash-card>
-        <div slot="header" class="card-header flex-space-between-vc" :class="type == 0 ? 'progress-user' : 'cashout-user'">
-            <span>
-              {{items.length}} {{type==0? 'in Game' : 'Cashed out'}}
-            </span>
-            <coin-label :bet="sum"></coin-label>
-        </div>
-        <div class="card-content">
-            <bit-crash-table :fields="fields" :items="items"></bit-crash-table>
-        </div>
+      <div slot="header" class="card-header flex-space-between-vc" :class="type == 0 ? 'progress-user' : 'cashout-user'">
+        <span>
+          {{ items.length }} {{ type==0? 'in Game' : 'Cashed out' }}
+        </span>
+        <coin-label :bet="sum" />
+      </div>
+      <div class="card-content">
+        <bit-crash-table :fields="fields" :items="items" />
+      </div>
     </bit-crash-card>
   </div>
 </template>
@@ -22,6 +22,11 @@ import { getFloat2Decimal } from '@/utils/index'
 
 export default {
   name: 'BotsTable',
+  components: {
+    BitCrashCard,
+    BitCrashTable,
+    CoinLabel
+  },
   props: {
     type: {
       type: Number,
@@ -49,11 +54,6 @@ export default {
 
       return getFloat2Decimal(sum)
     }
-  },
-  components: {
-    BitCrashCard,
-    BitCrashTable,
-    CoinLabel
   }
 }
 </script>
