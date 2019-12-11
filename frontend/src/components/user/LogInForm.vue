@@ -52,9 +52,29 @@ export default {
             // this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
             this.$store.dispatch('user/getInfo', this.token)
             this.$bvModal.hide('login-form')
+            this.$toast.error({
+              title: 'Login Success',
+              message: 'You just logged in successfully.',
+              position: 'top right',
+              type: 'error',
+              progressBar: true,
+              color: '#51A351',
+              showDuration: 4000,
+              hideDuration: 3000
+            })
             loader.hide()
           })
-          .catch(() => {
+          .catch((err) => {
+            this.$toast.error({
+              title: 'Login Failed',
+              message: err,
+              position: 'top right',
+              type: 'error',
+              progressBar: true,
+              color: '#BE2739',
+              showDuration: 4000,
+              hideDuration: 3000
+            })
             loader.hide()
           })
       } else {

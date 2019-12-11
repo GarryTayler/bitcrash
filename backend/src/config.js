@@ -10,7 +10,7 @@ var config = {
         password : '',
 		database : 'bitcrash'
     },
-    main_host_url : "http://localhost:3000/api/"
+    main_host_url : "http://localhost:3001/api/"
 }
 
 module.exports = config

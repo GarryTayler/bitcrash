@@ -7,8 +7,10 @@ import { faCaretRight, faChevronDown, faChevronLeft, faChevronRight, faChevronUp
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 import App from './App.vue'
+import CxltToastr from 'cxlt-vue2-toastr'
 import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/vue-loading.css'
+import 'cxlt-vue2-toastr/dist/css/cxlt-vue2-toastr.css'
 import './assets/scss/main.scss'
 // import './registerServiceWorker'
 import router from './router'
@@ -26,6 +28,7 @@ Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Vue.use(BootstrapVue)
 Vue.use(Loading)
+Vue.use(CxltToastr)
 
 Vue.config.productionTip = false
 
