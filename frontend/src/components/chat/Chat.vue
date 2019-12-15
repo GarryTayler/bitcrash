@@ -47,6 +47,19 @@ export default {
       type: Number
     }
   },
+  computed: {
+    ...mapGetters([
+      'is_logged_in',
+      'chat_server_url',
+      'user_id',
+      'name',
+      'ipaddress',
+      'token',
+      'crash_chat',
+      'avatar_small',
+      'avatar_medium'
+    ])
+  },
   data() {
     return {
       show: true,
@@ -78,19 +91,6 @@ export default {
       ],
       current_chat: ''
     }
-  },
-  computed: {
-    ...mapGetters([
-      'is_logged_in',
-      'chat_server_url',
-      'user_id',
-      'name',
-      'ipaddress',
-      'token',
-      'crash_chat',
-      'avatar_small',
-      'avatar_medium'
-    ])
   },
   watch: {
     show(value) {

@@ -87,7 +87,7 @@ export default {
   },
   data() {
     return {
-      show: true
+      show: false
     }
   },
   watch: {
@@ -110,6 +110,7 @@ export default {
     elx.remove()
   },
   created: function() {
+    this.$emit('showOrHide', this.show)
   },
   methods: {
     addEventClick() {
@@ -202,6 +203,9 @@ export default {
     // @include media-breakpoint-down(md) {
     //   transform: translate(0);
     // }
+  }
+  .handle-button {
+    display: none;
   }
 }
 

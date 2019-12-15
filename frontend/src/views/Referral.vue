@@ -7,7 +7,7 @@
           <span class="description">Invite your friends and earn money</span>
         </div>
         <b-row class="ml-1 top-bar" />
-        <b-row class="ml-1 top-content">
+        <b-row class="ml-1 top-content m-b">
           <b-col sm="12" md="6" lg="4" xl="4" class="manual">
             <img src="@/assets/img/referral_1.png">
             <div class="p-15">
@@ -33,7 +33,7 @@
             </div>
           </b-col>
         </b-row>
-        <b-row class="mt-4 w-100">
+        <b-row class="w-100 m-b">
           <b-col sm="12" md="12" lg="12" xl="12">
             <bit-crash-card :body-style="1" :no-header="true" class="link-content">
               <b-row>
@@ -78,8 +78,8 @@
             </bit-crash-card>
           </b-col>
         </b-row>
-        <b-row class="mt-4 w-100">
-          <b-col sm="12" md="5" lg="5" xl="5">
+        <b-row class="w-100" cl>
+          <b-col sm="12" md="5" lg="5" xl="5" class="m-b">
             <bit-crash-card :body-style="1" :no-header="true" class="link-content">
               <b-row>
                 <b-col sm="12" md="12" lg="12" xl="12">
@@ -93,7 +93,7 @@
               </b-row>
             </bit-crash-card>
           </b-col>
-          <b-col sm="12" md="7" lg="7" xl="7">
+          <b-col sm="12" md="7" lg="7" xl="7" class="m-b">
             <bit-crash-card :body-style="1" :no-header="true" class="link-content h-100">
               <b-row>
                 <b-col sm="12" md="12" lg="12" xl="12">
@@ -119,7 +119,7 @@
             </bit-crash-card>
           </b-col>
         </b-row>
-        <b-row class="mt-4 ml-1 w-100">
+        <b-row class="m-b ml-1 w-100">
           <b-col sm="12" md="9" lg="9" xl="9">
             <h4>Groups</h4>
           </b-col>
@@ -129,7 +129,7 @@
             </div>
           </b-col>
         </b-row>
-        <b-row class="mt-4 w-100">
+        <b-row class="m-b w-100">
           <b-col sm="12" md="12" lg="12" xl="12">
             <bit-crash-card :body-style="0" :no-header="false" class="link-content">
               <div slot="header" class="card-header flex-space-between-vc">
@@ -209,10 +209,10 @@
             </bit-crash-card>
           </b-col>
         </b-row>
-        <b-row class="mt-4 w-100">
+        <b-row class="m-b w-100">
           <crash-button text="CREATE GROUP" :disabled="false" class="m-auto" />
         </b-row>
-        <b-row class="mt-4 w-100">
+        <b-row class="m-b w-100">
           <b-col sm="12" md="12" lg="12" xl="12">
             <bit-crash-card :body-style="0" :no-header="false" class="link-content">
               <div slot="header" class="card-header flex-space-between-vc all-bets">
@@ -226,7 +226,7 @@
             </bit-crash-card>
           </b-col>
         </b-row>
-        <b-row class="mt-4 w-100">
+        <b-row class="m-b w-100">
           <crash-button text="Get Banners" :disabled="false" class="m-auto" />
         </b-row>
       </b-row>
@@ -379,12 +379,12 @@ export default {
   background: linear-gradient(90deg, #28335e, #28335e);
 }
 .content-padding {
-  padding-left: 250px;
-  padding-top: 60px;
-  padding-right: calc(250px + #{$chat-width});
-  padding-bottom: 250px;
+  padding-left: 50px;
+  padding-top: 50px;
+  padding-right: calc(50px + #{$chat-width});
+  padding-bottom: 50px;
   @include media-breakpoint-down(md) {
-    padding-right: 20px;
+    padding-right: 50px;
     padding-left: 50px;
   }
 }
@@ -436,5 +436,8 @@ export default {
   & :hover {
     border: none;
   }
+}
+.m-b {
+  margin-bottom: $normal-margin-bottom-lg;
 }
 </style>

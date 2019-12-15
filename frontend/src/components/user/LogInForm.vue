@@ -45,12 +45,14 @@ export default {
           loader: 'bars',
           color: '#3f48cc'
         })
+        this.loading = true
         this.form['token'] = ''
         this.$store
           .dispatch('user/login', this.form)
           .then(() => {
             // this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
             this.$store.dispatch('user/getInfo', this.token)
+            this.loading = false
             this.$bvModal.hide('login-form')
             this.$toast.error({
               title: 'Login Success',
@@ -76,6 +78,7 @@ export default {
               hideDuration: 6000
             })
             loader.hide()
+            this.loading = false
           })
       } else {
         console.log('error submit!!')
