@@ -30,3 +30,19 @@ export function signup(data) {
     data
   })
 }
+
+export function fetchList(data) {
+  return request({
+    url: 'api/user/list',
+    method: 'post',
+    data
+  })
+}
+
+export function updateUser(data) {
+  return request({
+    url: 'api/user/update',
+    method: 'post',
+    data
+  })
+}

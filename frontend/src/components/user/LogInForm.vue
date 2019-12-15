@@ -60,7 +60,7 @@ export default {
               progressBar: true,
               color: '#51A351',
               showDuration: 4000,
-              hideDuration: 3000
+              hideDuration: 6000
             })
             loader.hide()
           })
@@ -73,7 +73,7 @@ export default {
               progressBar: true,
               color: '#BE2739',
               showDuration: 4000,
-              hideDuration: 3000
+              hideDuration: 6000
             })
             loader.hide()
           })

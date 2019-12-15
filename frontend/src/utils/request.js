@@ -2,12 +2,11 @@ import axios from 'axios'
 // import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
+import config from '@/config'
 
 // create an axios instance
 const service = axios.create({
-  // baseURL: 'http://localhost:3000/',
-  // server
-  baseURL: 'http://45.76.180.140:3001/',
+  baseURL: 'http://' + config.base_domain + ':' + config.main_port + '/', // process.env.VUE_APP_BASE_API,
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 5000 // request timeout
 })

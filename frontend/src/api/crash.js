@@ -1,1 +1,17 @@
+import request from '@/utils/request'
 
+export function game_log(data) {
+  return request({
+    url: 'api/crash/game_log',
+    method: 'post',
+    data
+  })
+}
+
+export function getHistoryList(data) {
+  return request({
+    url: 'api/crash/history',
+    method: 'post',
+    data
+  })
+}

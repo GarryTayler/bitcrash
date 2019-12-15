@@ -3,7 +3,7 @@ var db = require('./../../utils/database');
 var dateFormat = require('dateformat');
 var userModel = require('./user');
 
-var bust_game = function (gameInfo, curTime) {
+var bust_game = function (gameInfo) {
     // set game busted ---> because it has bust alrady
     var bustedBets = []
     db.cmd(db.statement('update', 'crash_game_total', "set " + db.lineClause(
@@ -13,7 +13,7 @@ var bust_game = function (gameInfo, curTime) {
         },
         {
             key: "BUSTEDTIME",
-            val: curTime
+            val: dateFormat(new Date(), "yyyy-mm-dd hh:MM:ss")
         }], ","), db.itemClause("ID", gameInfo.ID)))
 
     // updated users table ---
@@ -99,7 +99,7 @@ var start_game = function (gameInfo, bust) {
         },
         {
             key: "STARTTIME",
-            val: dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss")
+            val: dateFormat(new Date(), "yyyy-mm-dd hh:MM:ss") // Date.now()
         }
     ], ","), db.itemClause("ID", gameInfo.ID)))
     return next_game()
@@ -119,7 +119,7 @@ var next_game = function () {
             maxGameNo = db.convInt(maxGameNos[0].GAMENO) == 0 ? 1 : (db.convInt(maxGameNos[0].GAMENO) + 1)
         }
         db.cmd(db.statement("insert into", "crash_game_total", "(GAMENO, REGTIME)", '',
-            'VALUES (' + maxGameNo + ',' + "'" + dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss") + "'" + ')'))
+            'VALUES (' + maxGameNo + ',' + "'" + dateFormat(new Date(), "yyyy-mm-dd hh:MM:ss") + "'" + ')'))
         return maxGameNo
     })
     // $maxGameNo = $this -> db -> select('max(GAMENO) GAMENO') -> from('crash_game_total') -> get() -> row();
@@ -131,7 +131,7 @@ var next_game = function () {
     // return $maxGameNo;
 }
 
-var make_bet = function (gameNo, userID, betAmount, curTime) {
+var make_bet = function (gameNo, userID, betAmount) {
     var retData = null
     return userModel.bet_available(userID, betAmount).then((userCheckResult) => {
         if (userCheckResult != 'success') {
@@ -150,7 +150,7 @@ var make_bet = function (gameNo, userID, betAmount, curTime) {
 
         db.cmd(db.statement("insert into", "crash_game_log",
             "(CREATE_TIME, GAMENO, USERID, IS_BOT, BET_AMOUNT)", '',
-            'VALUES(' + curTime + ',' + gameNo + ',' + userId + ',' + 0 + ',' + betAmount + ')'), true)
+            'VALUES(' + "'" + dateFormat(new Date(), "yyyy-mm-dd hh:MM:ss") + "'" + ',' + gameNo + ',' + userId + ',' + 0 + ',' + betAmount + ')'), true)
         userModel.new_bet(userID, betAmount)
         return 'success'
     })
@@ -179,7 +179,7 @@ var make_bet = function (gameNo, userID, betAmount, curTime) {
     // return 'success';
 }
 
-var bet = function (userID, betAmount, gameNo, isBot, curTime) {
+var bet = function (userID, betAmount, gameNo, isBot) {
     var userInfo = []
     var retData = null
     return db.list(db.statement("select * from", "crash_game_total", '', db.itemClause("GAMENO", gameNo)), true).then((rows) => {
@@ -228,7 +228,8 @@ var bet = function (userID, betAmount, gameNo, isBot, curTime) {
             ], ","), db.itemClause('ID', userID)), true)
         }
         var str = ''
-        str += "VALUES (" + "'" + curTime + "'," + gameNo + "," + userID + "," + (isBot ? '1' : '0') + ",0" + "," + betAmount + ")"
+        str += "VALUES (" + "'" + dateFormat(new Date(), "yyyy-mm-dd hh:MM:ss") + "'" + "," + gameNo + "," + userID + "," + (isBot ? '1' : '0') + ",0" + "," + betAmount + ")"
+        console.log("Log: " + str)
         db.cmd(db.statement("insert into", "crash_game_log",
             "(CREATE_TIME, GAMENO, USERID, IS_BOT, CASHOUTRATE, BET_AMOUNT)", '',
             str), true)
@@ -369,7 +370,10 @@ var cashout = function (userID, gameNo, cashRate, isBot) {
             }
             return retData
         }
+        console.log("cashRate: " + cashRate)
         var cashout = db.convFloat(betInfo[0].BET_AMOUNT) * cashRate
+        console.log("BET_AMOUNT: " + betInfo[0].BET_AMOUNT)
+        console.log("cashOut: " + cashout)
         db.cmd(db.statement("update", "crash_game_log", "set " + db.lineClause([
             {
                 key: 'CASHOUTRATE',
@@ -512,7 +516,7 @@ var game_start = function (gameNo, gameBust) {
     //     )
     // );
 }
-var game_bust = function (gameNo, curTime) {
+var game_bust = function (gameNo) {
     var gameInfo = []
 
     return db.list(db.statement("select * from", "crash_game_total", "", db.itemClause('GAMENO', gameNo)), true).then((_gameInfo) => {
@@ -524,7 +528,7 @@ var game_bust = function (gameNo, curTime) {
                 data: null
             }
         }
-        bust_game(gameInfo[0], curTime)
+        bust_game(gameInfo[0])
         return {
             status: true,
             error: '',
@@ -544,7 +548,7 @@ var game_bust = function (gameNo, curTime) {
 
     // $this->load_json(array('status' => true));
 }
-var game_init = function (curTime) {
+var game_init = function () {
     var waitingGame = []
     var bots = []
     var game_player_list = []
@@ -581,7 +585,7 @@ var game_init = function (curTime) {
             return retData
         }
         if (startedGame != null && startedGame.length > 0) {
-            bust_game(startedGame, curTime)
+            bust_game(startedGame)
         }
         return next_game()
     }).then((next_game_no) => {
@@ -643,7 +647,7 @@ var get_profit_rate = function () {
         }
     })
 }
-var game_finish_start = function (gameNo, gameBust, curTime) {
+var game_finish_start = function (gameNo, gameBust) {
     var retData = null
     var gameInfo = []
     return db.list(db.statement("select * from", "crash_game_total", "", db.itemClause('GAMENO', gameNo)), true).then((_gameInfo) => {
@@ -661,7 +665,7 @@ var game_finish_start = function (gameNo, gameBust, curTime) {
         if (retData != null) {
             return retData
         }
-        bust_game(gameInfo[0], curTime)
+        bust_game(gameInfo[0])
         return {
             status: true,
             error: '',
@@ -685,6 +689,45 @@ var game_finish_start = function (gameNo, gameBust, curTime) {
 
     // $this->load_json(array('status' => true, 'next_game_no' => $nextGameNo));
 }
+var game_log = function (limit) {
+    return db.list(db.statement("select * from", "crash_game_total", "", db.itemClause('STATE', 'BUSTED'), 'ORDER BY ID DESC LIMIT 0, ' + limit), true).then((gameInfo) => {
+        return gameInfo
+    })
+}
+var getHistory = function(id, start_date, end_date, page, limit) {
+    var whereItems = []
+    if (id !== undefined && isNaN(parseInt(id)) == false && parseInt(id) >= 0) {
+        whereItems.push({
+            key: "ID",
+            val: parseInt(id)
+        })
+    } else {
+        if (start_date !== undefined && start_date != null && start_date !== '') {
+            if (end_date !== undefined && end_date != null && end_date !== '') {
+                whereItems.push({
+                    key: "REGTIME",
+                    val: start_date + " 00:00:00",
+                    opt: ">="
+                })
+                whereItems.push({
+                    key: "REGTIME",
+                    val: end_date + " 23:59:59",
+                    opt: "<="
+                })
+            }
+        }
+    }
+    var total = 0
+    return db.list(db.statement("select count(*) as total from", "crash_game_total", '', whereItems.length > 0 ? db.lineClause(whereItems, 'and') : '', ''), true).then((rows) => {
+        total = rows[0].total
+        return db.list(db.statement("select * from", "crash_game_total", "", whereItems.length > 0 ? db.lineClause(whereItems, 'and') : '', 'ORDER BY ID ASC LIMIT ' + (page - 1) * limit + ',' + (page * limit)), true)
+    }).then((rows) => {
+        return {
+            total: total,
+            items: rows
+        }
+    })
+}
 var crashModel = {
     bust_game: bust_game,
     start_game: start_game,
@@ -697,7 +740,9 @@ var crashModel = {
     game_bust: game_bust,
     game_init: game_init,
     get_profit_rate: get_profit_rate,
-    game_finish_start: game_finish_start
+    game_finish_start: game_finish_start,
+    game_log: game_log,
+    getHistory: getHistory
 }
 
 module.exports = crashModel

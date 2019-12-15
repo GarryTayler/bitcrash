@@ -1,5 +1,5 @@
 <template>
-  <div class="root content-padding" :class="{'with-menu': menu}">
+  <div class="root content-padding">
     <b-row align-v="start">
       <b-col v-for="item in pay_types" :key="item" sm="12" md="6" lg="3" xl="3" class="m-b flex-row-hc-vc">
         <pay-btn :type="item" @click="payClick(item)" />
@@ -166,7 +166,7 @@
         </bit-crash-card>
       </div>
     </b-row>
-    <menu-bar @showOrHide="menuShowed" />
+    <!-- <menu-bar @showOrHide="menuShowed"></menu-bar> -->
   </div>
 </template>
 
@@ -177,7 +177,7 @@ import DepositBtn from '@/components/deposit/DepositBtn.vue'
 // import { getNumberFormat, getFloat2Decimal } from '@/utils'
 import PayBtn from '@/components/deposit/PayBtn'
 import ChatInputBox from '@/components/chat/ChatInputBox'
-import MenuBar from '@/components/deposit/Menu'
+// import MenuBar from '@/components/deposit/Menu'
 
 export default {
   name: 'Home',
@@ -185,8 +185,8 @@ export default {
     BitCrashCard,
     PayBtn,
     DepositBtn,
-    ChatInputBox,
-    MenuBar
+    ChatInputBox
+    // MenuBar
   },
   computed: {
     ...mapGetters([
@@ -206,17 +206,17 @@ export default {
   },
   data() {
     return {
-      menu: true
+    //   menu: true
     }
   },
   created: function() {
   },
   methods: {
     payClick(type) {
-    },
-    menuShowed(show) {
-      this.menu = show
     }
+    // menuShowed(show) {
+    //   this.menu = show
+    // }
   }
 }
 </script>
@@ -238,6 +238,9 @@ export default {
   padding-bottom: 50px;
 }
 .with-menu {
+  @include media-breakpoint-down(md) {
+    padding-left: 50px;
+  }
   padding-left: calc(50px + #{$menu-width});
 }
 .m-b {

@@ -20,9 +20,12 @@ export function parseTime(time, cFormat) {
     if ((typeof time === 'string') && (/^[0-9]+$/.test(time))) {
       time = parseInt(time)
     }
-    if ((typeof time === 'number') && (time.toString().length === 10)) {
+    if ((typeof time === 'number')) {
       time = time * 1000
     }
+    // if ((typeof time === 'number') && (time.toString().length === 10)) {
+    //   time = time * 1000
+    // }
     date = new Date(time)
   }
   const formatObj = {

@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
-var userModel = require('./model/user');
+
+var model = require('./model/user');
 router.post('/login', function (req, res) {
   const { search_key, password, token } = req.body
   var data = {}
@@ -14,7 +15,8 @@ router.post('/login', function (req, res) {
       password: password
     }
   }
-  userModel.getUserInfo(data, function (rows) {
+  console.log(token)
+  model.getUserInfo(data, function (rows) {
     var token = null
     if(rows.length < 1) {
       return res.json({
@@ -44,7 +46,10 @@ router.post('/login', function (req, res) {
 
 router.post('/info', function (req, res) {
   const { token } = req.body
-  userModel.getUserInfo({ token: token }, function (rows) {
+
+  console.log(token)
+  model.getUserInfo({ token: token }, function (rows) {
+    console.log(rows)
     if(rows.length < 1 || rows[0]['STATE'] != 0) {
       return res.json({
         code: 50008,
@@ -61,7 +66,7 @@ router.post('/info', function (req, res) {
 router.post('/signup', async function (req, res) {
   const { username, email, password } = req.body
 
-  var ret = await userModel.signup({ username: username, email: email, password: password })
+  var ret = await model.signup({ username: username, email: email, password: password })
   if (ret.code == false) {
     return res.json({
       code: 50000,
@@ -82,6 +87,26 @@ router.post('/logout', function (req, res) {
     code: 20000,
     data: ''
   });
+});
+router.post('/list', async function (req, res) {
+  const { search_key, page, limit } = req.body
+
+  console.log(search_key)
+  var i_page = isNaN(parseInt(page)) ? 1 : parseInt(page)
+  var i_limit = isNaN(parseInt(limit)) ? 1 : parseInt(limit)
+  var data = await model.getList(search_key, i_page, i_limit)
+  return res.json({
+      code: 20000,
+      data: data
+  })
+});
+router.post('/update', function (req, res) {
+  var ret = model.update(req.body)
+  return res.json({
+      code: ret ? 20000 : 60000,
+      message: ret ? '' : 'Error',
+      data: null
+  })
 });
 
 module.exports = router;

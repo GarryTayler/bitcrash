@@ -1,4 +1,5 @@
 import Cookies from 'js-cookie'
+import config from '@/config'
 
 const state = {
   sidebar: {
@@ -7,12 +8,9 @@ const state = {
   },
   device: 'desktop',
   size: Cookies.get('size') || 'medium',
-  // crash_server_url: 'http://localhost:4202',
-  // server
-  crash_server_url: 'http://45.76.180.140:4202',
-  // chat_server_url: 'http://localhost:4204',
-  // server
-  chat_server_url: 'http://45.76.180.140:4204',
+  base_domain: 'localhost',
+  crash_server_url: 'http://' + config.base_domain + ':' + config.crash_port,
+  chat_server_url: 'http://' + config.base_domain + ':' + config.chat_port,
   crash_chat: 'crash_chat'
 }
 

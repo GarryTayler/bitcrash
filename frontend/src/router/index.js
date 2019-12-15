@@ -3,7 +3,10 @@ import VueRouter from 'vue-router'
 
 Vue.use(VueRouter)
 
-const routes = [
+/* Admin Layout */
+import AdminLayout from '@/layouts/AdminMain'
+
+export const constantRoutes = [
   {
     path: '/',
     component: () => import('../layouts/Main.vue'),
@@ -11,20 +14,120 @@ const routes = [
       { path: '/', redirect: '/home' },
       {
         path: '/home',
-        component: () => import('../views/Home.vue')
+        component: () => import('../views/Home.vue'),
+        meta: { title: 'Crash' }
       },
       {
         path: '/deposit',
-        component: () => import('../views/deposit.vue')
+        component: () => import('../views/deposit.vue'),
+        meta: { title: 'Deposit' }
       },
       {
         path: '/referral',
-        component: () => import('../views/Referral.vue')
+        component: () => import('../views/Referral.vue'),
+        meta: { title: 'Referral' }
       }
     ]
+  },
+  {
+    path: '/login',
+    component: () => import('@/views/admin/login/index'),
+    hidden: true
   }
 ]
-
+export const adminChildRoutes = [
+  {
+    path: 'dashboard',
+    component: () => import('@/views/admin/dashboard/index'),
+    name: 'Dashboard',
+    meta: {
+      title: 'Dashboard',
+      icon: 'dashboard'
+    }
+  },
+  {
+    path: 'users',
+    component: () => import('@/views/admin/users'),
+    name: 'Users',
+    meta: {
+      title: 'Users',
+      icon: 'user'
+    }
+  },
+  {
+    path: 'bot',
+    component: () => import('@/views/admin/bot'),
+    name: 'Bot',
+    meta: {
+      title: 'Bot',
+      icon: 'peoples'
+    }
+  },
+  {
+    path: 'wallet',
+    component: () => import('@/views/admin/wallet/index'), // Parent router-view
+    name: 'Wallet',
+    meta: { title: 'Wallet', icon: 'money' },
+    redirect: '/admin/wallet/deposit',
+    children: [
+      {
+        path: 'deposit',
+        component: () => import('@/views/admin/wallet/deposit'),
+        name: 'Deposit',
+        meta: {
+          title: 'Deposit'
+        }
+      },
+      {
+        path: 'withdraw',
+        component: () => import('@/views/admin/wallet/withdraw'),
+        name: 'Withdraw',
+        meta: {
+          title: 'Withdraw'
+        }
+      }
+    ]
+  },
+  {
+    path: 'crash',
+    component: () => import('@/views/admin/crash/index'), // Parent router-view
+    name: 'Crash',
+    meta: { title: 'Crash', icon: 'star' },
+    redirect: '/admin/crash/gamehistory',
+    children: [
+      {
+        path: 'gamehistory',
+        component: () => import('@/views/admin/crash/gamehistory'),
+        name: 'GameHistory',
+        meta: {
+          title: 'GameHistory'
+        }
+      }
+    ]
+  },
+  {
+    path: 'faq',
+    component: () => import('@/views/admin/faq'),
+    name: 'Faq',
+    meta: {
+      title: 'Faq',
+      icon: 'documentation'
+    }
+  }
+]
+export const adminRoutes = [
+  {
+    path: '/admin',
+    component: AdminLayout,
+    redirect: '/admin/dashboard',
+    alwaysShow: true,
+    name: 'Admin',
+    meta: {
+      title: 'Admin'
+    },
+    children: adminChildRoutes
+  }
+]
 // const router = new VueRouter({
 //   mode: 'history',
 //   base: process.env.BASE_URL,
@@ -36,24 +139,10 @@ const createRouter = () => new VueRouter({
   // routes: constantRoutes
   mode: 'hash',
   base: process.env.BASE_URL,
-  routes
+  routes: constantRoutes.concat(adminRoutes)
 })
 
 const router = createRouter()
-
-router.beforeResolve((to, from, next) => {
-  // If this isn't an initial page load.
-  // eslint-disable-next-line no-undef
-  NProgress.start()
-  next()
-})
-
-// eslint-disable-next-line no-unused-vars
-router.afterEach((to, from) => {
-  // Complete the animation of the route progress bar.
-  // eslint-disable-next-line no-undef
-  NProgress.done()
-})
 
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {

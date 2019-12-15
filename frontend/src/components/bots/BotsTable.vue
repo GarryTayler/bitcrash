@@ -52,7 +52,7 @@ export default {
         sum += this.items[i].bet * (this.type === 0 ? 1 : (this.items[i].option === undefined ? 1 : this.items[i].option / 100))
       }
 
-      return getFloat2Decimal(sum)
+      return parseFloat(getFloat2Decimal(sum))
     }
   }
 }

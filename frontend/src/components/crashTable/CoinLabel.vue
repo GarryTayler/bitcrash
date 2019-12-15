@@ -1,6 +1,6 @@
 <template>
   <div class="flex-row-hl-vc">
-    <img src="@/assets/img/avatar_mark.png" class="p-r-10 coin_img">
+    <img src="@/assets/img/avatar_mark.png" class="p-r-10">
     {{ bet }}
   </div>
 </template>
@@ -11,8 +11,8 @@ export default {
   components: {},
   props: {
     bet: {
-      type: String,
-      default: ''
+      type: Number,
+      default: 0
     }
   }
 }

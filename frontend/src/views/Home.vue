@@ -4,14 +4,21 @@
       <b-row align-v="start" class="flex1 content-padding main-content">
         <b-col sm="12" md="4" lg="4" xl="4" class="p-none m-b">
           <bots-table :type="0" :fields="bots_tbl_fields" :items="current_users" class="m-b" />
-          <bots-table :type="1" :fields="bots_tbl_fields" :items="cashout_list" />
+          <bots-table :type="1" :fields="bots_cashout_tbl_fields" :items="cashout_list" />
         </b-col>
         <b-col sm="12" md="8" lg="8" xl="8" class="p-none p-l">
           <bit-crash-card class="m-b">
             <div slot="header" class="card-header">
-              <div class="flex-space-between-vc" style="overflow: hidden">
-                <crash-header-item v-for="element in headerList" :key="element.id" :data="element" />
-              </div>
+              <b-row align-v="center">
+                <b-col v-for="element in headerList" :key="element.id" class="c_col2" style="padding-left: 0px !important; padding-right: 0px !important;">
+                  <div>
+                    <crash-header-item :data="element" />
+                  </div>
+                </b-col>
+              </b-row>
+              <!-- <div class="flex-space-between-vc" style="overflow: hidden">
+                  <crash-header-item v-for="element in headerList" :key="element.id" :data="element"></crash-header-item>
+                </div> -->
             </div>
             <div class="card-content">
               <b-row>
@@ -71,6 +78,8 @@ import CrashGraph from '@/components/main/CrashGraph.vue'
 import io from 'socket.io-client/dist/socket.io.js'
 // import { getNumberFormat, showToast } from '@/utils'
 import { getNumberFormat, getFloat2Decimal } from '@/utils'
+import { game_log } from '@/api/crash'
+
 export default {
   name: 'Home',
   components: {
@@ -153,6 +162,26 @@ export default {
           key: 'bet'
         }
       ],
+      bots_cashout_tbl_fields: [
+        {
+          id: 1,
+          label: 'Username',
+          type: 'profile',
+          key: 'show_user'
+        },
+        {
+          id: 2,
+          label: '@',
+          type: 'text',
+          key: 'cashout'
+        },
+        {
+          id: 3,
+          label: 'Profit',
+          type: 'text',
+          key: 'option'
+        }
+      ],
       all_tbl_fields: [
         {
           id: 1,
@@ -233,7 +262,7 @@ export default {
         case 'ReloadPlayers':
           console.log('ReloadPlayers')
           self.reload(data)
-          self.addHistory(data)
+          // self.addHistory(data)
           // recalc bet_sum, cashout_sum, and add count-up/down animation ...
           break
         case 'WaitGame':
@@ -300,6 +329,7 @@ export default {
       // stop game
       self.stop()
     })
+    this.updateHistory(null)
   },
   methods: {
     scaleItemClick(item) {
@@ -335,7 +365,39 @@ export default {
         default:
       }
     },
-
+    updateHistory(data) {
+      game_log({ limit: 6 }).then(response => {
+        this.headerList = []
+        const { data } = response
+        for (var i = 0; i < data.length; i++) {
+          this.headerList.push(
+            {
+              id: data[i].GAMENO,
+              scale: getFloat2Decimal(data[i].BUST / 100),
+              val: data[i].GAMENO,
+              type: ((getFloat2Decimal(data[i].BUST / 100) > 2.5) ? 1 : 0),
+              is_active: true
+            }
+          )
+        }
+      })
+      // if (data.crash !== undefined && data.crash && data.game_no !== undefined && data.game_no) {
+      //   var crash = isNaN(parseFloat(data.crash)) ? 0 : parseFloat(data.crash)
+      //   var game_no = isNaN(parseFloat(data.game_no)) ? 0 : parseFloat(data.game_no)
+      //   if (this.headerList.length === 4) {
+      //     this.headerList.shift()
+      //   }
+      //   this.headerList.push(
+      //     {
+      //       id: game_no,
+      //       scale: getFloat2Decimal(crash / 100),
+      //       val: game_no,
+      //       type: 0,
+      //       is_active: true
+      //     }
+      //   )
+      // }
+    },
     do_action() {
       if (!this.is_logged_in) return
       if (this.bet_temp > 0) this.bet_temp = 0
@@ -482,6 +544,7 @@ export default {
       this.sendEvent('game-finished', { crash: this.tick })
       this.update_btn()
 
+      this.updateHistory(data)
       // $('title').html('Crashed at ' + this.tick / 100 + 'x - Crash | Tarobet')
     },
     start(data) {
@@ -539,22 +602,6 @@ export default {
         data['profit'] = isNaN(parseFloat(list[index].option)) ? '-' : getFloat2Decimal((parseFloat(list[index].option) / 100 - 1) * data.mybet)
         this.all_tbl_items.push(data)
       }
-    },
-    addHistory(data) {
-      if (data.cur_cashout !== undefined && data.cur_cashout != null && data.cur_cashout.user_id === this.user_id) {
-        var bet = isNaN(parseFloat(data.cur_cashout.bet)) ? 0 : parseFloat(data.cur_cashout.bet)
-        var option = isNaN(parseFloat(data.cur_cashout.option)) ? 0 : parseFloat(data.cur_cashout.option)
-
-        this.headerList.push(
-          {
-            id: this.headerList.length,
-            scale: getFloat2Decimal(option / 100),
-            val: getFloat2Decimal(bet / 100 * option),
-            type: 0,
-            is_active: true
-          }
-        )
-      }
     }
   }
 }
@@ -604,4 +651,45 @@ export default {
 .all-bets {
   color: white;
 }
+
+@media (min-width: 1700px)
+{
+  .c_col2 {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 16.66667%;
+    flex: 0 0 16.66667%;
+    max-width: 16.66667%;
+  }
+}
+
+@media (min-width: 1270px) and (max-width: 1700px)
+{
+  .c_col2 {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 25%;
+    flex: 0 0 25%;
+    max-width: 25%;
+  }
+}
+
+@media (min-width: 1120px) and (max-width: 1310px)
+{
+  .c_col2 {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 33.3%;
+    flex: 0 0 33.3%;
+    max-width: 33.3%;
+  }
+}
+
+@media (max-width: 1120px)
+{
+  .c_col2 {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 50%;
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
+
 </style>

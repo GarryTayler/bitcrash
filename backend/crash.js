@@ -90,6 +90,7 @@ function generateBustValue(currentHash)
 {
 	currentHash = genGameHash(currentHash);   
 	finalBust = Math.floor(gameResult(clientSeed , currentHash) * 100);
+
 	return {"hash": currentHash ,  "crash": finalBust};  
 }
 
@@ -273,6 +274,7 @@ io.on('connection', function(socket){
                 socket.emit('onMessage' , obj);
                 break;
             default:
+                console.log('unknown code', data.code);
                 break;
         }
     });
@@ -380,6 +382,7 @@ function startGame() {
 		);
 		return;
 	}
+
 	request.post(
 		{
 			url: mainServerUrl + "game_start",
@@ -404,6 +407,7 @@ function startGame() {
 					startTime = Date.now();
 					firstTimerHandler = setInterval(intervalFunc, timeInterval);
 				} , 200);
+				
 				io.emit('onMessage',
 					{
 						code: 'GameStart',
@@ -496,7 +500,8 @@ function intervalFunc()
 				io.emit('onMessage',
 					{
 						code: 'GameCrash',
-						crash: crash
+						crash: crash,
+						game_no: gameId
 					}
 				);
 			} 
@@ -541,6 +546,7 @@ function waitGame() {
 		startGame();
 	}, 5000);
 }
+
 //For wait time synchronize
 function sendWaitTime() {
 	wait_time_left -= 500;

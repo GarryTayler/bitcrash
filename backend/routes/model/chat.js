@@ -4,17 +4,8 @@ var dateFormat = require('dateformat');
 var add = function(data) {
     var statement = db.statement("insert into", "chats", "(CHAT_TYPE, CREATE_TIME, UPDATE_TIME, MSG, IPADDRESS, USERID)", "", 
     "VALUES (" + "'" + data.CHAT_TYPE + "'" + "," + "'" + data.CREATE_TIME + "'" + "," + "'" + data.UPDATE_TIME + "'" + "," + "'" + data.MSG + "'" + "," + "'" + data.IPADDRESS + "'" + "," + data.USERID + ")")
+    console.log(statement)
     db.cmd(statement)
-    // $insert_data = array(
-    //     'CHAT_TYPE' => $_POST['type'] ,
-    //     'CREATE_TIME' => $curtime ,
-    //     'UPDATE_TIME' => $curtime ,
-    //     'MSG' => $_POST['msg'],
-    //     'IPADDRESS' => $this->input->ip_address(),
-    //     'USERID' => $this->session->userdata('USERID')
-    // );
-
-    // $this->db->insert('chats' , $insert_data);
 }
 var list = function (chat_type) {
     return db.list(db.statement("select chats.ID as id, chats.USERID as user_id, chats.CREATE_TIME, chats.MSG as message, users.USERNAME as user, users.AVATAR_SMALL as avatar from", "chats", 
@@ -36,7 +27,6 @@ var list = function (chat_type) {
         ], "and"), ""), true).then((chatItems) => {
             return chatItems
     })
-    
     // $current_date = getCurrentTimeStamp();
 
     // $this->db->select("chats.CREATE_TIME , chats.MSG , users.USERNAME , users.AVATAR_SMALL as AVATAR");

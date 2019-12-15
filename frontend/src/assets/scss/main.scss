@@ -7,22 +7,25 @@
 @import "./deposit";
 @import "./graph";
 @import "./flex";
+@import "./element-ui.scss";
+@import './admin_variables.scss';
+@import './_sidebar.scss';
 
 body {
   position: relative;
   font-family: OpenSans;
-
-  &:before {
-    content: " ";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: $main-bg-color;//url(../img/background.jpg);
-    opacity: 0.5;
-    z-index: -10;
-  }
+  background-color: #1e2742;
+  // &:before {
+  //   content: " ";
+  //   position: absolute;
+  //   top: 0;
+  //   left: 0;
+  //   width: 100%;
+  //   height: 100%;
+  //   background: $main-bg-color;//url(../img/background.jpg);
+  //   opacity: 0.5;
+  //   z-index: -10;
+  // }
 }
 
 .app-container {
@@ -182,7 +185,7 @@ body {
     display: inline-flex;
 
     li {
-      font-family: OpenSans;
+      font-family: Avenir-Heavy;
       font-size: 0.7vw;
       padding: 0.75vw 1vw;
       max-width: 100vw;
@@ -221,7 +224,7 @@ body {
   }
 
   .content {
-    font-family: OpenSans;
+    font-family: Avenir-Heavy;
     @include media-breakpoint-down(md) {
       flex-direction: column;
     }
@@ -311,7 +314,7 @@ body {
 }
 
 .contact-us {
-  font-family: OpenSans;
+  font-family: Avenir-Black;
   font-size: 1.08vw;
   padding: 10px 25px;
 
@@ -481,11 +484,7 @@ body {
   }
 }
 
-.coin_img {
-  width: 30px;
-}
-
 .vld-overlay.is-full-page {
-  z-index: 10001 !important;
-  position: fixed
+  z-index: 10000;
+  position: fixed;
 }

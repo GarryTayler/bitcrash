@@ -6,6 +6,10 @@ var logger = require('morgan');
 var userRouter = require('./routes/user');
 var crashRouter = require('./routes/crash');
 var chatRouter = require('./routes/chat');
+var adminUserRouter = require('./routes/admin_user');
+var dashboardRouter = require('./routes/dashboard');
+var botRouter = require('./routes/bot');
+var faqRouter = require('./routes/faq');
 
 // require('./src/game/crash');
 
@@ -39,6 +43,10 @@ app.use(function (req, res, next) {
 app.use('/api/user', userRouter);
 app.use('/api/crash', crashRouter);
 app.use('/api/chat', chatRouter);
+app.use('/api/admin_user', adminUserRouter);
+app.use('/api/dashboard', dashboardRouter);
+app.use('/api/bot', botRouter);
+app.use('/api/faq', faqRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

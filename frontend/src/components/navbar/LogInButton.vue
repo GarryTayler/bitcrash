@@ -1,6 +1,6 @@
 <template>
   <div class="root">
-    <div class="bg flex-row-hc-vc" @click="btnClick">
+    <div class="bg flex-row-hc-vc" :class="{'is-medium': size }" @click="btnClick">
       <span class="text">{{ text }}</span>
     </div>
   </div>
@@ -16,6 +16,10 @@ export default {
     text: {
       type: String,
       default: 'LogIn'
+    },
+    size: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {
@@ -53,5 +57,8 @@ export default {
     color: white;
     font-weight: bold;
   }
+}
+.is-medium {
+  height: 40px !important;
 }
 </style>

@@ -1,7 +1,7 @@
-//var MD5 = require('md5.js');
 var md5 = require('md5');
 var db = require('./../../utils/database');
 var rn = require('random-number');
+var dateFormat = require('dateformat');
 
 var bet_available = function (userID, betAmount) {
     return db.list(db.statement("select * from", "users", '', db.itemClause('ID', userID)), true).then((userInfo) => {
@@ -85,7 +85,7 @@ var win_game = function (
     //     ->update('users');
 }
 var getUserInfo = function (query, callback) {
-    var pwdStr = ''
+    var pwdStr = '';
     /*if (query.password != undefined) {
         var md5stream = new MD5()
         md5stream.end(query.password)
@@ -123,6 +123,7 @@ var getUserInfo = function (query, callback) {
         return;
     }
     sql = sql + (whereClause == '' ? '' : ' where ' + whereClause)
+    console.log(sql)
     db.con.query(sql, function (err, rows, fields) {
         if (err) {
             if (callback != null) {
@@ -130,6 +131,7 @@ var getUserInfo = function (query, callback) {
             }
             throw err
         }
+        console.log(rows)
         callback(rows)
     });
 }
@@ -143,7 +145,7 @@ var generateRandomString = function (length = 25) {
         , max: charactersLength - 1
         , integer: true
     }
-    
+
     for (var i = 0; i < length; i++) {
         randomString += characters[rn(options)];
     }
@@ -171,17 +173,20 @@ var signup = function (data) {
         }
         var token = generateRandomString()
 
-        var pwdStr = ""
+        var pwdStr = "";
         /*var md5stream = new MD5()
         md5stream.end(data.password)
         pwdStr = md5stream.read().toString('hex')*/
         pwdStr = md5(data.password);
 
-        var values = "(" + "'" + data.username + "', "
+        var values = "(" + "'" + dateFormat(new Date(), "yyyy-mm-dd hh:MM:ss") + "'" + ", "
+        values += "'" + data.username + "', "
         values += "'" + pwdStr + "', "
         values += "'" + data.email + "', "
         values += "'" + token + "'" + ")"
-        var statement = db.statement("insert into", "users", "(USERNAME, PASSWORD, EMAIL, API_TOKEN)", "", "VALUES " + values)
+        var statement = db.statement("insert into", "users", "(CREATE_TIME, USERNAME, PASSWORD, EMAIL, API_TOKEN)", "", "VALUES " + values)
+        console.log(statement)
+
         db.con.query(statement, function (err, results, fields) {
             if (err) {
                 reject(err)
@@ -195,6 +200,62 @@ var signup = function (data) {
         });
     })
 }
+var getList = function (search_key, page, limit) {
+    var total = 0
+    var whereItems = []
+
+    if (search_key !== undefined && search_key != '') {
+        whereItems.push(
+            {
+                key: 'username',
+                val: '%' + search_key + '%',
+                opt: 'like'
+            }
+        )
+
+        whereItems.push(
+            {
+                key: 'email',
+                val: '%' + search_key + '%',
+                opt: 'like'
+            }
+        )
+    }
+    var whereClause = (whereItems.length > 0 ? "(" + db.lineClause(whereItems, "or") + ")" + " and " : '') + db.itemClause('DEL_YN', 'N')
+
+    return db.list(db.statement("select count(*) as total from", "users", "", whereClause), true).then((rows) => {
+        total = rows[0].total
+        return db.list(db.statement("select * from", "users", "", whereClause, 'LIMIT ' + (page - 1) * limit + ',' + (page * limit)), true)
+    }).then((rows) => {
+        return {
+            total: total,
+            items: rows
+        }
+    })
+}
+var update = function (params) {
+    const {id, del_yn, state} = params
+    if (id === undefined || id == 0) {
+        return false
+    } else {
+        var whereClause = db.itemClause('ID', parseInt(id))
+        var setItems = []
+        if (del_yn !== undefined && del_yn != '') {
+            setItems.push({
+                key: 'DEL_YN',
+                val: del_yn
+            })
+        }
+        if (state !== undefined) {
+            setItems.push({
+                key: 'state',
+                val: parseInt(state)
+            })
+        }
+        db.cmd(db.statement("update", "users", "set " + db.lineClause(setItems, ","), whereClause))
+        return true
+    }
+}
 var userModel = {
     getUserInfo: getUserInfo,
     signup: signup,
@@ -202,7 +263,10 @@ var userModel = {
     bet_available: bet_available,
     new_bet: new_bet,
     lose_game: lose_game,
-    win_game: win_game
+    win_game: win_game,
+
+    getList: getList,
+    update: update
 }
 
 module.exports = userModel;

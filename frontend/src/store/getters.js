@@ -12,9 +12,11 @@ const getters = {
   roles: state => state.user.roles,
   wallet: state => state.user.wallet,
   is_logged_in: state => state.user.token !== undefined && state.user.token !== '',
+  is_admin_logged_in: state => state.admin.token !== undefined && state.admin.token !== '',
   user_id: state => state.user.user_id,
   crash_server_url: state => state.app.crash_server_url,
   chat_server_url: state => state.app.chat_server_url,
-  crash_chat: state => state.app.crash_chat
+  crash_chat: state => state.app.crash_chat,
+  permission_routes: state => state.permission.routes
 }
 export default getters

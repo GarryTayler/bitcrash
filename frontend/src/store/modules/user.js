@@ -13,6 +13,8 @@ const state = {
   avatar_medium: '',
   introduction: '',
   wallet: 0,
+  wallet_avail: 0,
+  wallet_block: 0,
   roles: []
 }
 
@@ -47,6 +49,12 @@ const mutations = {
   SET_WALLET: (state, wallet) => {
     state.wallet = wallet
   },
+  SET_WALLET_AVAIL: (state, wallet) => {
+    state.wallet_avail = wallet
+  },
+  SET_WALLET_BLOCK: (state, wallet) => {
+    state.wallet_block = wallet
+  },
   SET_ROLES: (state, roles) => {
     state.roles = roles
   }
@@ -70,6 +78,7 @@ const actions = {
       }
       login(data).then(response => {
         const { data } = response
+
         commit('SET_TOKEN', data.token)
         commit('SET_ID', data.id)
         setToken(data.token)
@@ -85,15 +94,20 @@ const actions = {
     return new Promise((resolve, reject) => {
       getInfo({ token: state.token }).then(response => {
         const { data } = response
+
         if (!data) {
           reject('Verification failed, please Login again.')
         }
-        const { ID, USERNAME, EMAIL, AVATAR, AVATAR_SMALL, AVATAR_MEDIUM, WALLET, IPADDRESS } = data
+
+        const { ID, USERNAME, EMAIL, AVATAR, AVATAR_SMALL, AVATAR_MEDIUM, WALLET, IPADDRESS, WALLET_AVAILABLE, WALLET_BLOCK } = data
+
         // roles must be a non-empty array
         // if (!roles || roles.length <= 0) {
         //   reject('getInfo: roles must be a non-null array!')
         // }
+
         commit('SET_ID', ID)
+
         commit('SET_ROLES', '')
         commit('SET_NAME', USERNAME)
         commit('SET_EMAIL', EMAIL)
@@ -102,7 +116,10 @@ const actions = {
         commit('SET_AVATAR_MEDIUM', AVATAR_MEDIUM)
         commit('SET_INTRODUCTION', '')
         commit('SET_WALLET', WALLET)
+        commit('SET_WALLET_AVAIL', WALLET_AVAILABLE)
+        commit('SET_WALLET_BLOCK', WALLET_BLOCK)
         commit('SET_IPADDRESS', IPADDRESS)
+
         resolve(data)
       }).catch(error => {
         reject(error)
