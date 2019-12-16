@@ -1,9 +1,6 @@
 <template>
   <div class="root content-padding">
     <b-row align-v="start">
-      <b-col v-for="item in pay_types" :key="item" sm="12" md="6" lg="3" xl="3" class="m-b flex-row-hc-vc">
-        <pay-btn :type="item" @click="payClick(item)" />
-      </b-col>
       <div class="w-h m-b-sm">
         <bit-crash-card :body-style="1" :no-header="true">
           <div class="bitcoin-card-content">
@@ -174,16 +171,12 @@
 import { mapGetters } from 'vuex'
 import BitCrashCard from '@/components/crashTable/BitCrashCard.vue'
 import DepositBtn from '@/components/deposit/DepositBtn.vue'
-// import { getNumberFormat, getFloat2Decimal } from '@/utils'
-import PayBtn from '@/components/deposit/PayBtn'
 import ChatInputBox from '@/components/chat/ChatInputBox'
-// import MenuBar from '@/components/deposit/Menu'
 
 export default {
   name: 'Home',
   components: {
     BitCrashCard,
-    PayBtn,
     DepositBtn,
     ChatInputBox
     // MenuBar
