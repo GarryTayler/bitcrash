@@ -2,7 +2,7 @@
   <div :class="{'has-logo':showLogo}">
     <logo v-if="showLogo" :collapse="isCollapse" />
     <hamburger v-if="device!=='mobile'" id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container" style="margin-top:10px;" @toggleClick="toggleSideBar" />
-    <el-scrollbar wrap-class="scrollbar-wrapper">
+    <el-scrollbar wrap-class="scrollbar-wrapper-admin">
       <el-menu
         :default-active="activeMenu"
         :collapse="isCollapse"
@@ -29,6 +29,11 @@ import { adminChildRoutes } from '@/router'
 
 export default {
   components: { SidebarItem, Logo, Hamburger },
+  data() {
+    return {
+      adminRoutes: adminChildRoutes
+    }
+  },
   computed: {
     ...mapGetters([
       // 'permission_routes',
@@ -53,11 +58,6 @@ export default {
     },
     isCollapse() {
       return !this.sidebar.opened
-    }
-  },
-  data() {
-    return {
-      adminRoutes: adminChildRoutes
     }
   },
   methods: {

@@ -72,6 +72,11 @@ export default {
       type: Number
     }
   },
+  data() {
+    return {
+      show: false
+    }
+  },
   computed: {
     ...mapGetters([
       'is_logged_in',
@@ -84,11 +89,6 @@ export default {
       'avatar_small',
       'avatar_medium'
     ])
-  },
-  data() {
-    return {
-      show: false
-    }
   },
   watch: {
     show(value) {

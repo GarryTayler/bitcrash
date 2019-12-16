@@ -25,7 +25,7 @@ module.exports = {
     config.plugins.delete('prefetch') // TODO: need test
 
     // set svg-sprite-loader
-    config.module
+    /* config.module
       .rule('svg')
       .exclude.add(resolve('src/icons'))
       .end()
@@ -39,7 +39,20 @@ module.exports = {
       .options({
         symbolId: 'icon-[name]'
       })
+      .end() */
+
+    config.module.rules.delete('svg')
+    config.module
+      .rule('svg-sprite-loader')
+      .test(/\.svg$/)
+      .include
+      .add(resolve('src/icons')) // 处理svg目录
       .end()
+      .use('svg-sprite-loader')
+      .loader('svg-sprite-loader')
+      .options({
+        symbolId: 'icon-[name]'
+      })
 
     // set preserveWhitespace
     config.module

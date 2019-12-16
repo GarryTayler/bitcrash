@@ -251,22 +251,6 @@ export default {
     LevelSilver,
     WalletSect
   },
-  computed: {
-    ...mapGetters([
-      'is_logged_in',
-      'wallet',
-      'avatar',
-      'crash_server_url',
-      'user_id',
-      'name',
-      'token'
-    ]),
-    option_types: {
-      get() {
-        return ['user', 'bet', 'income']
-      }
-    }
-  },
   data() {
     return {
       currentValue: this.value,
@@ -314,6 +298,22 @@ export default {
           level: 'Silver', type: '0-100', or: '', win: '100k', profit: '10%'
         }
       ]
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'is_logged_in',
+      'wallet',
+      'avatar',
+      'crash_server_url',
+      'user_id',
+      'name',
+      'token'
+    ]),
+    option_types: {
+      get() {
+        return ['user', 'bet', 'income']
+      }
     }
   },
   methods: {

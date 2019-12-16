@@ -24,6 +24,12 @@
   </div>
 </template>
 
+<style scoped>
+  .menu-wrapper a:hover{
+    text-decoration: none;
+  }
+</style>
+
 <script>
 import path from 'path'
 import { isExternal } from '@/utils/validate'

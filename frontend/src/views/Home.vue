@@ -10,7 +10,7 @@
           <bit-crash-card class="m-b">
             <div slot="header" class="card-header">
               <b-row align-v="center">
-                <b-col v-for="element in headerList" :key="element.id" sm="4" md="3" lg="3" xl="3" style="padding-left: 0px !important; padding-right: 0px !important;">
+                <b-col v-for="element in headerList" :key="element.id" class="c_col2" style="padding-left: 0px !important; padding-right: 0px !important;">
                   <div>
                     <crash-header-item :data="element" />
                   </div>
@@ -93,58 +93,6 @@ export default {
     CrashScaleItem,
     // Chat,
     CrashGraph
-  },
-  computed: {
-    ...mapGetters([
-      'is_logged_in',
-      'wallet',
-      'avatar',
-      'crash_server_url',
-      'user_id',
-      'name',
-      'token'
-    ]),
-    betting_time: function() {
-      return Math.floor(this.timeLeft / 100) / 10
-    }
-  },
-  watch: {
-    current_users: {
-      deep: true,
-      handler(val) {
-        var temp = val
-        for (var i = 0; i < temp.length; i++) {
-          temp[i]['show_user'] = {
-            name: temp[i]['name'],
-            url:
-              temp[i]['avatar_small'] === undefined ||
-              temp[i]['avatar_small'] === null
-                ? ''
-                : temp[i]['avatar_small']
-          }
-          temp[i]['id'] = temp[i]['user_id']
-        }
-        this.updateAllBets()
-      }
-    },
-    cashout_list: {
-      deep: true,
-      handler(val) {
-        var temp = val
-        for (var i = 0; i < temp.length; i++) {
-          temp[i]['show_user'] = {
-            name: temp[i]['name'],
-            url:
-              temp[i]['avatar_small'] === undefined ||
-              temp[i]['avatar_small'] === null
-                ? ''
-                : temp[i]['avatar_small']
-          }
-          temp[i]['id'] = temp[i]['user_id']
-        }
-        this.updateAllBets()
-      }
-    }
   },
   data() {
     return {
@@ -248,6 +196,58 @@ export default {
       timerHandler: 0,
       crash_socket: null,
       eventBus: {}
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'is_logged_in',
+      'wallet',
+      'avatar',
+      'crash_server_url',
+      'user_id',
+      'name',
+      'token'
+    ]),
+    betting_time: function() {
+      return Math.floor(this.timeLeft / 100) / 10
+    }
+  },
+  watch: {
+    current_users: {
+      deep: true,
+      handler(val) {
+        var temp = val
+        for (var i = 0; i < temp.length; i++) {
+          temp[i]['show_user'] = {
+            name: temp[i]['name'],
+            url:
+              temp[i]['avatar_small'] === undefined ||
+              temp[i]['avatar_small'] === null
+                ? ''
+                : temp[i]['avatar_small']
+          }
+          temp[i]['id'] = temp[i]['user_id']
+        }
+        this.updateAllBets()
+      }
+    },
+    cashout_list: {
+      deep: true,
+      handler(val) {
+        var temp = val
+        for (var i = 0; i < temp.length; i++) {
+          temp[i]['show_user'] = {
+            name: temp[i]['name'],
+            url:
+              temp[i]['avatar_small'] === undefined ||
+              temp[i]['avatar_small'] === null
+                ? ''
+                : temp[i]['avatar_small']
+          }
+          temp[i]['id'] = temp[i]['user_id']
+        }
+        this.updateAllBets()
+      }
     }
   },
   created: function() {
@@ -366,7 +366,7 @@ export default {
       }
     },
     updateHistory(data) {
-      game_log({ limit: 4 }).then(response => {
+      game_log({ limit: 6 }).then(response => {
         this.headerList = []
         const { data } = response
         for (var i = 0; i < data.length; i++) {
@@ -651,4 +651,45 @@ export default {
 .all-bets {
   color: white;
 }
+
+@media (min-width: 1700px)
+{
+  .c_col2 {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 16.66667%;
+    flex: 0 0 16.66667%;
+    max-width: 16.66667%;
+  }
+}
+
+@media (min-width: 1270px) and (max-width: 1700px)
+{
+  .c_col2 {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 25%;
+    flex: 0 0 25%;
+    max-width: 25%;
+  }
+}
+
+@media (min-width: 1120px) and (max-width: 1310px)
+{
+  .c_col2 {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 33.3%;
+    flex: 0 0 33.3%;
+    max-width: 33.3%;
+  }
+}
+
+@media (max-width: 1120px)
+{
+  .c_col2 {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 50%;
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
+
 </style>

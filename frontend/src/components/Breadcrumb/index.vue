@@ -72,7 +72,7 @@ export default {
   color: white !important;
 
   .no-redirect {
-    color: #52b3a2;
+    color: rgb(64, 158, 255);
     cursor: text;
   }
 }

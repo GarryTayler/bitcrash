@@ -18,18 +18,18 @@
 import { mapGetters } from 'vuex'
 export default {
   name: 'Hamburger',
+  props: {
+    isActive: {
+      type: Boolean,
+      default: false
+    }
+  },
   computed: {
     ...mapGetters([
       // 'permission_routes',
       'sidebar',
       'device'
     ])
-  },
-  props: {
-    isActive: {
-      type: Boolean,
-      default: false
-    }
   },
   methods: {
     toggleClick() {

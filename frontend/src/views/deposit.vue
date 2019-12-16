@@ -188,6 +188,11 @@ export default {
     ChatInputBox
     // MenuBar
   },
+  data() {
+    return {
+    //   menu: true
+    }
+  },
   computed: {
     ...mapGetters([
       'is_logged_in',
@@ -202,11 +207,6 @@ export default {
       get() {
         return ['skins', 'bitcoin', 'alipay', 'wechat']
       }
-    }
-  },
-  data() {
-    return {
-    //   menu: true
     }
   },
   created: function() {

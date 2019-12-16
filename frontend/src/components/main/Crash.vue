@@ -50,28 +50,6 @@ export default {
     CrashEdit,
     CrashScaleItem
   },
-  computed: {
-    ...mapGetters(['is_logged_in', 'wallet', 'avatar']),
-    betting_time: function() {
-      return Math.floor(this.timeLeft / 100) / 10
-    },
-    bet_sum: function() {
-      var sum = 0
-      for (var i = 0; i < this.current_users.length; i += 1) {
-        sum += this.current_users[i].bet * 1
-      }
-
-      return sum
-    },
-    cashout_sum: function() {
-      var sum = 0
-      for (var i = 0; i < this.cashout_list.length; i += 1) {
-        sum += this.cashout_list[i].bet * this.cashout_list[i].option / 100
-      }
-
-      return sum
-    }
-  },
   data() {
     return {
       headerList: [
@@ -140,6 +118,28 @@ export default {
         increase_amount: 100
       },
       timerHandler: 0
+    }
+  },
+  computed: {
+    ...mapGetters(['is_logged_in', 'wallet', 'avatar']),
+    betting_time: function() {
+      return Math.floor(this.timeLeft / 100) / 10
+    },
+    bet_sum: function() {
+      var sum = 0
+      for (var i = 0; i < this.current_users.length; i += 1) {
+        sum += this.current_users[i].bet * 1
+      }
+
+      return sum
+    },
+    cashout_sum: function() {
+      var sum = 0
+      for (var i = 0; i < this.cashout_list.length; i += 1) {
+        sum += this.cashout_list[i].bet * this.cashout_list[i].option / 100
+      }
+
+      return sum
     }
   },
   methods: {

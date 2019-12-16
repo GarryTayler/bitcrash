@@ -1,50 +1,12 @@
 <template>
   <div>
-    <div class="navbar-1 p-l-r">
+    <div class="navbar-1 p-l-r navbar-admin-menu-bar">
       <hamburger v-if="device=='mobile'" id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
       <a href="/" style="margin-left: 30px;">
         <img src="@/assets/img/brand_logo.png" class="logo-img">
         <h1 class="logo-title">BitCrash </h1>
       </a>
       <log-in-button v-if="is_admin_logged_in" text="LogOut" :size="true" class="logout" @click="logout" />
-      <!-- <div class="right-menu" v-show="false">
-        <template v-if="device!=='mobile'">
-          <search id="header-search" class="right-menu-item" />
-
-          <error-log class="errLog-container right-menu-item hover-effect" />
-
-          <screenfull id="screenfull" class="right-menu-item hover-effect" />
-
-          <el-tooltip content="Global Size" effect="dark" placement="bottom">
-            <size-select id="size-select" class="right-menu-item hover-effect" />
-          </el-tooltip>
-
-        </template>
-
-        <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
-          <div class="avatar-wrapper">
-            <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
-            <i class="el-icon-caret-bottom" />
-          </div>
-          <el-dropdown-menu slot="dropdown">
-            <router-link to="/profile/index">
-              <el-dropdown-item>Profile</el-dropdown-item>
-            </router-link>
-            <router-link to="/">
-              <el-dropdown-item>Dashboard</el-dropdown-item>
-            </router-link>
-            <a target="_blank" href="https://github.com/PanJiaChen/vue-element-admin/">
-              <el-dropdown-item>Github</el-dropdown-item>
-            </a>
-            <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
-              <el-dropdown-item>Docs</el-dropdown-item>
-            </a>
-            <el-dropdown-item divided>
-              <span style="display:block;" @click="logout">Log Out</span>
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-      </div> -->
     </div>
     <div class="breadcrumb-wrapper">
       <breadcrumb id="breadcrumb-container" class="breadcrumb-container" />
@@ -52,6 +14,15 @@
   </div>
 
 </template>
+
+<style scoped>
+.navbar-admin-menu-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 70px;
+}
+</style>
 
 <script>
 import { mapGetters } from 'vuex'
@@ -98,7 +69,7 @@ export default {
 @import "~bootstrap-vue/src/index";
 @import "~@/assets/scss/_variables.scss";
 .navbar-1 {
-  height: 60px;
+  height: 70px;
   overflow: hidden;
   position: relative;
   background: $crash-header-bg-color !important;
@@ -108,7 +79,6 @@ export default {
 
   .hamburger-container {
     line-height: 46px;
-    height: 100%;
     float: left;
     cursor: pointer;
     transition: background .3s;
@@ -186,7 +156,7 @@ export default {
     padding-left: 10px;
   }
   padding-right: 10px;
-  background: $crash-header-bg-color !important;
+  background: white !important;
   box-shadow: 0 1px 4px rgba(0,21,41,.08);
 
   .breadcrumb-container {
