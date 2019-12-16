@@ -2,9 +2,9 @@
   <div>
     <div class="flex-row root">
       <b-row align-v="start" class="flex1 content-padding main-content">
-        <b-col sm="12" md="4" lg="4" xl="4" class="p-none m-b">
-          <bots-table :type="0" :fields="bots_tbl_fields" :items="current_users" class="m-b" />
-          <bots-table :type="1" :fields="bots_cashout_tbl_fields" :items="cashout_list" />
+        <b-col sm="12" md="4" lg="4" xl="4" class="bots-table-wrapper p-none m-b">
+          <bots-table :type='0' :fields="bots_tbl_fields" :items="current_users" class="bots-table m-b"></bots-table>
+          <bots-table :type='1' :fields="bots_cashout_tbl_fields" :items="cashout_list" class="bots-table bots-table-1"></bots-table>
         </b-col>
         <b-col sm="12" md="8" lg="8" xl="8" class="p-none p-l">
           <bit-crash-card class="m-b">
@@ -22,25 +22,25 @@
             </div>
             <div class="card-content">
               <b-row>
-                <crash-graph :event-bus="eventBus" />
+                <crash-graph :event-bus="eventBus"></crash-graph>
               </b-row>
               <b-row>
                 <b-col sm="12" md="4" lg="4" xl="4" class="m-b">
-                  <crash-edit v-model="bet_input" label="BET" sup="BTC" />
+                  <crash-edit label="BET" sup="BTC" v-model="bet_input"></crash-edit>
                 </b-col>
                 <b-col sm="12" md="4" lg="4" xl="4" class="m-b">
-                  <crash-edit v-model="auto_cashout" label="AUTO CASHOUT" sup="X" />
+                  <crash-edit label="AUTO CASHOUT" sup="X" v-model="auto_cashout"></crash-edit>
                 </b-col>
                 <b-col sm="12" md="4" lg="4" xl="4">
-                  <crash-bet-button :is-disabled="!is_logged_in" :text="betBtnText" :size="betBtnSize" @click="do_action" />
+                  <crash-bet-button :is-disabled="!is_logged_in" :text="betBtnText" :size="betBtnSize" @click="do_action"></crash-bet-button>
                 </b-col>
               </b-row>
               <b-row>
                 <b-col sm="12" md="8" lg="8" xl="8">
-                  <crash-scale-item @click="scaleItemClick" />
+                  <crash-scale-item @click="scaleItemClick"></crash-scale-item>
                 </b-col>
                 <b-col sm="12" md="4" lg="4" xl="4">
-                  <crash-bet-select />
+                  <crash-bet-select></crash-bet-select>
                 </b-col>
               </b-row>
             </div>
@@ -651,7 +651,23 @@ export default {
 .all-bets {
   color: white;
 }
-
+.bots-table-wrapper {
+  height: 100%;
+  position: relative;
+}
+.bots-table {
+  height: 300px;
+}
+.bots-table-1 {
+  position: absolute;
+  top: 400px;
+  width: calc(100% - 30px);
+  @include media-breakpoint-down(md) {
+    position: relative;
+    top: 0px;
+    width: 100%;
+  }
+}
 @media (min-width: 1700px)
 {
   .c_col2 {

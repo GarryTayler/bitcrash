@@ -59,55 +59,6 @@ export default {
       currentGamePayout: 0
     }
   },
-  watch: {
-    eventBus: {
-      deep: true,
-      handler(val) {
-        var payload = this.eventBus.payload
-        switch (this.eventBus.msg) {
-          case 'game-created':
-            this.status = this.STATUS_PENDING
-            this.duration = (payload.duration / 1000).toFixed(1)
-            break
-          case 'game-started':
-            // console.log('game-started')
-            //  i modified code below to set real start time
-            this.crash = payload.crash
-            if (this.status !== this.STATUS_STARTED) {
-              this.status = this.STATUS_STARTED
-              this.start_time = Date.now() - Math.ceil(this.inverseGrowth(this.crash + 1))
-              // console.log('start-time reset', this.start_time)
-            }
-            break
-          case 'game-finished':
-            // console.log('game-finished')
-            this.status = this.STATUS_FINISHED
-            if (payload.crash === 100) {
-              //  in case that game finishes when it starts,
-              this.start_time = Date.now() - Math.ceil(this.inverseGrowth(this.crash + 1))
-            }
-            this.crash = payload.crash
-            break
-          case 'resize':
-            this.onWindowResizeBinded()
-            break
-          case 'game-error':
-            //  when error occures...
-            this.rendering = false
-            break
-        }
-      }
-    }
-    // 'eventBus.msg': function() {
-
-    // }
-  },
-  destroyed() {
-    this.stopRendering()
-  },
-  mounted() {
-    this.startRendering()
-  },
   methods: {
     growth(ms) {
       const r = 0.00006
@@ -387,6 +338,54 @@ export default {
         )
       }
     }
+  },
+  destroyed() {
+    this.stopRendering()
+  },
+  mounted() {
+    this.startRendering()
+  },
+  watch: {
+    eventBus: {
+      deep: true,
+      handler(val) {
+        var payload = this.eventBus.payload
+        switch (this.eventBus.msg) {
+          case 'game-created':
+            this.status = this.STATUS_PENDING
+            this.duration = (payload.duration / 1000).toFixed(1)
+            break
+          case 'game-started':
+            // console.log('game-started')
+            //  i modified code below to set real start time
+            this.crash = payload.crash
+            if (this.status !== this.STATUS_STARTED) {
+              this.status = this.STATUS_STARTED
+              this.start_time = Date.now() - Math.ceil(this.inverseGrowth(this.crash + 1))
+              // console.log('start-time reset', this.start_time)
+            }
+            break
+          case 'game-finished':
+            // console.log('game-finished')
+            this.status = this.STATUS_FINISHED
+            if (payload.crash === 100) {
+              //  in case that game finishes when it starts,
+              this.start_time = Date.now() - Math.ceil(this.inverseGrowth(this.crash + 1))
+            }
+            this.crash = payload.crash
+            break
+          case 'resize':
+            this.onWindowResizeBinded()
+            break
+          case 'game-error':
+            //  when error occures...
+            this.rendering = false
+            break
+        }
+      }
+    }
+    // 'eventBus.msg': function() {
+    // }
   }
 }
 </script>

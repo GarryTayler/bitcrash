@@ -26,6 +26,11 @@ export const constantRoutes = [
         path: '/referral',
         component: () => import('../views/Referral.vue'),
         meta: { title: 'Referral' }
+      },
+      {
+        path: '/faq',
+        component: () => import('../views/faq.vue'),
+        meta: { title: 'FAQ' }
       }
     ]
   },

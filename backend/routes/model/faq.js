@@ -2,7 +2,7 @@ var db = require('./../../utils/database');
 var rn = require('random-number');
 var dateFormat = require('dateformat');
 
-var getList = function (search_key, page, limit) {
+var getList = function (search_key, type, page, limit) {
     var total = 0
     var whereClause = search_key === undefined || search_key == '' ? '' : db.lineClause([
         {
@@ -16,7 +16,8 @@ var getList = function (search_key, page, limit) {
             opt: 'like'
         }
     ], 'or')
-    whereClause = whereClause == '' ? "deleted=0" : "(" + whereClause + ") AND deleted=0"
+    var typeClause = type == -1 ? "" : " And type=" + type
+    whereClause = whereClause == '' ? "deleted=0" + typeClause : "(" + whereClause + ") AND deleted=0" + typeClause
     return db.list(db.statement("select count(*) as total from", "faq", "", whereClause), true).then((rows) => {
         total = rows[0].total
         return db.list(db.statement("select * from", "faq", "", whereClause, 'LIMIT ' + (page - 1) * limit + ',' + (page * limit)), true)
@@ -28,7 +29,7 @@ var getList = function (search_key, page, limit) {
     })
 }
 var add = function (params) {
-    const {question, answer} = params
+    const {type, question, answer} = params
     var setItems = []
     var insertValues = "("
     var insertFields = "("
@@ -40,6 +41,7 @@ var add = function (params) {
         insertValues += "'" + answer + "'" + ","
         insertFields += "answer,"
     }
+
     if (question !== undefined) {
         setItems.push({
             key: 'question',
@@ -48,7 +50,16 @@ var add = function (params) {
         insertValues += "'" + question + "'" + ","
         insertFields += "question,"
     }
-    
+
+    if (type !== undefined) {
+        setItems.push({
+            key: 'type',
+            val: type
+        })
+        insertValues += type + ","
+        insertFields += "type,"
+    }
+
     insertFields += "create_time,"
     insertValues += "'" + dateFormat(new Date(), "yyyy-mm-dd hh:MM:ss") + "'" + ","
 

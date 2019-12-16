@@ -1,15 +1,15 @@
 <template>
   <div>
-    <bit-crash-card>
-      <div slot="header" class="card-header flex-space-between-vc" :class="type == 0 ? 'progress-user' : 'cashout-user'">
-        <span>
-          {{ items.length }} {{ type==0? 'in Game' : 'Cashed out' }}
-        </span>
-        <coin-label :bet="sum" />
-      </div>
-      <div class="card-content">
-        <bit-crash-table :fields="fields" :items="items" />
-      </div>
+    <bit-crash-card class="bots-table-card">
+        <div slot="header" class="card-header flex-space-between-vc" :class="type == 0 ? 'progress-user' : 'cashout-user'">
+            <span>
+              {{items.length}} {{type==0? 'in Game' : 'Cashed out'}}
+            </span>
+            <coin-label :bet="sum"></coin-label>
+        </div>
+        <div class="card-content">
+            <bit-crash-table :fields="fields" :items="items"></bit-crash-table>
+        </div>
     </bit-crash-card>
   </div>
 </template>
@@ -59,7 +59,9 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import "~@/assets/scss/_variables.scss";
-
+.bots-table-card {
+  max-height: calc(80% - #{$normal-margin-bottom})
+}
 .card-header {
   height: $card-header-height;
   padding-left: 30px;
@@ -73,6 +75,7 @@ export default {
 }
 .card-content {
   padding: 20px;
+  height: 100%;
 }
 .progress-user {
   background: linear-gradient(90deg, #04aef7, #1c8ace);

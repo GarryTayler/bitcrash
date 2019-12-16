@@ -228,7 +228,7 @@ var bet = function (userID, betAmount, gameNo, isBot) {
             ], ","), db.itemClause('ID', userID)), true)
         }
         var str = ''
-        str += "VALUES (" + "'" + dateFormat(new Date(), "yyyy-mm-dd hh:MM:ss") + "'" + "," + gameNo + "," + userID + "," + (isBot ? '1' : '0') + ",0" + "," + betAmount + ")"
+        str += "VALUES (" + "'" + dateFormat(new Date(), "yyyy-mm-dd hh:MM:ss") + "'" + "," + gameNo + "," + userID + "," + (isBot ? 1 : 0) + ",0" + "," + betAmount + ")"
         console.log("Log: " + str)
         db.cmd(db.statement("insert into", "crash_game_log",
             "(CREATE_TIME, GAMENO, USERID, IS_BOT, CASHOUTRATE, BET_AMOUNT)", '',
@@ -728,12 +728,22 @@ var getHistory = function(id, start_date, end_date, page, limit) {
         }
     })
 }
+var getGameLog = function (id) {
+    var cmd = "SELECT crash_game_log.ID, crash_game_log.CREATE_TIME, crash_game_log.BET_AMOUNT, crash_game_log.UPDATE_TIME, crash_game_log.GAMENO,\
+    crash_game_log.USERID, crash_game_log.IS_BOT, crash_game_log.BET, crash_game_log.CASHOUTRATE, crash_game_log.CASHOUT, crash_game_log.PROFIT,\
+    crash_game_bot.F_ID AS BOT_NAME, users.USERNAME AS USER_NAME, users.AVATAR_SMALL AS USER_AVATAR FROM"
+    var extra = "LEFT JOIN crash_game_bot ON crash_game_bot.ID = crash_game_log.USERID LEFT JOIN users ON users.ID = crash_game_log.USERID"
+
+    var statement = cmd + " crash_game_log " + extra + " where crash_game_log.GAMENO=" + id
+    return db.list(statement, true).then((gameInfo) => {
+        return gameInfo
+    })
+}
 var crashModel = {
     bust_game: bust_game,
     start_game: start_game,
     next_game: next_game,
     // make_bet: make_bet,
-
     bet: bet,
     cashout: cashout,
     game_start: game_start,
@@ -742,7 +752,8 @@ var crashModel = {
     get_profit_rate: get_profit_rate,
     game_finish_start: game_finish_start,
     game_log: game_log,
-    getHistory: getHistory
+    getHistory: getHistory,
+    getGameLog: getGameLog
 }
 
 module.exports = crashModel

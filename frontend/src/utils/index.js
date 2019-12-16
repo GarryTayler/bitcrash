@@ -373,7 +373,7 @@ export function getNumberFormat(_num) {
 
 export function getFloat2Decimal(f_val) {
   var val = parseFloat(f_val)
-  return sprintf('%.2f', val)
+  return isNaN(val) ? '' : sprintf('%.2f', val)
 }
 // export function showToast(type, message, position = 'top-right') {
 //   var heading = ''

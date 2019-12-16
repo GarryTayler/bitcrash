@@ -18,13 +18,13 @@
     <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%">
       <el-table-column align="center" label="ID" width="80">
         <template slot-scope="scope">
-          <span class="link-type" @click="showDetail(scope.row.ID)">{{ scope.row.ID }}</span>
+          <span class="link-type" @click="showDetail(scope.row.GAMENO)">{{ scope.row.ID }}</span>
         </template>
       </el-table-column>
 
       <el-table-column width="160px" align="center" label="Time">
         <template slot-scope="scope">
-          <span class="link-type" @click="showDetail(scope.row.ID)">{{ scope.row.REGTIME | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span class="link-type" @click="showDetail(scope.row.GAMENO)">{{ scope.row.REGTIME | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
 
@@ -68,70 +68,73 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
     <el-dialog :visible.sync="dlgVisible" title="Detail">
-      <table class="detail-table">
-        <tr style="display: none">
-          <th style="width: 100px;">Key</th>
-          <th>Val</th>
-        </tr>
-        <tr>
-          <td>Reg Time</td>
-          <td>{{ dlgData.REGTIME | parseTime('{y}-{m}-{d} {h}:{i}') }}</td>
-        </tr>
-        <tr>
-          <td>GameRound</td>
-          <td>{{ dlgData.GAMENO }}</td>
-        </tr>
-        <tr>
-          <td>Start Time</td>
-          <td>{{ dlgData.STARTTIME | parseTime('{y}-{m}-{d} {h}:{i}') }}</td>
-        </tr>
-        <tr>
-          <td>Busted Time</td>
-          <td>{{ dlgData.BUSTEDTIME | parseTime('{y}-{m}-{d} {h}:{i}') }}</td>
-        </tr>
-        <tr>
-          <td>Bust</td>
-          <td>{{ dlgData.BUST }}</td>
-        </tr>
-        <tr>
-          <td>Total</td>
-          <td>{{ dlgData.TOTAL }}</td>
-        </tr>
-        <tr>
-          <td>Profit</td>
-          <td>{{ dlgData.PROFIT }}</td>
-        </tr>
-        <tr>
-          <td>Users</td>
-          <td>{{ dlgData.USERS }}</td>
-        </tr>
-        <tr>
-          <td>Bots</td>
-          <td>{{ dlgData.BOTS }}</td>
-        </tr>
-        <tr>
-          <td>Hash</td>
-          <td>{{ dlgData.HASH }}</td>
-        </tr>
-        <tr>
-          <td>State</td>
-          <td>{{ dlgData.STATE }}</td>
-        </tr>
-      </table>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="dlgVisible = false">Confirm</el-button>
       </span>
+      <el-table v-loading="dlgListLoading" :data="dlgList" border fit highlight-current-row style="width: 100%">
+        <el-table-column align="center" label="GameRound" width="150px">
+          <template slot-scope="scope">
+            <span>{{ scope.row.GAMENO }}</span>
+          </template>
+        </el-table-column>
+
+        <el-table-column width="150px" align="center" label="BOT">
+          <template slot-scope="scope">
+            <span>{{ scope.row.IS_BOT == 0 ? 'No' : 'Yes' }}</span>
+          </template>
+        </el-table-column>
+
+        <el-table-column width="150px" align="center" label="Name">
+          <template slot-scope="scope">
+            <span>{{ scope.row.IS_BOT == 0 ? scope.row.USER_NAME : scope.row.BOT_NAME }}</span>
+          </template>
+        </el-table-column>
+
+        <el-table-column width="160px" align="center" label="Time">
+          <template slot-scope="scope">
+            <span>{{ scope.row.CREATE_TIME | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          </template>
+        </el-table-column>
+
+        <el-table-column width="150px" align="center" label="Bet Amount">
+          <template slot-scope="scope">
+            <span>{{ scope.row.BET_AMOUNT }}</span>
+          </template>
+        </el-table-column>
+
+        <el-table-column width="150px" align="center" label="BET">
+          <template slot-scope="scope">
+            <span>{{ scope.row.BET }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column width="150px" align="center" label="CashOut Rate">
+          <template slot-scope="scope">
+            <span>{{ scope.row.CASHOUTRATE }}</span>
+          </template>
+        </el-table-column>
+
+        <el-table-column width="150px" align="center" label="Profit">
+          <template slot-scope="scope">
+            <span>{{ scope.row.PROFIT | profitFilter }}</span>
+          </template>
+        </el-table-column>
+      </el-table>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { getHistoryList } from '@/api/crash'
+import { getHistoryList, getLog } from '@/api/crash'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
-
+import { getFloat2Decimal } from '@/utils/index'
 export default {
   components: {
     Pagination
+  },
+  filters: {
+    profitFilter(profit) {
+      return getFloat2Decimal(profit)
+    }
   },
   props: {},
   data() {
@@ -147,20 +150,22 @@ export default {
         page: 1,
         limit: 20
       },
-      dlgData: {
-        REGTIME: 0,
-        GAMENO: 0,
-        STARTTIME: 0,
-        BUSTEDTIME: 0,
-        BUST: 0,
-        TOTAL: 0,
-        PROFIT: 0,
-        USERS: 0,
-        BOTS: 0,
-        HASH: 0,
-        STATE: ''
-      },
-      dlgVisible: false
+      dlgListLoading: true,
+      dlgList: [],
+      // dlgData: {
+      //   REGTIME: 0,
+      //   GAMENO: 0,
+      //   STARTTIME: 0,
+      //   BUSTEDTIME: 0,
+      //   BUST: 0,
+      //   TOTAL: 0,
+      //   PROFIT: 0,
+      //   USERS: 0,
+      //   BOTS: 0,
+      //   HASH: 0,
+      //   STATE: ''
+      // },
+      dlgVisible : false
     }
   },
   created() {
@@ -186,15 +191,11 @@ export default {
     endDatePick() {
     },
     showDetail(id) {
-      getHistoryList({
-        id: id,
-        page: 1,
-        limit: 20
-      }).then(response => {
-        if (response.data.items.length > 0) {
-          this.dlgData = response.data.items[0]
-          this.dlgVisible = true
-        }
+      this.dlgVisible = true
+      this.dlgListLoading = true
+      getLog({id: id}).then(response => {
+        this.dlgList = response.data.items
+        this.dlgListLoading = false
       })
     }
   }
@@ -211,17 +212,6 @@ export default {
 }
 .m-t {
     margin-top: $page-margin-top;
-}
-.detail-table {
-  width: 100%;
-  th, td {
-    border: 1px solid black;
-    border-collapse: collapse;
-    padding: 5px;
-  }
-  th {
-    text-align: left;
-  }
 }
 .link-type,
 .link-type:focus {

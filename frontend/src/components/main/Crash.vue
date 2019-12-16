@@ -1,32 +1,32 @@
 <template>
   <div>
     <bit-crash-card>
-      <div slot="header" class="card-header">
-        <div class="flex-space-between-vc" style="overflow: hidden">
-          <crash-header-item v-for="element in headerList" :key="element.id" :data="element" />
+        <div slot="header" class="card-header">
+          <div class="flex-space-between-vc" style="overflow: hidden">
+            <crash-header-item v-for="element in headerList" :key="element.id" :data="element"></crash-header-item>
+          </div>
         </div>
-      </div>
-      <div class="card-content">
-        <b-row>
-          <b-col sm="12" md="4" lg="4" xl="4" class="m-b">
-            <crash-edit v-model="bet_input" label="BET" sup="BTC" />
-          </b-col>
-          <b-col sm="12" md="4" lg="4" xl="4" class="m-b">
-            <crash-edit v-model="auto_cashout" label="AUTO CASHOUT" sup="X" />
-          </b-col>
-          <b-col sm="12" md="4" lg="4" xl="4">
-            <crash-bet-button :is-disabled="!is_logged_in" :text="state=='started' ? 'Cancel' : 'BET'" @click="betClick" />
-          </b-col>
-        </b-row>
-        <b-row>
-          <b-col sm="12" md="8" lg="8" xl="8">
-            <crash-scale-item @click="scaleItemClick" />
-          </b-col>
-          <b-col sm="12" md="4" lg="4" xl="4">
-            <crash-bet-select />
-          </b-col>
-        </b-row>
-      </div>
+        <div class="card-content">
+          <b-row>
+            <b-col sm="12" md="4" lg="4" xl="4" class="m-b">
+              <crash-edit label="BET" sup="BTC" v-model="bet_input"></crash-edit>
+            </b-col>
+            <b-col sm="12" md="4" lg="4" xl="4" class="m-b">
+              <crash-edit label="AUTO CASHOUT" sup="X" v-model="auto_cashout"></crash-edit>
+            </b-col>
+            <b-col sm="12" md="4" lg="4" xl="4">
+              <crash-bet-button :is-disabled="!is_logged_in" :text="state=='started' ? 'Cancel' : 'BET'" @click="betClick"></crash-bet-button>
+            </b-col>
+          </b-row>
+          <b-row>
+            <b-col sm="12" md="8" lg="8" xl="8">
+              <crash-scale-item @click="scaleItemClick"></crash-scale-item>
+            </b-col>
+            <b-col sm="12" md="4" lg="4" xl="4">
+              <crash-bet-select></crash-bet-select>
+            </b-col>
+          </b-row>
+        </div>
     </bit-crash-card>
   </div>
 </template>

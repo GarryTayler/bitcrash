@@ -7,15 +7,15 @@
       </div>
       <div class="chat-header flex-space-between-vc">
         Chat
-        <nation-group-flag />
+        <nation-group-flag></nation-group-flag>
       </div>
       <div class="chat-items">
         <div class="drawer-container">
-          <chat-item v-for="message in messages" :key="message.id" :data="message" />
+          <chat-item v-for="message in messages" :key="message.id" :data="message"></chat-item>
         </div>
       </div>
       <div class="chat-footer flex-space-between-vc">
-        <chat-input-box :value="current_chat" :disabled="!is_logged_in" @sendMsg="sendMsg" />
+        <chat-input-box :value="current_chat" :disabled="!is_logged_in" @sendMsg="sendMsg"></chat-input-box>
       </div>
     </div>
   </div>

@@ -8,14 +8,14 @@ var request = require('request');
 var config = require('./src/config');
 app.use(bodyParser.json());
 ///////////// constant from main server
-var gameId = 1 , next_gameId = 0 , status = 0 , firstTimerHandler , bet_max_limit = 100000, bet_min_limit = 1000 , jackpot = 40778217, max_payout = 50000000, promo = true;
+var gameId = 1, next_gameId = 0, status = 0, firstTimerHandler, bet_max_limit = 100000, bet_min_limit = 1000, jackpot = 40778217, max_payout = 50000000, promo = true;
 var mainServerUrl = config.main_host_url + 'crash/';
 var profit_rate = [];
 ////////////
-var timeInterval = 10 , resetGameTime = 0 , stopGameG = false;
-var game_play_list = [], bots_list = [] , cashout_list = [] , socket_list = [];
-var startTime = Date.now() , globalVariable = 0 , elapsed_time = 0;
-var crash = 283 , hash = 'This is our server seed and how do you think our server seed , can you give me your opinion?';
+var timeInterval = 10, resetGameTime = 0, stopGameG = false;
+var game_play_list = [], bots_list = [], cashout_list = [], socket_list = [];
+var startTime = Date.now(), globalVariable = 0, elapsed_time = 0; prev_time = 0;
+var crash = 283, hash = 'This is our server seed and how do you think our server seed , can you give me your opinion?';
 var clientSeed = '000000000000000007a9a31ff7f07463d91af6b5454241d5faf282e5e0fe1b3a';
 var tick;
 
@@ -23,51 +23,50 @@ var tick;
 var wait_time_left = 0;
 
 //generate hash and get crash from hash
-var genGameHash = function(serverSeed) {
-    return crypto.createHash('sha256').update(serverSeed).digest('hex');
+var genGameHash = function (serverSeed) {
+	return crypto.createHash('sha256').update(serverSeed).digest('hex');
 };
-function gameResult(seed, salt) 
-{
-  const nBits = 52 // number of most significant bits to use
-  // 1. HMAC_SHA256(key=salt, message=seed)
-  const hmac = crypto.createHmac("sha256", salt)
-  hmac.update(seed)
-  seed = hmac.digest("hex")
+function gameResult(seed, salt) {
+	const nBits = 52 // number of most significant bits to use
+	// 1. HMAC_SHA256(key=salt, message=seed)
+	const hmac = crypto.createHmac("sha256", salt)
+	hmac.update(seed)
+	seed = hmac.digest("hex")
 
-  // 2. r = 52 most significant bits
-  seed = seed.slice(0, nBits/4)
-  const r = parseInt(seed, 16)
+	// 2. r = 52 most significant bits
+	seed = seed.slice(0, nBits / 4)
+	const r = parseInt(seed, 16)
 
-  // 3. X = r / 2^52
-  let X = r / Math.pow(2, nBits) // uniformly distributed in [0; 1)
+	// 3. X = r / 2^52
+	let X = r / Math.pow(2, nBits) // uniformly distributed in [0; 1)
 
-  // 4. X = 99 / (1-X)
-  X = 99 / (1 - X)
+	// 4. X = 99 / (1-X)
+	X = 99 / (1 - X)
 
-  // 5. return max(trunc(X), 100)
-  const result = Math.floor(X)
-  return Math.max(1, result / 100)
+	// 5. return max(trunc(X), 100)
+	const result = Math.floor(X)
+	return Math.max(1, result / 100)
 }
 //
-app.post('/set_config', function(req, res) {
-   bet_min_limit = req.body.bet_min_limit;
-   bet_max_limit = req.body.bet_max_limit;
-   max_payout = req.body.max_payout;
-   profit_rate = req.body.profit_rate;
-   res.json({"status":true});
+app.post('/set_config', function (req, res) {
+	bet_min_limit = req.body.bet_min_limit;
+	bet_max_limit = req.body.bet_max_limit;
+	max_payout = req.body.max_payout;
+	profit_rate = req.body.profit_rate;
+	res.json({ "status": true });
 });
 
 request.post({
         //   headers: {'content-type' : 'application/json',
-        //   'MOBIUS-API-KEY' : apiKey},
-		  url:    mainServerUrl + 'profit_rate',
-          form: {}
-        }, function(error, response, body) {
-            var ret = JSON.parse(body);
-            if(ret.status) 
-                profit_rate = ret.profit_rate;
-            else 
-                stopGameG = true;
+		//   'MOBIUS-API-KEY' : apiKey},
+		url: mainServerUrl + 'profit_rate',
+		form: {}
+	}, function (error, response, body) {
+		var ret = JSON.parse(body);
+		if (ret.status)
+			profit_rate = ret.profit_rate;
+		else
+			stopGameG = true;
 });
 
 request.post(
@@ -79,11 +78,11 @@ request.post(
         var ret = JSON.parse(body);
         if (ret.status) {
             gameId = ret.game_no;
-            if (ret.bots) bots_list = ret.bots;
-            if (ret.game_player_list) game_play_list = ret.game_player_list;
-        } else 
-            stopGameG = true;
-    }
+			if (ret.bots) bots_list = ret.bots;
+			if (ret.game_player_list) game_play_list = ret.game_player_list;
+		} else
+			stopGameG = true;
+	}
 )
 
 function generateBustValue(currentHash) 
@@ -174,7 +173,7 @@ io.on('connection', function(socket){
 							avatar: data.avatar,
                             option: 0,
                             game_id: data.game_id,
-                            is_bot: '0',
+                            is_bot: 0,
                             done: false,
                             new: '1'
                         };
@@ -226,7 +225,7 @@ io.on('connection', function(socket){
                             var cashout_player = false;
                             for (var i = 0; i < game_play_list.length; i += 1) {
                                 if (game_play_list[i].new == '0' 
-                                    && game_play_list[i].is_bot == '0'
+                                    && game_play_list[i].is_bot == 0
                                     && game_play_list[i].user_id == data.user_id) {
                                     // this user cashout
                                     cashout_player = game_play_list.splice(i, 1);
@@ -309,7 +308,7 @@ function addBot(bot) {
 		'cashout': 0,
 		'new': '1',
 		'done': bust_val > crash ? true : false,
-		'is_bot': '1',
+		'is_bot': 1,
 		'bust': bust_val
 	};
 
@@ -407,7 +406,6 @@ function startGame() {
 					startTime = Date.now();
 					firstTimerHandler = setInterval(intervalFunc, timeInterval);
 				} , 200);
-				
 				io.emit('onMessage',
 					{
 						code: 'GameStart',
@@ -424,22 +422,26 @@ function startGame() {
 		}
 	);
 }
-
-function intervalFunc() 
+function intervalFunc()
 {
 	elapsed_time = Date.now() - startTime;
 	tick = Math.floor(100 * Math.pow(Math.E, 0.00006 * elapsed_time));
-	io.emit('onMessage',
-		{
-			code: 'Tick',
-			tick: tick,
-			game_id: gameId
-		}
-	);
+	if (elapsed_time - prev_time > 1000) {
+		console.log('intervalFunc() : ' + tick);
+
+		io.emit('onMessage',
+			{
+				code: 'Tick',
+				tick: tick,
+				game_id: gameId
+			}
+		);
+		prev_time = elapsed_time
+	}
 	// check for bot to be cashed out
 	var old_len = game_play_list.length;
 	for (var i = 0; i < game_play_list.length; i += 1) {
-		if (game_play_list[i].is_bot == '0') 
+		if (game_play_list[i].is_bot == 0) 
 			continue;
 		if (game_play_list[i].bust <= tick) {
 			var cashout = game_play_list[i];

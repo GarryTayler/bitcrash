@@ -15,24 +15,24 @@
     <b-collapse id="nav-collapse" is-nav>
       <div class="navbar-nav-wrapper">
         <b-navbar-nav>
-          <b-nav-item href="/#/home">
-            <img src="@/assets/img/ic_bits2usd.png" class="mr-sm">
+          <b-nav-item href="/home" :class="{'link-active': isHomeActive}">
+            <img src="@/assets/img/ic_bits2usd.png" class="mr-sm" />
             Crash
           </b-nav-item>
-          <b-nav-item href="/#/deposit">
-            <img src="@/assets/img/ic_leaderboard.png" class="mr-sm">
+           <b-nav-item href="/deposit" :class="{'link-active': isDepositActive}">
+            <img src="@/assets/img/ic_leaderboard.png" class="mr-sm" />
             Deposit
           </b-nav-item>
           <b-nav-item>
             <img src="@/assets/img/ic_bitcoin.png" class="mr-sm">
             Withdraw
           </b-nav-item>
-          <b-nav-item>
-            <img src="@/assets/img/ic_faq.png" class="mr-sm">
+          <b-nav-item href="/faq" :class="{'link-active': isFaqActive}">
+            <img src="@/assets/img/ic_faq.png" class="mr-sm" />
             FAQ
           </b-nav-item>
-          <b-nav-item href="/#/referral">
-            <img src="@/assets/img/ic_referral.png" class="mr-sm">
+          <b-nav-item href="/referral" :class="{'link-active': isReferralActive}">
+            <img src="@/assets/img/ic_referral.png" class="mr-sm" />
             Referral
           </b-nav-item>
           <b-nav-item>
@@ -41,9 +41,9 @@
           </b-nav-item>
         </b-navbar-nav>
         <div class="profile-bar-wrapper flex-row-hl-vc">
-          <profile-select v-if="token!=undefined && token!=''" :avatar-bits="wallet" :avatar-name="name" />
-          <log-in-button v-if="token==undefined || token==''" text="LogIn" class="login" @click="logIn" />
-          <log-in-button v-if="token==undefined || token==''" text="SignUp" class="signup" @click="signUp" />
+          <profile-select :avatar-bits="wallet" :avatar-name="name" v-if="token!=undefined && token!=''"></profile-select>
+          <log-in-button text="LogIn" class="login" @click="logIn" v-if="token==undefined || token==''"></log-in-button>
+          <log-in-button text="SignUp" class="signup" @click="signUp" v-if="token==undefined || token==''"></log-in-button>
         </div>
       </div>
     </b-collapse>
@@ -78,7 +78,27 @@ export default {
       'name',
       'wallet',
       'avatar'
-    ])
+    ]),
+    isHomeActive: {
+      get() {
+        return this.$route.path == '/home'
+      }
+    },
+    isDepositActive: {
+      get() {
+        return this.$route.path == '/deposit'
+      }
+    },
+    isFaqActive: {
+      get() {
+        return this.$route.path == '/faq'
+      }
+    },
+    isReferralActive: {
+      get() {
+        return this.$route.path == '/referral'
+      }
+    }
   },
   methods: {
     logIn() {

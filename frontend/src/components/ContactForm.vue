@@ -20,10 +20,10 @@
           </label>
         </b-col>
         <b-col md="7" lg="8" xl="9">
-          <a v-if="contact.link" :href="contact.link" class="text-warning underline">
+          <a :href="contact.link" class="text-warning underline" v-if="contact.link">
             {{ contact.value }}
           </a>
-          <label v-if="!contact.link" class="text-warning">
+          <label class="text-warning" v-if="!contact.link">
             {{ contact.value }}
           </label>
         </b-col>
@@ -42,11 +42,9 @@
             label="FIRST NAME"
             label-for="form-firstname"
           >
-            <b-form-input
-              id="form-firstname"
-              v-model="form.firstname"
-              placeholder="Your first name here"
-            />
+            <b-form-input id="form-firstname" v-model="form.firstname"
+                          placeholder="Your first name here">
+            </b-form-input>
           </b-form-group>
         </b-col>
         <b-col md="6">
@@ -54,11 +52,9 @@
             label="LAST NAME"
             label-for="form-lastname"
           >
-            <b-form-input
-              id="form-lastname"
-              v-model="form.lastname"
-              placeholder="Your last name here"
-            />
+            <b-form-input id="form-lastname" v-model="form.lastname"
+                          placeholder="Your last name here">
+            </b-form-input>
           </b-form-group>
         </b-col>
       </b-row>
@@ -69,11 +65,9 @@
             label="TELEPHONE"
             label-for="form-telephone"
           >
-            <b-form-input
-              id="form-telephone"
-              v-model="form.phone"
-              placeholder="Your phone number here"
-            />
+            <b-form-input id="form-telephone" v-model="form.phone"
+                          placeholder="Your phone number here">
+            </b-form-input>
           </b-form-group>
         </b-col>
         <b-col md="6">
@@ -81,11 +75,9 @@
             label="EMAIL"
             label-for="form-email"
           >
-            <b-form-input
-              id="form-email"
-              v-model="form.email"
-              placeholder="Your email here"
-            />
+            <b-form-input id="form-email" v-model="form.email"
+                          placeholder="Your email here">
+            </b-form-input>
           </b-form-group>
         </b-col>
       </b-row>
@@ -94,15 +86,11 @@
         label="MESSAGE"
         label-for="form-message"
       >
-        <b-form-textarea
-          id="form-message"
-          v-model="form.message"
-          rows="5"
-          placeholder="Your message here..."
-        />
+        <b-form-textarea id="form-message" rows="5" v-model="form.message"
+                         placeholder="Your message here...">
+        </b-form-textarea>
       </b-form-group>
-
-      <contact-button :submit="true" @submitted="onSubmit" />
+      <contact-button :submit="true" @submitted="onSubmit"></contact-button>
     </form>
   </b-modal>
 </template>

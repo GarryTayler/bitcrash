@@ -27,124 +27,38 @@ var db = require('./../utils/database');
 //     })
 // })
 router.post('/bet', async function (req, res) {
-
     const { user_id, bet, game_no, is_bot } = req.body
-    var ret = await crashModel.bet(user_id, bet, game_no, is_bot)
+    var ret = await crashModel.bet(user_id, bet, game_no, is_bot == undefined ? false : is_bot == 1)
     return res.json(ret)
-    // if (ret.status) {
-    //     return res.json({
-    //         code: 20000,
-    //         data: ret
-    //     });
-    // } else {
-    //     return res.json({
-    //         code: 60204,
-    //         message: ret.error,
-    //         data: ret
-    //     })
-    // }
 })
 router.post('/cashout', async function (req, res) {
     const { user_id, game_no, cash_rate, is_bot } = req.body
-    console.log("cash_rate: " + cash_rate)
-    var ret = await crashModel.cashout(user_id, game_no, cash_rate / 100, is_bot)
+    var ret = await crashModel.cashout(user_id, game_no, cash_rate / 100, is_bot == undefined ? false : is_bot == 1)
     return res.json(ret)
-    // if (ret.status) {
-    //     return res.json({
-    //         code: 20000,
-    //         data: {
-    //         }
-    //     });
-    // } else {
-    //     return res.json({
-    //         code: 60204,
-    //         message: ret.error
-    //     })
-    // }
 })
 router.post('/game_start', async function (req, res) {
-
     const { game_no, bust } = req.body
     console.log("game_start " + game_no + " " + bust)
     var ret = await crashModel.game_start(game_no, bust)
-
     return res.json(ret)
-    // if (ret.status) {
-    //     return res.json({
-    //         code: 20000,
-    //         data: ret.data
-    //     });
-    // } else {
-    //     return res.json({
-    //         code: 60204,
-    //         message: ret.error
-    //     })
-    // }
 })
 router.post('/game_bust', async function (req, res) {
-
     const { game_no } = req.body
     var ret = await crashModel.game_bust(game_no)
     return res.json(ret)
-    // if (ret.status) {
-    //     return res.json({
-    //         code: 20000,
-    //         data: {
-    //         }
-    //     });
-    // } else {
-    //     return res.json({
-    //         code: 60204,
-    //         message: ret.error
-    //     })
-    // }
 })
 router.post('/init', async function (req, res) {
     var ret = await crashModel.game_init()
-
     return res.json(ret)
-    // if (ret.status) {
-    //     return res.json({
-    //         code: 20000,
-    //         data: ret.data
-    //     });
-    // } else {
-    //     return res.json({
-    //         code: 60204,
-    //         message: ret.error
-    //     })
-    // }
 })
 router.post('/profit_rate', async function (req, res) {
     var ret = await crashModel.get_profit_rate()
     return res.json(ret)
-    // if (ret.status) {
-    //     return res.json({
-    //         code: 20000,
-    //         data: ret.data
-    //     });
-    // } else {
-    //     return res.json({
-    //         code: 60204,
-    //         message: ret.error
-    //     })
-    // }
 })
 router.post('/game_finish_start', async function (req, res) {
     const { game_no, bust } = req.body
     var ret = await crashModel.game_finish_start(game_no, bust)
     return res.json(ret)
-    // if (ret.status) {
-    //     return res.json({
-    //         code: 20000,
-    //         data: ret.data
-    //     });
-    // } else {
-    //     return res.json({
-    //         code: 60204,
-    //         message: ret.error
-    //     })
-    // }
 })
 router.post('/game_log', async function (req, res) {
     console.log("game_log")
@@ -154,17 +68,6 @@ router.post('/game_log', async function (req, res) {
         code: 20000,
         data: ret
     });
-    // if (ret.status) {
-    //     return res.json({
-    //         code: 20000,
-    //         data: ret.data
-    //     });
-    // } else {
-    //     return res.json({
-    //         code: 60204,
-    //         message: ret.error
-    //     })
-    // }
 })
 router.post('/history', async function (req, res) {
     console.log("history")
@@ -175,6 +78,25 @@ router.post('/history', async function (req, res) {
     return res.json({
         code: 20000,
         data: ret
+    });
+})
+router.post('/log', async function (req, res) {
+    console.log("log")
+    const { id } = req.body
+    if (id == undefined || isNaN(parseInt(id))) {
+        return res.json({
+            code: 60000,
+            message: 'ID param is not defined.',
+            data: null
+        });
+    }
+    var i_id = parseInt(id)
+    var ret = await crashModel.getGameLog(i_id)
+    return res.json({
+        code: 20000,
+        data: {
+          items: ret
+        }
     });
 })
 module.exports = router;

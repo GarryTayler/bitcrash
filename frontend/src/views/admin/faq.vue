@@ -6,16 +6,16 @@
           <el-input v-model="listQuery.search_key" placeholder="Content" style="width: 200px;" @keyup.enter.native="handleFilter" />
         </b-col>
         <b-col sm="12" md="4" lg="4" xl="4" class="pt-2">
-          <el-button class="m-l" type="primary" style="float: right;" @click="handleAdd">
+          <el-button class="m-l" type="primary" @click="handleAdd" style="float: right;">
             Add
           </el-button>
-          <el-button class="m-l" type="primary" style="float: right;" @click="handleFilter">
+          <el-button class="m-l" type="primary" @click="handleFilter" style="float: right;">
             Search
           </el-button>
         </b-col>
       </b-row>
     </div>
-    <el-table v-loading="listLoading" class="m-t" :data="list" border fit highlight-current-row style="width: 100%">
+    <el-table class="m-t" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%">
       <el-table-column align="center" label="ID" width="80">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
@@ -25,6 +25,12 @@
       <el-table-column width="160px" align="center" label="Time">
         <template slot-scope="scope">
           <span>{{ scope.row.create_time | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column align="center" label="Type">
+        <template slot-scope="scope">
+          <span>{{ scope.row.type | typeFilter }}</span>
         </template>
       </el-table-column>
 
@@ -45,11 +51,16 @@
 
     <el-dialog :title="dlgTextMap[dlgStatus]" :visible.sync="dlgVisible">
       <el-form ref="temp" :rules="rules" :model="temp" label-position="left" label-width="130px" style="width: 400px margin-left:50px">
+        <el-form-item label="Type" prop="type">
+          <el-select v-model="temp.type" placeholder="Type" clearable style="width: 130px">
+            <el-option v-for="item in typeOptions" :key="item.key" :label="item.display_name" :value="item.key"/>
+          </el-select>
+        </el-form-item>
         <el-form-item label="Question" prop="question">
-          <el-input v-model="temp.question" placeholder="Input Question" :rows="3" type="textarea" />
+          <el-input v-model="temp.question" placeholder="Input Question" :rows="3" type="textarea"/>
         </el-form-item>
         <el-form-item label="Answer" prop="answer">
-          <el-input v-model="temp.answer" placeholder="Input Answer" :rows="3" type="textarea" />
+          <el-input v-model="temp.answer" placeholder="Input Answer" :rows="3" type="textarea"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -67,12 +78,21 @@
 <script>
 import { getList, addItem } from '@/api/faq'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
+const typeOptions = [
+  { key: 0, display_name: 'Getting started with Bitcrash' },
+  { key: 1, display_name: 'Payment on Bitcrash' }
+]
 
 export default {
   components: {
     Pagination
   },
   props: {},
+  filters: {
+    typeFilter(type) {
+      return typeOptions[type].display_name
+    }
+  },
   data() {
     const validateRequire = (rule, value, callback) => {
       if (value === '') {
@@ -83,6 +103,17 @@ export default {
         callback(new Error('Content is empty.'))
       } else {
         callback()
+      }
+    }
+    const validateOptionRequire = (rule, value, callback) => {
+      if (value === undefined || value === '') {
+        this.$message({
+          message: "Select item.",
+          type: "warning"
+        });
+        callback(new Error("Select item"));
+      } else {
+        callback();
       }
     }
     return {
@@ -98,6 +129,7 @@ export default {
         answer: '',
         question: ''
       },
+      typeOptions,
       dlgVisible: false,
       dlgStatus: 'create',
       dlgTextMap: {
@@ -110,6 +142,9 @@ export default {
         ],
         question: [
           { required: true, trigger: 'blur', validator: validateRequire }
+        ],
+        type: [
+          { required: true, trigger: 'blur', validator: validateOptionRequire }
         ]
       }
     }

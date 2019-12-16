@@ -2,36 +2,36 @@
   <div>
     <el-row :gutter="20">
       <el-col :span="8" :xs="24">
-        <el-card class="box-container">
-          <div slot="header">
-            TODAY's {{ cardTitle[chartType].statistics_desc }} STATISTICS
-          </div>
-          <div class="box-item">
-            <el-table :data="statistics" class="setting-table">
-              <el-table-column label="Description" min-width="200">
-                <template slot-scope="scope">
-                  {{ scope.row.desc }}
-                </template>
-              </el-table-column>
-              <el-table-column label="Value">
-                <template slot-scope="scope">
-                  {{ scope.row.value }}
-                </template>
-              </el-table-column>
-            </el-table>
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :span="16" :xs="24">
-        <el-card class="box-container">
-          <div slot="header">
-            {{ cardTitle[chartType].visits_desc }} CHART FOR PREVIOUS MONTH
-          </div>
-          <div class="box-item">
-            <line-chart :chart-data="visits" />
-          </div>
-        </el-card>
-      </el-col>
+            <el-card class="box-container">
+                <div slot="header">
+                    TODAY's {{ cardTitle[chartType].statistics_desc }} STATISTICS
+                </div>
+                <div class="box-item">
+                    <el-table :data="statistics" class="setting-table">
+                        <el-table-column label="Description" min-width="200">
+                            <template slot-scope="scope">
+                                {{ scope.row.desc }}
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="Value">
+                            <template slot-scope="scope">
+                                {{ scope.row.value }}
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+            </el-card>
+        </el-col>
+        <el-col :span="16" :xs="24">
+            <el-card class="box-container">
+                <div slot="header">
+                    {{ cardTitle[chartType].visits_desc }} CHART FOR PREVIOUS MONTH
+                </div>
+                <div class="box-item">
+                    <line-chart :chart-data="visits" />
+                </div>
+            </el-card>
+        </el-col>
     </el-row>
   </div>
 </template>

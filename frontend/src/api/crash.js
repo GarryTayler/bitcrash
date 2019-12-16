@@ -15,3 +15,11 @@ export function getHistoryList(data) {
     data
   })
 }
+
+export function getLog(data) {
+  return request({
+    url: 'api/crash/log',
+    method: 'post',
+    data
+  })
+}

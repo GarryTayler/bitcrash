@@ -12,8 +12,8 @@
         </tr>
         <tr v-for="item in items" :key="item.id">
           <td v-for="field in fields" :key="field.id">
-            <user-profile v-if="field.type == 'profile'" :user="item[field.key]" />
-            <coin-label v-if="field.type=='bet'" :bet="item[field.key]" />
+            <user-profile :user='item[field.key]' v-if="field.type == 'profile'"></user-profile>
+            <coin-label :bet='item[field.key]' v-if="field.type=='bet'"></coin-label>
             <div v-if="field.type=='text'">
               {{ item[field.key] }}
             </div>
@@ -64,11 +64,12 @@ export default {
   display: block;
   width: 100%;
   overflow: auto;
+  height: 100%;
 
   .bit-crash-table {
     font-size: $user-tbl-header-text-size;
     width: 100%;
-    overflow-x: auto;
+    overflow-y: auto;
     -webkit-overflow-scrolling: touch;
 
     thead {

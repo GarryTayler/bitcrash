@@ -8,9 +8,8 @@
       @keyup.enter="sendMsg"
       @focus="handleFocus"
       @blur="handleBlur"
-      @input="handleInput"
-    >
-    <crash-button :icon="text.length > 0 ? '' : 'paper-plane'" :disabled="disabled" :text="text" @click="sendMsg" />
+       @input="handleInput"/>
+      <crash-button :icon="text.length > 0 ? '' : 'paper-plane'" @click="sendMsg" :disabled="disabled" :text="text"/>
   </div>
 </template>
 

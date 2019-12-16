@@ -108,6 +108,12 @@ body {
         color: $navbar-profile-text-color;
       }
     }
+    .link-active {
+      background: #1e2742;
+      border-radius: 20px;
+      // border-bottom: 1px solid white;
+      // color: white;
+    }
   }
   .vert-seperator {
     background-color: #485991;

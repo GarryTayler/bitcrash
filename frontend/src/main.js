@@ -8,7 +8,7 @@ import './assets/scss/element-variables.scss'
 
 import BootstrapVue from 'bootstrap-vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faCaretRight, faChevronDown, faChevronLeft, faChevronRight, faChevronUp, faPaperPlane } from '@fortawesome/free-solid-svg-icons'
+import { faCaretRight, faChevronDown, faChevronLeft, faChevronRight, faChevronUp, faPaperPlane, faPlus, faMinus } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 import App from './App.vue'
@@ -32,6 +32,8 @@ library.add(faChevronUp)
 library.add(faChevronLeft)
 library.add(faChevronRight)
 library.add(faPaperPlane)
+library.add(faPlus)
+library.add(faMinus)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Vue.use(Element, {
