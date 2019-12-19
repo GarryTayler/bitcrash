@@ -3,12 +3,12 @@
   <div>
     <el-row>
       <el-col :xs="24" :sm="24" :md="8" :lg="8" class="m-b-sm">
-        <span class="title-text">{{data.title}}</span>
+        <span class="title-text">{{ data.title }}</span>
       </el-col>
       <el-col :xs="24" :sm="24" :md="16" :lg="16">
         <div v-for="item in data.items" :key="item.id" class="content">
-          <faq-item :data="item"></faq-item>
-          <div class="seperator"></div>
+          <faq-item :data="item" />
+          <div class="seperator" />
         </div>
       </el-col>
     </el-row>
@@ -16,10 +16,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import FaqItem from './FaqItem.vue'
-// import { getNumberFormat, getFloat2Decimal } from '@/utils'
-
 export default {
   name: 'FaqSection',
   components: {
@@ -36,15 +33,15 @@ export default {
       }
     }
   },
-  computed: {
-  },
   data() {
     return {
     }
   },
-  methods: {
+  computed: {
   },
   created: function() {
+  },
+  methods: {
   }
 }
 </script>

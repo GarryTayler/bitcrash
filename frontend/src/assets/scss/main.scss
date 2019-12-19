@@ -15,17 +15,6 @@ body {
   position: relative;
   font-family: OpenSans;
   background-color: #1e2742;
-  // &:before {
-  //   content: " ";
-  //   position: absolute;
-  //   top: 0;
-  //   left: 0;
-  //   width: 100%;
-  //   height: 100%;
-  //   background: $main-bg-color;//url(../img/background.jpg);
-  //   opacity: 0.5;
-  //   z-index: -10;
-  // }
 }
 
 .app-container {
@@ -494,3 +483,38 @@ body {
   z-index: 10000;
   position: fixed;
 }
+
+body::-webkit-scrollbar {
+  width: 10px;
+}
+
+body::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: #4b5e9a;
+  outline: 1px solid #4b5e9a;
+  border-radius: 3px;
+}
+div::-webkit-scrollbar {
+   width: 10px;
+   @include media-breakpoint-down(sm) {
+      width: 6px;
+   }
+}
+div::-webkit-scrollbar-track {
+   -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+   border-radius: 10px;
+   @include media-breakpoint-down(sm) {
+      border-radius: 5px;
+   }
+}
+div::-webkit-scrollbar-thumb {
+   border-radius: 10px;
+   -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+   @include media-breakpoint-down(sm) {
+      border-radius: 5px;
+   }
+}
+

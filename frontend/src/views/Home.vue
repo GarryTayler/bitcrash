@@ -3,8 +3,8 @@
     <div class="flex-row root">
       <b-row align-v="start" class="flex1 content-padding main-content">
         <b-col sm="12" md="4" lg="4" xl="4" class="bots-table-wrapper p-none m-b">
-          <bots-table :type='0' :fields="bots_tbl_fields" :items="current_users" class="bots-table m-b"></bots-table>
-          <bots-table :type='1' :fields="bots_cashout_tbl_fields" :items="cashout_list" class="bots-table bots-table-1"></bots-table>
+          <bots-table :type="0" :fields="bots_tbl_fields" :items="current_users" class="bots-table m-b" />
+          <bots-table :type="1" :fields="bots_cashout_tbl_fields" :items="cashout_list" class="bots-table bots-table-1" />
         </b-col>
         <b-col sm="12" md="8" lg="8" xl="8" class="p-none p-l">
           <bit-crash-card class="m-b">
@@ -16,31 +16,28 @@
                   </div>
                 </b-col>
               </b-row>
-              <!-- <div class="flex-space-between-vc" style="overflow: hidden">
-                  <crash-header-item v-for="element in headerList" :key="element.id" :data="element"></crash-header-item>
-                </div> -->
             </div>
             <div class="card-content">
               <b-row>
-                <crash-graph :event-bus="eventBus"></crash-graph>
+                <crash-graph :event-bus="eventBus" />
               </b-row>
               <b-row>
                 <b-col sm="12" md="4" lg="4" xl="4" class="m-b">
-                  <crash-edit label="BET" sup="BTC" v-model="bet_input"></crash-edit>
+                  <crash-edit v-model="bet_input" label="BET" sup="BTC" />
                 </b-col>
                 <b-col sm="12" md="4" lg="4" xl="4" class="m-b">
-                  <crash-edit label="AUTO CASHOUT" sup="X" v-model="auto_cashout"></crash-edit>
+                  <crash-edit v-model="auto_cashout" label="AUTO CASHOUT" sup="X" />
                 </b-col>
                 <b-col sm="12" md="4" lg="4" xl="4">
-                  <crash-bet-button :is-disabled="!is_logged_in" :text="betBtnText" :size="betBtnSize" @click="do_action"></crash-bet-button>
+                  <crash-bet-button :is-disabled="!is_logged_in" :text="betBtnText" :size="betBtnSize" @click="do_action" />
                 </b-col>
               </b-row>
               <b-row>
                 <b-col sm="12" md="8" lg="8" xl="8">
-                  <crash-scale-item @click="scaleItemClick"></crash-scale-item>
+                  <crash-scale-item @click="scaleItemClick" />
                 </b-col>
                 <b-col sm="12" md="4" lg="4" xl="4">
-                  <crash-bet-select></crash-bet-select>
+                  <crash-bet-select />
                 </b-col>
               </b-row>
             </div>
@@ -127,7 +124,7 @@ export default {
           id: 3,
           label: 'Profit',
           type: 'text',
-          key: 'option'
+          key: 'profit'
         }
       ],
       all_tbl_fields: [
@@ -141,13 +138,13 @@ export default {
           id: 2,
           label: '@',
           type: 'text',
-          key: 'type'
+          key: 'cashout'
         },
         {
           id: 3,
           label: 'My Bet',
           type: 'text',
-          key: 'mybet'
+          key: 'bet'
         },
         {
           id: 4,
@@ -250,6 +247,8 @@ export default {
       }
     }
   },
+  mounted() {
+  },
   created: function() {
     var self = this
     this.crash_socket = io.connect(this.crash_server_url)
@@ -260,16 +259,13 @@ export default {
         case 'GameRule': // i don't know what to do here ...
           break
         case 'ReloadPlayers':
-          console.log('ReloadPlayers')
           self.reload(data)
           // self.addHistory(data)
           // recalc bet_sum, cashout_sum, and add count-up/down animation ...
           break
         case 'WaitGame':
-          // $('title').html('Crash | Tarobet')
           // game-created
           self.sendEvent('game-created', { duration: 0 })
-
           self.on_wait(data)
           break
         case 'GameStart':
@@ -280,7 +276,7 @@ export default {
           // from server
           if (Date.now() - self.time_stamp > 500) {
             // $('title').html(
-            //   parseFloat(data.tick / 100).toFixed(2) + 'x - Crash | Tarobet'
+            //   parseFloat(data.tick / 100).toFixed(2) + 'x - Crash'
             // )
             self.time_stamp = Date.now()
           }
@@ -320,7 +316,7 @@ export default {
           }
           break
         default:
-          console.log('unknown code: ' + data.code)
+          break
       }
     })
 
@@ -366,7 +362,11 @@ export default {
       }
     },
     updateHistory(data) {
-      game_log({ limit: 6 }).then(response => {
+      let limitVal = 6
+      if (window.innerWidth > 1310 && window.innerWidth <= 1700) {
+        limitVal = 8
+      }
+      game_log({ limit: limitVal }).then(response => {
         this.headerList = []
         const { data } = response
         for (var i = 0; i < data.length; i++) {
@@ -434,7 +434,6 @@ export default {
       this.update_btn()
     },
     update_btn() {
-      console.log('update btn', this.bet_temp, this.bet_amount)
       var label = 'BET'
       if (this.bet_temp > 0) label = 'Cancel'
       else if (this.bet_amount > 0) {
@@ -519,6 +518,7 @@ export default {
     reload(data) {
       this.current_users = data.current_users
       this.cashout_list = data.cashout_list
+
       if (!this.is_logged_in) return
       for (var i = 0; i < this.current_users.length; i += 1) {
         if (
@@ -529,7 +529,6 @@ export default {
           break
         }
       }
-      console.log('on reload')
       this.update_btn()
     },
     crash(data) {
@@ -579,12 +578,12 @@ export default {
       for (var i = 0; i < this.current_users.length + this.cashout_list.length; i++) {
         var list = []
         var index = 0
-        if (i < this.current_users.length) {
-          list = this.current_users
+        if (i < this.cashout_list.length) {
+          list = this.cashout_list
           index = i
         } else {
-          list = this.cashout_list
-          index = i - this.current_users.length
+          list = this.current_users
+          index = i - this.cashout_list.length
         }
         var data = {}
         data['id'] = list[index]['user_id']
@@ -596,10 +595,10 @@ export default {
               ? ''
               : list[index]['avatar_small']
         }
-        data['type'] = isNaN(parseFloat(list[index]['cashout'])) ? '-' : getFloat2Decimal(parseFloat(list[index]['cashout']))
-        data['mybet'] = list[index]['bet']
+        data['cashout'] = (isNaN(parseFloat(list[index]['cashout'])) || parseFloat(list[index]['cashout']) === 0) ? '-' : getFloat2Decimal(parseFloat(list[index]['cashout']))
+        data['bet'] = list[index]['bet']
         data['bonus'] = '-'
-        data['profit'] = isNaN(parseFloat(list[index].option)) ? '-' : getFloat2Decimal((parseFloat(list[index].option) / 100 - 1) * data.mybet)
+        data['profit'] = list[index]['profit']
         this.all_tbl_items.push(data)
       }
     }
@@ -617,34 +616,18 @@ export default {
 .main-content {
   width: 100%;
 }
-.content-padding {
-  padding-left: 50px;
-  padding-top: 50px;
-  padding-right: calc(50px + #{$chat-width} + #{$scrollbar-width});
-  @include media-breakpoint-down(md) {
-    padding-right: 50px;
-  }
-  padding-bottom: 50px;
-
-  .p-l {
-    // padding-left: 20px;
-    // @include media-breakpoint-down(xs) {
-    //   padding-left: 0px;
-    // }
-  }
-}
-
 .card-header {
-  min-height: $card-header-height;
+  //min-height: $card-header-height;
   background: $crash-header-bg-color;
-  padding-left: 20px;
-  padding-right: 20px;
-  padding-bottom: 15px;
-  padding-top: 15px;
+  padding: 1vw;
+  @include media-breakpoint-down(sm) {
+      padding-left: 20px;
+      padding-right: 20px;
+      padding-bottom: 15px;
+      padding-top: 15px;
+   }
 }
-.card-content {
-  padding: 35px;
-}
+
 .m-b {
   margin-bottom: $normal-margin-bottom-sm;
 }
@@ -652,16 +635,12 @@ export default {
   color: white;
 }
 .bots-table-wrapper {
-  height: 100%;
   position: relative;
-}
-.bots-table {
-  height: 300px;
 }
 .bots-table-1 {
   position: absolute;
-  top: 400px;
-  width: calc(100% - 30px);
+  top: calc( (100vh - 85px - 20px) / 2);
+  width: calc(100% - 1vw);
   @include media-breakpoint-down(md) {
     position: relative;
     top: 0px;
@@ -676,15 +655,27 @@ export default {
     flex: 0 0 16.66667%;
     max-width: 16.66667%;
   }
+  .card-content {
+    padding-top: 1.5vw;
+    padding-left: 1.5vw;
+    padding-bottom: 1.5vw;
+    padding-right: 1.5vw;
+  }
 }
 
-@media (min-width: 1270px) and (max-width: 1700px)
+@media (min-width: 1310px) and (max-width: 1700px)
 {
   .c_col2 {
     -webkit-box-flex: 0;
     -ms-flex: 0 0 25%;
     flex: 0 0 25%;
     max-width: 25%;
+  }
+  .card-content {
+    padding-top: 1.5vw;
+    padding-left: 2vw;
+    padding-bottom: 1.5vw;
+    padding-right: 2vw;
   }
 }
 
@@ -696,9 +687,15 @@ export default {
     flex: 0 0 33.3%;
     max-width: 33.3%;
   }
+  .card-content {
+    padding-top: 1.5vw;
+    padding-left: 2vw;
+    padding-bottom: 1.5vw;
+    padding-right: 2vw;
+  }
 }
 
-@media (max-width: 1120px)
+@media (min-width: 768px) and (max-width: 1120px)
 {
   .c_col2 {
     -webkit-box-flex: 0;
@@ -706,6 +703,61 @@ export default {
     flex: 0 0 50%;
     max-width: 50%;
   }
+  .card-content {
+    padding-top: 1.5vw;
+    padding-left: 3vw;
+    padding-bottom: 1.5vw;
+    padding-right: 3vw;
+  }
 }
 
+@media (min-width: 576px) and (max-width: 768px)
+{
+    .card-content {
+      padding-top: 1.5vw;
+      padding-left: 4vw;
+      padding-bottom: 1.5vw;
+      padding-right: 4vw;
+    }
+}
+
+@media (max-width: 576px)
+{
+    .card-content {
+      padding-top: 1.5vw;
+      padding-left: 6.2vw;
+      padding-bottom: 1.5vw;
+      padding-right: 6.2vw;
+    }
+}
+
+.content-padding {
+  padding-left: 20px;
+  padding-top: 20px;
+  padding-right: calc(1vw + #{$chat-width} + #{$scrollbar-width});
+  @include media-breakpoint-down(md) {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  padding-bottom: 50px;
+  .p-l {
+  }
+}
+@media (max-width: 991.98px) and (min-width: 321px)
+{
+  .content-padding {
+    padding-right: 20px;
+  }
+}
+@media (max-width: 1600px) and (min-width: 992px)
+{
+  .content-padding {
+    padding-right: calc(1vw + 300px + #{$scrollbar-width});
+  }
+}
+
+.col-1, .col-2, .col-3, .col-4, .col-5, .col-6, .col-7, .col-8, .col-9, .col-10, .col-11, .col-12, .col, .col-auto, .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm, .col-sm-auto, .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12, .col-md, .col-md-auto, .col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg, .col-lg-auto, .col-xl-1, .col-xl-2, .col-xl-3, .col-xl-4, .col-xl-5, .col-xl-6, .col-xl-7, .col-xl-8, .col-xl-9, .col-xl-10, .col-xl-11, .col-xl-12, .col-xl, .col-xl-auto {
+    padding-right: 0.5vw;
+    padding-left: 0.5vw;
+}
 </style>

@@ -309,7 +309,8 @@ function addBot(bot) {
 		'new': '1',
 		'done': bust_val > crash ? true : false,
 		'is_bot': 1,
-		'bust': bust_val
+		'bust': bust_val,
+		'profit': 0
 	};
 
 	request.post({
@@ -465,6 +466,8 @@ function intervalFunc()
 			game_play_list.splice(i, 1); i -= 1;
 			cashout.done = true;
 			cashout.option = cashout.bust;
+			cashout.cashout = parseFloat(cashout.bust / 100).toFixed(2).toString() + 'x';
+			cashout.profit = parseFloat(cashout.bust / 100) * cashout.bet;
 			cashout_list.push(cashout);
 		}
 	}

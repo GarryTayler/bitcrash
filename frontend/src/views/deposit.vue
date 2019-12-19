@@ -221,15 +221,6 @@ export default {
   position: relative;
   width: 100%;
 }
-.content-padding {
-  padding-left: 50px;
-  padding-top: 50px;
-  padding-right: calc(50px + #{$chat-width} + #{$scrollbar-width});
-  @include media-breakpoint-down(md) {
-    padding-right: 50px;
-  }
-  padding-bottom: 50px;
-}
 .with-menu {
   @include media-breakpoint-down(md) {
     padding-left: 50px;
@@ -356,4 +347,29 @@ export default {
     }
   }
 }
+.content-padding {
+  padding-left: 50px;
+  padding-top: 20px;
+  padding-right: calc(50px + #{$chat-width} + #{$scrollbar-width});
+  @include media-breakpoint-down(md) {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  padding-bottom: 50px;
+  .p-l {
+  }
+}
+@media (max-width: 991.98px) and (min-width: 321px)
+{
+  .content-padding {
+    padding-right: 20px;
+  }
+}
+@media (max-width: 1600px) and (min-width: 992px)
+{
+  .content-padding {
+    padding-right: calc(50px + 300px + #{$scrollbar-width});
+  }
+}
+
 </style>

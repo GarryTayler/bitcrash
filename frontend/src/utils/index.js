@@ -23,9 +23,6 @@ export function parseTime(time, cFormat) {
     if ((typeof time === 'number')) {
       time = time * 1000
     }
-    // if ((typeof time === 'number') && (time.toString().length === 10)) {
-    //   time = time * 1000
-    // }
     date = new Date(time)
   }
   const formatObj = {
@@ -48,7 +45,6 @@ export function parseTime(time, cFormat) {
   })
   return time_str
 }
-
 /**
  * @param {number} time
  * @param {string} option
@@ -251,15 +247,11 @@ export function debounce(func, wait, immediate) {
   let timeout, args, context, timestamp, result
 
   const later = function() {
-    // 据上一次触发时间间隔
     const last = +new Date() - timestamp
-
-    // 上次被包装函数被调用时间间隔 last 小于设定时间间隔 wait
     if (last < wait && last > 0) {
       timeout = setTimeout(later, wait - last)
     } else {
       timeout = null
-      // 如果设定为immediate===true，因为开始边界已经调用过了此处无需调用
       if (!immediate) {
         result = func.apply(context, args)
         if (!timeout) context = args = null
@@ -271,7 +263,6 @@ export function debounce(func, wait, immediate) {
     context = this
     timestamp = +new Date()
     const callNow = immediate && !timeout
-    // 如果延时不存在，重新设定延时
     if (!timeout) timeout = setTimeout(later, wait)
     if (callNow) {
       result = func.apply(context, args)
@@ -362,7 +353,9 @@ export function getNumberFormat(_num) {
   var gap_size = 3 // Desired distance between spaces
 
   while (_num.length > 0) { // Loop through string
-    result = result + ' ' + _num.substring(0, gap_size) // Insert space character
+    if (result === '') {
+      result = result + _num.substring(0, gap_size)
+    } else { result = result + ',' + _num.substring(0, gap_size) } // Insert space character
     _num = _num.substring(gap_size) // Trim String
   }
   num = result.split('')
@@ -375,15 +368,4 @@ export function getFloat2Decimal(f_val) {
   var val = parseFloat(f_val)
   return isNaN(val) ? '' : sprintf('%.2f', val)
 }
-// export function showToast(type, message, position = 'top-right') {
-//   var heading = ''
-//   if (type === 'error') heading = 'Error'
 
-//   $.toast({
-//     heading: heading,
-//     text: message,
-//     showHideTransition: 'fade',
-//     position: position,
-//     icon: type
-//   })
-// }

@@ -3,7 +3,7 @@
     <div class="bg flex-row-hl-vc" :class="bodyStyle" @click="btnClick">
       <img v-if="type == 'deposit'" src="@/assets/img/ic_deposit.png">
       <img v-if="type == 'withdraw'" src="@/assets/img/ic_withdraw.png">
-      <div class="seperator"></div>
+      <div class="seperator" />
       <span class="text">{{ text }}</span>
     </div>
   </div>

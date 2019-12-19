@@ -12,10 +12,13 @@
         </tr>
         <tr v-for="item in items" :key="item.id">
           <td v-for="field in fields" :key="field.id">
-            <user-profile :user='item[field.key]' v-if="field.type == 'profile'"></user-profile>
-            <coin-label :bet='item[field.key]' v-if="field.type=='bet'"></coin-label>
-            <div v-if="field.type=='text'">
+            <user-profile v-if="field.type == 'profile'" :user="item[field.key]" />
+            <coin-label v-if="field.type=='bet'" :bet="setNumberFormat(item[field.key])" />
+            <div v-if="field.type==='text' && field.key!=='bet' && field.key!=='profit'">
               {{ item[field.key] }}
+            </div>
+            <div v-if="field.type==='text' && (field.key==='bet' || field.key==='profit')">
+              {{ setNumberFormat(item[field.key]) }}
             </div>
           </td>
         </tr>
@@ -27,7 +30,7 @@
 <script>
 import CoinLabel from '@/components/crashTable/CoinLabel.vue'
 import UserProfile from '@/components/crashTable/UserProfile.vue'
-
+import { getNumberFormat } from '@/utils/index'
 export default {
   name: 'BitCrashCard',
   components: {
@@ -52,12 +55,19 @@ export default {
     return {
       striped: true
     }
+  },
+  methods: {
+    setNumberFormat(num) {
+      return getNumberFormat(num)
+    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
 @import "~@/assets/scss/_variables.scss";
+@import "~bootstrap/scss/bootstrap";
+@import "~bootstrap-vue/src/index";
 .bit-crash-table-wrapper {
   // padding-left: 40px;
   // padding-right: 10px;
@@ -79,6 +89,10 @@ export default {
 
       th {
         padding-bottom: 20px;
+        padding-left: 0.9vw;
+        @include media-breakpoint-down(sm) {
+          padding-left: 15px;
+        }
       }
     }
 
@@ -86,8 +100,14 @@ export default {
       color: white;
 
       td {
-        padding: 10px;
-        padding-left: 15px;
+
+        padding: 0.5vw;
+        padding-left: 0.9vw;
+
+        @include media-breakpoint-down(sm) {
+          padding: 10px;
+          padding-left: 15px;
+        }
 
         img {
           width: $user-tbl-profile-size;

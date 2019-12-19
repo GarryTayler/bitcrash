@@ -3,12 +3,12 @@
     <div class="title-text">
       Frequently Asked Questions
     </div>
-    <bit-crash-card :bodyStyle="1" :noHeader="true">
-        <div class="card-content">
-            <div v-for="item in faq" :key="item.id" class="m-b">
-                <faq-section :data="item"></faq-section>
-            </div>
+    <bit-crash-card :body-style="1" :no-header="true">
+      <div class="card-content">
+        <div v-for="item in faq" :key="item.id" class="m-b">
+          <faq-section :data="item" />
         </div>
+      </div>
     </bit-crash-card>
   </div>
 </template>
@@ -41,16 +41,16 @@ export default {
     return {
       faq: [
         {
-            id: 0,
-            title: 'Getting started with Bitcrash',
-            items: [
-            ]
+          id: 0,
+          title: 'Getting started with Bitcrash',
+          items: [
+          ]
         },
         {
-            id: 1,
-            title: 'Payment on Bitcrash',
-            items: [
-            ]
+          id: 1,
+          title: 'Payment on Bitcrash',
+          items: [
+          ]
         }
       ],
       typeOptions: [{
@@ -65,20 +65,7 @@ export default {
         page: 1,
         limit: 10000,
         type: -1
-      },
-    }
-  },
-  methods: {
-    faqListIndex(type) {
-      var i = 0
-      var isExist = false
-      for (i = 0; i < this.faq.length; i++) {
-        if(this.faq[i].id == type) {
-          isExist = true
-          break
-        }
       }
-      return i
     }
   },
   created: function() {
@@ -88,10 +75,21 @@ export default {
       for (var i = 0; i < response.data.items.length; i++) {
         var index = this.faqListIndex(parseInt(response.data.items[i].type))
         var obj = response.data.items[i]
-        obj["collapsed"] = true
+        obj['collapsed'] = true
         this.faq[index].items.push(obj)
       }
     })
+  },
+  methods: {
+    faqListIndex(type) {
+      var i = 0
+      for (i = 0; i < this.faq.length; i++) {
+        if (this.faq[i].id === type) {
+          break
+        }
+      }
+      return i
+    }
   }
 }
 </script>
@@ -102,15 +100,6 @@ export default {
 .root {
   position: relative;
   width: 100%;
-}
-.content-padding {
-  padding-left: 50px;
-  padding-top: 50px;
-  padding-right: calc(50px + #{$chat-width} + #{$scrollbar-width});
-  @include media-breakpoint-down(md) {
-    padding-right: 50px;
-  }
-  padding-bottom: 50px;
 }
 .m-b {
   margin-bottom: $normal-margin-bottom-lg;
@@ -137,4 +126,30 @@ export default {
   padding-top: 10px;
   padding-bottom: 10px;
 }
+.content-padding {
+  padding-left: 20px;
+  padding-top: 20px;
+  padding-right: calc(20px + #{$chat-width} + #{$scrollbar-width});
+  @include media-breakpoint-down(md) {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  padding-bottom: 50px;
+  .p-l {
+  }
+}
+@media (max-width: 320px)
+{
+  .content-padding {
+    padding-right: calc(20px + 260px + #{$scrollbar-width});
+  }
+}
+
+@media (max-width: 1600px) and (min-width: 321px)
+{
+  .content-padding {
+    padding-right: calc(20px + 300px + #{$scrollbar-width});
+  }
+}
+
 </style>

@@ -15,7 +15,7 @@
         <div class="link">
           <a href="#" class="text-link mr-lg-4 mr-xl-5" @click.prevent="scrollTo('section-about')">FAQ</a>
           <a href="#" class="text-link mr-lg-4 mr-xl-5" @click.prevent="scrollTo('section-together')">LEGAL</a>
-          <a href="#" class="text-link mr-lg-4 mr-xl-5" @click.prevent="scrollTo('section-industry')">PRAVABLY FAIR</a>
+          <a href="#" class="text-link mr-lg-4 mr-xl-5" @click.prevent="scrollTo('section-industry')">PROVABLY FAIR</a>
           <a href="#" class="text-link mr-lg-4 mr-xl-5" @click.prevent="contactUs()">ABOUT</a>
         </div>
       </b-row>

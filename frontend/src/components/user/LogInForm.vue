@@ -36,7 +36,6 @@ export default {
   },
   methods: {
     onLogIn() {
-      // console.log('api has not been implemented yet.', this.form)
       var valid = true
       if (valid) {
         const loader = this.$loading.show({
@@ -81,7 +80,6 @@ export default {
             this.loading = false
           })
       } else {
-        console.log('error submit!!')
         return false
       }
     }

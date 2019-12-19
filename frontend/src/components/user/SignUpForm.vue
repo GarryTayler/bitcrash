@@ -67,7 +67,6 @@ export default {
       return true
     },
     onSignup() {
-      // console.log('api has not been implemented yet.', this.form)
       var valid = this.isValid()
       if (valid) {
         this.loading = true
@@ -80,7 +79,6 @@ export default {
           if (response.code !== 20000) {
             // Error
           } else {
-            console.log(response.data)
             this.$store
               .dispatch('user/login', { token: response.data.token })
               .then(() => {
@@ -93,7 +91,6 @@ export default {
           }
         })
       } else {
-        console.log('error submit!!')
         return false
       }
     }

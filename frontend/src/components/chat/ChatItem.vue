@@ -1,16 +1,16 @@
 <template>
   <div class="flex-row-hl-vc">
-    <div class="d-flex align-items-center m-b-5"  v-if="user_id!=data.user_id">
+    <div v-if="user_id!=data.user_id" class="d-flex align-items-center m-b-5">
       <div class="icon p-r-15">
-        <img src="@/assets/img/avatar-sample.png" />
+        <img src="@/assets/img/avatar-sample.png">
         <!-- <img :src="user.url"/> -->
       </div>
       <div class="chat-text">
-        <div class="chat-user">{{data.user}}</div>
-        {{data.message}}
+        <div class="chat-user">{{ data.user }}</div>
+        {{ data.message }}
       </div>
     </div>
-    <div class="d-flex align-items-center m-b-5" v-if="user_id==data.user_id">
+    <div v-if="user_id==data.user_id" class="d-flex align-items-center m-b-5">
       <div class="right-chat-text">
         <!-- <div class="chat-text"> -->
         {{ data.message }}
@@ -44,6 +44,8 @@ export default {
 
 <style lang="scss" scoped>
 @import "~@/assets/scss/_variables.scss";
+@import "~bootstrap/scss/bootstrap";
+@import "~bootstrap-vue/src/index";
   .p-l-r {
     padding-right: 10px;
   }
@@ -63,7 +65,10 @@ export default {
   .chat-text {
     border-radius: 5px;
     position: relative;
-    padding: 17px 10px 17px 10px;
+    padding: 0.8vw 0.5vw 0.8vw 0.5vw;
+    @include media-breakpoint-down(sm) {
+      padding: 17px 10px 17px 10px;
+    }
     background: #4b5e9a;
     border: 1px solid #4b5e9a;
     margin: 2px 0 0 15px;

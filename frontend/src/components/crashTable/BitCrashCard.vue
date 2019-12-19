@@ -1,22 +1,18 @@
 <template>
   <div class="bit-crash-card" :class="customStyle">
-    <div class="bit-crash-header" v-if="$slots.header || header">
-        <slot name="header">{{ header }}</slot>
-        <!-- <b-col md="8" lg="8" sm="6" class="bit-crash-title">4 in games</b-col>
+    <div v-if="$slots.header || header" class="bit-crash-header">
+      <slot name="header">{{ header }}</slot>
+      <!-- <b-col md="8" lg="8" sm="6" class="bit-crash-title">4 in games</b-col>
         <b-col md="4" lg="4" sm="6" class="bit-crash-title">
           <coin-label></coin-label>
         </b-col> -->
     </div>
     <div :class="contentStyle">
-      <slot></slot>
+      <slot />
     </div>
   </div>
 </template>
-
 <script>
-// import BitCrashTable from '@/components/cashTable/BitCrashTable.vue';
-// import CoinLabel from '@/components/cashTable/CoinLabel.vue';
-
 export default {
   name: 'BitCrashCard',
   components: {
@@ -40,6 +36,10 @@ export default {
     noHeader: {
       type: Boolean,
       default: false
+    },
+    cardType: {
+      type: String,
+      default: '0'
     }
   },
   computed: {
@@ -52,7 +52,7 @@ export default {
     },
     contentStyle: {
       get() {
-        var ret = 'bit-crash-content'
+        var ret = this.cardType === '1' ? 'bit-log-content' : 'bit-crash-content'
         ret += this.shadow ? ' is-shadow' : ' is-none-shadow'
         ret += this.bodyStyle === 0 ? ' normal-content' : ' special-content'
         ret += !this.noHeader ? '' : ' top-left-border-radius'
@@ -65,22 +65,20 @@ export default {
 
 <style lang="scss" scoped>
 @import "~@/assets/scss/_variables.scss";
-
   .bit-crash-card {
     position: relative;
     border-radius: $card-border-radius;
-    // display: block;
-    // margin: 20px;
-
     .bit-crash-content{
       border-bottom-left-radius: $card-border-radius;
       border-bottom-right-radius: $card-border-radius;
       width: 100%;
       height: 100%;
-      max-height: 100%;
-      // min-height: 200px;
-      // max-height: 360px;
-      // overflow-y: auto;
+    }
+    .bit-log-content {
+      border-bottom-left-radius: $card-border-radius;
+      border-bottom-right-radius: $card-border-radius;
+      width: 100%; overflow-y: auto;
+      max-height: calc( (100vh - 85px - 20px - 40px - #{$card-header-height * 2}) / 2 );
     }
     .normal-content {
       background-color: #313d67;
@@ -88,9 +86,6 @@ export default {
     .special-content {
       background: linear-gradient(180deg, #333f6c, #2a355a)
     }
-    // .bit-crash-title {
-    //   padding-top:9px;
-    // }
   }
   .is-shadow {
     box-shadow: 0 10px 16px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
@@ -105,12 +100,9 @@ export default {
     border-color: transparent;
     border-style: solid;
     border-width: 1px;
-
     .bit-crash-content{
       border-top-left-radius: $card-border-radius;
       border-top-right-radius: $card-border-radius;
-      // min-height: 200px;
-      // max-height: 360px;
       // overflow-y: auto;
     }
 

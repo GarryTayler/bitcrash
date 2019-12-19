@@ -2,20 +2,17 @@
 <template>
   <div>
     <div class="flex-row-hl-vc" :class="{'m-b-sm': data.collapsed==false}">
-      <div class="title-text">{{data.question}}</div>
+      <div class="title-text">{{ data.question }}</div>
       <button class="collapse-btn" :class="{'discollapsed': data.collapsed==false}" @click="data.collapsed=!data.collapsed">
-        <font-awesome-icon icon="plus" v-if="data.collapsed"/>
-        <font-awesome-icon icon="minus" v-if="!data.collapsed"/>
+        <font-awesome-icon v-if="data.collapsed" icon="plus" />
+        <font-awesome-icon v-if="!data.collapsed" icon="minus" />
       </button>
     </div>
-    <span class="content-text" v-if="data.collapsed == false">{{data.answer}}</span>
+    <span v-if="data.collapsed == false" class="content-text">{{ data.answer }}</span>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-// import { getNumberFormat, getFloat2Decimal } from '@/utils'
-
 export default {
   name: 'FaqItem',
   components: {
@@ -32,15 +29,15 @@ export default {
       }
     }
   },
-  computed: {
-  },
   data() {
     return {
     }
   },
-  methods: {
+  computed: {
   },
   created: function() {
+  },
+  methods: {
   }
 }
 </script>

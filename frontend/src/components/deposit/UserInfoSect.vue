@@ -3,14 +3,14 @@
     <img src="@/assets/img/avatar-medium.png" class="profile">
     <div class="m-l">
       <div class="flex-row-hl-vc m-b">
-        <img src="@/assets/img/ic_vip.png" />
+        <img src="@/assets/img/ic_vip.png">
         <span class="lbl m-l-sm">Level 1</span>
       </div>
       <div class="flex-row-hl-vc m-b">
         <span class="lbl-1">Priven Reddy</span>
       </div>
       <div class="flex-row-hl-vc">
-        <div class="circle-indicator"></div>
+        <div class="circle-indicator" />
         <span class="lbl m-l-sm">4.235</span>
       </div>
     </div>

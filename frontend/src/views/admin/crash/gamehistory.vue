@@ -165,7 +165,7 @@ export default {
       //   HASH: 0,
       //   STATE: ''
       // },
-      dlgVisible : false
+      dlgVisible: false
     }
   },
   created() {
@@ -193,7 +193,7 @@ export default {
     showDetail(id) {
       this.dlgVisible = true
       this.dlgListLoading = true
-      getLog({id: id}).then(response => {
+      getLog({ id: id }).then(response => {
         this.dlgList = response.data.items
         this.dlgListLoading = false
       })

@@ -1,15 +1,15 @@
 <template>
   <div>
-    <bit-crash-card class="bots-table-card">
-        <div slot="header" class="card-header flex-space-between-vc" :class="type == 0 ? 'progress-user' : 'cashout-user'">
-            <span>
-              {{items.length}} {{type==0? 'in Game' : 'Cashed out'}}
-            </span>
-            <coin-label :bet="sum"></coin-label>
-        </div>
-        <div class="card-content">
-            <bit-crash-table :fields="fields" :items="items"></bit-crash-table>
-        </div>
+    <bit-crash-card class="bots-table-card" card-type="1">
+      <div slot="header" class="card-header flex-space-between-vc" :class="type == 0 ? 'progress-user' : 'cashout-user'">
+        <span>
+          {{ items.length }} {{ type==0? 'in Game' : 'Cashed out' }}
+        </span>
+        <coin-label :bet="sum" />
+      </div>
+      <div class="card-content">
+        <bit-crash-table :fields="fields" :items="items" />
+      </div>
     </bit-crash-card>
   </div>
 </template>
@@ -18,7 +18,7 @@
 import BitCrashCard from '@/components/crashTable/BitCrashCard.vue'
 import BitCrashTable from '@/components/crashTable/BitCrashTable.vue'
 import CoinLabel from '@/components/crashTable/CoinLabel.vue'
-import { getFloat2Decimal } from '@/utils/index'
+import { getNumberFormat } from '@/utils/index'
 
 export default {
   name: 'BotsTable',
@@ -52,29 +52,39 @@ export default {
         sum += this.items[i].bet * (this.type === 0 ? 1 : (this.items[i].option === undefined ? 1 : this.items[i].option / 100))
       }
 
-      return parseFloat(getFloat2Decimal(sum))
+      return getNumberFormat(sum)
     }
   }
 }
 </script>
 <style lang="scss" scoped>
 @import "~@/assets/scss/_variables.scss";
+@import "~bootstrap/scss/bootstrap";
+@import "~bootstrap-vue/src/index";
 .bots-table-card {
   max-height: calc(80% - #{$normal-margin-bottom})
 }
 .card-header {
-  height: $card-header-height;
-  padding-left: 30px;
-  padding-right: 30px;
-  padding-bottom: 20px;
-  padding-top: 20px;
-
+  //height: $card-header-height;
+  //height: 3vw;
+  padding: 0.7vw 1vw 0.7vw 1vw;
   color: white;
-  font-size: 18px;
+  font-size: 14px;
   font-weight: bold;
+  @include media-breakpoint-down(sm) {
+      padding-left: 20px;
+      padding-right: 20px;
+      padding-bottom: 15px;
+      padding-top: 15px;
+      height: $card-header-height;
+  }
+
 }
 .card-content {
-  padding: 20px;
+  padding: 1vw;
+  @include media-breakpoint-down(sm) {
+    padding: 20px;
+  }
   height: 100%;
 }
 .progress-user {

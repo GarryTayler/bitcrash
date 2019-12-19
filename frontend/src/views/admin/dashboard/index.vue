@@ -2,13 +2,13 @@
   <div class="admin-page">
     <el-col>
       <el-row class="chart-item">
-        <statistics-chart chartType="user" />
+        <statistics-chart chart-type="user" />
       </el-row>
       <el-row class="chart-item">
-        <statistics-chart chartType="betting" />
+        <statistics-chart chart-type="betting" />
       </el-row>
       <el-row class="chart-item">
-        <statistics-chart chartType="financial" />
+        <statistics-chart chart-type="financial" />
       </el-row>
     </el-col>
   </div>

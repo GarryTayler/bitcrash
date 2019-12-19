@@ -7,15 +7,15 @@
       </div>
       <div class="chat-header flex-space-between-vc">
         Chat
-        <nation-group-flag></nation-group-flag>
+        <nation-group-flag />
       </div>
       <div class="chat-items">
         <div class="drawer-container">
-          <chat-item v-for="message in messages" :key="message.id" :data="message"></chat-item>
+          <chat-item v-for="message in messages" :key="message.id" :data="message" />
         </div>
       </div>
       <div class="chat-footer flex-space-between-vc">
-        <chat-input-box :value="current_chat" :disabled="!is_logged_in" @sendMsg="sendMsg"></chat-input-box>
+        <chat-input-box :value="current_chat" :disabled="!is_logged_in" @sendMsg="sendMsg" />
       </div>
     </div>
   </div>
@@ -163,7 +163,6 @@ export default {
         if (response.code !== 20000) {
           // Error
         } else {
-          console.log(response.data)
           this.reload()
         }
       })
@@ -202,15 +201,12 @@ export default {
   }
   background: rgba(0, 0, 0, 0.2);
 }
-
 .chat {
   width: 100%;
-  width: calc(#{$chat-width} + #{$scrollbar-width});
+  width: $chat-width;
   height: 100%;
-  // position: absolute;
   right: 0;
   position: fixed !important;
-
   @include media-breakpoint-down(md) {
     transition: all 0.25s cubic-bezier(0.7, 0.3, 0.1, 1);
     transform: translate(100%);
@@ -219,6 +215,20 @@ export default {
   background: $navbar-bg-color;
   @include media-breakpoint-up(md) {
     position: absolute;
+  }
+}
+
+@media (max-width: 320px)
+{
+  .chat {
+    width: 260px;
+  }
+}
+
+@media (max-width: 1600px) and (min-width: 321px)
+{
+  .chat {
+    width: 300px;
   }
 }
 
@@ -259,8 +269,9 @@ export default {
     font-size: 24px;
     line-height: 48px;
   }
-  @include media-breakpoint-up(md) {
-    display: none;
+  display: none;
+  @include media-breakpoint-down(md) {
+    display: block;
   }
 }
 .chat-header {
@@ -276,8 +287,11 @@ export default {
   padding-bottom: 10px;
 }
 .drawer-container {
-  padding: 24px;
-  font-size: 14px;
+  padding: 1vw;
+  @include media-breakpoint-down(sm) {
+    padding: 24px;
+  }
+  font-size: 12.6px;
   line-height: 1.5;
   word-wrap: break-word;
 

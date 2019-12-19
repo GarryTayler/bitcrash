@@ -1,4 +1,4 @@
-# honeytek-frontend
+# bitcrash-frontend
 
 ## Project setup
 ```

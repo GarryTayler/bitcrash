@@ -28,23 +28,17 @@ export default {
       }
     }
   },
-  data() {
-    return {
-    }
-  },
   computed: {
     scaleTextStyle: {
       get() {
-        return (this.data.is_active ? 'is-active' : '') + (' scale-text-' + this.data.type)
+        return (this.data.is_active ? 'is-active' : '') + (' scale-text-' + (this.data.scale > 2.5 ? '1' : '0'))
       }
     },
     circleStyle: {
       get() {
-        return 'circle circle-bg-' + this.data.type
+        return 'circle circle-bg-' + (this.data.scale > 2.5 ? '1' : '0')
       }
     }
-  },
-  methods: {
   }
 }
 </script>
