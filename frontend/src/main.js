@@ -7,6 +7,7 @@ import Element from 'element-ui'
 import './assets/scss/element-variables.scss'
 
 import BootstrapVue from 'bootstrap-vue'
+import { VLazyImagePlugin } from 'v-lazy-image'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCaretRight, faChevronDown, faChevronLeft, faChevronRight, faChevronUp, faPaperPlane, faPlus, faMinus } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -40,6 +41,7 @@ Vue.use(Element, {
   size: Cookies.get('size') || 'medium' // set element-ui default size
 })
 Vue.use(BootstrapVue)
+Vue.use(VLazyImagePlugin)
 Vue.use(Loading)
 Vue.use(CxltToastr)
 

@@ -720,7 +720,7 @@ var getHistory = function(id, start_date, end_date, page, limit) {
 var getGameLog = function (id) {
     var cmd = "SELECT crash_game_log.ID, crash_game_log.CREATE_TIME, crash_game_log.BET_AMOUNT, crash_game_log.UPDATE_TIME, crash_game_log.GAMENO,\
     crash_game_log.USERID, crash_game_log.IS_BOT, crash_game_log.BET, crash_game_log.CASHOUTRATE, crash_game_log.CASHOUT, crash_game_log.PROFIT,\
-    crash_game_bot.F_ID AS BOT_NAME, users.USERNAME AS USER_NAME, users.AVATAR_SMALL AS USER_AVATAR FROM"
+    crash_game_bot.F_ID AS BOT_NAME, users.USERNAME AS USER_NAME, users.AVATAR AS USER_AVATAR FROM"
     var extra = "LEFT JOIN crash_game_bot ON crash_game_bot.ID = crash_game_log.USERID LEFT JOIN users ON users.ID = crash_game_log.USERID"
 
     var statement = cmd + " crash_game_log " + extra + " where crash_game_log.GAMENO=" + id

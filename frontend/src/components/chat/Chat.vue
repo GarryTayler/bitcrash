@@ -23,7 +23,6 @@
 
 <script>
 import { mapGetters } from 'vuex'
-// import { addClass, removeClass } from '@/utils'
 import NationGroupFlag from '@/components/chat/NationGroupFlag.vue'
 import ChatItem from '@/components/chat/ChatItem.vue'
 import ChatInputBox from '@/components/chat/ChatInputBox.vue'
@@ -51,30 +50,6 @@ export default {
     return {
       show: true,
       messages: [
-        {
-          id: 1,
-          user: 'Martintm33',
-          user_id: 3,
-          message: 'At least it wasnt catx'
-        },
-        {
-          id: 2,
-          user: 'da',
-          user_id: 1,
-          message: 'I wanna sau next big cat might go overb 10k'
-        },
-        {
-          id: 4,
-          user: 'Martintm33',
-          user_id: 3,
-          message: 'Morning and good luck!'
-        },
-        {
-          id: 3,
-          user: '23',
-          user_id: 1,
-          message: 'how are you all?'
-        }
       ],
       current_chat: ''
     }
@@ -88,8 +63,7 @@ export default {
       'ipaddress',
       'token',
       'crash_chat',
-      'avatar_small',
-      'avatar_medium'
+      'avatar'
     ])
   },
   watch: {
@@ -97,15 +71,9 @@ export default {
       if (value && !this.clickNotClose) {
         this.addEventClick()
       }
-      //   if (value) {
-      //     addClass(document.body, 'showChat')
-      //   } else {
-      //     removeClass(document.body, 'showChat')
-      //   }
     }
   },
   mounted() {
-    // this.insertToBody()
   },
   beforeDestroy() {
     const elx = this.$refs.chat
@@ -146,8 +114,7 @@ export default {
         MSG: msg,
         IPADDRESS: this.ipaddress,
         USERID: this.user_id,
-        AVATAR_MEDIUM: this.avatar_medium,
-        AVATAR_SMALL: this.avatar_small,
+        AVATAR: this.avatar,
         USERNAME: this.name
       }
       emit(emitData).then(response => {

@@ -9,8 +9,6 @@ const state = {
   email: '',
   ipaddress: '',
   avatar: '',
-  avatar_small: '',
-  avatar_medium: '',
   introduction: '',
   wallet: 0,
   wallet_avail: 0,
@@ -39,12 +37,6 @@ const mutations = {
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
-  },
-  SET_AVATAR_SMALL: (state, avatar) => {
-    state.avatar_small = avatar
-  },
-  SET_AVATAR_MEDIUM: (state, avatar) => {
-    state.avatar_medium = avatar
   },
   SET_WALLET: (state, wallet) => {
     state.wallet = wallet
@@ -99,15 +91,13 @@ const actions = {
           reject('Verification failed, please Login again.')
         }
 
-        const { ID, USERNAME, EMAIL, AVATAR_SMALL, AVATAR_MEDIUM, WALLET, IPADDRESS, WALLET_AVAILABLE, WALLET_BLOCK } = data
+        const { ID, USERNAME, EMAIL, AVATAR, WALLET, IPADDRESS, WALLET_AVAILABLE, WALLET_BLOCK } = data
 
         commit('SET_ID', ID)
         commit('SET_ROLES', '')
         commit('SET_NAME', USERNAME)
         commit('SET_EMAIL', EMAIL)
-        commit('SET_AVATAR', AVATAR_SMALL)
-        commit('SET_AVATAR_SMALL', AVATAR_SMALL)
-        commit('SET_AVATAR_MEDIUM', AVATAR_MEDIUM)
+        commit('SET_AVATAR', AVATAR)
         commit('SET_INTRODUCTION', '')
         commit('SET_WALLET', WALLET)
         commit('SET_WALLET_AVAIL', WALLET_AVAILABLE)

@@ -218,10 +218,10 @@ export default {
           temp[i]['show_user'] = {
             name: temp[i]['name'],
             url:
-              temp[i]['avatar_small'] === undefined ||
-              temp[i]['avatar_small'] === null
+              temp[i]['avatar'] === undefined ||
+              temp[i]['avatar'] === null
                 ? ''
-                : temp[i]['avatar_small']
+                : temp[i]['avatar']
           }
           temp[i]['id'] = temp[i]['user_id']
         }
@@ -236,10 +236,10 @@ export default {
           temp[i]['show_user'] = {
             name: temp[i]['name'],
             url:
-              temp[i]['avatar_small'] === undefined ||
-              temp[i]['avatar_small'] === null
+              temp[i]['avatar'] === undefined ||
+              temp[i]['avatar'] === null
                 ? ''
-                : temp[i]['avatar_small']
+                : temp[i]['avatar']
           }
           temp[i]['id'] = temp[i]['user_id']
         }
@@ -590,10 +590,10 @@ export default {
         data['user'] = {
           name: list[index]['name'],
           url:
-            list[index]['avatar_small'] === undefined ||
-            list[index]['avatar_small'] === null
+            list[index]['avatar'] === undefined ||
+            list[index]['avatar'] === null
               ? ''
-              : list[index]['avatar_small']
+              : list[index]['avatar']
         }
         data['cashout'] = (isNaN(parseFloat(list[index]['cashout'])) || parseFloat(list[index]['cashout']) === 0) ? '-' : getFloat2Decimal(parseFloat(list[index]['cashout']))
         data['bet'] = list[index]['bet']

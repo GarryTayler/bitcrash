@@ -86,8 +86,7 @@ export default {
       'ipaddress',
       'token',
       'crash_chat',
-      'avatar_small',
-      'avatar_medium'
+      'avatar'
     ])
   },
   watch: {
