@@ -52,7 +52,8 @@ export default {
     },
     contentStyle: {
       get() {
-        var ret = this.cardType === '1' ? 'bit-log-content' : 'bit-crash-content'
+        var ret = ''
+        if (this.cardType === '1') { ret = 'bit-log-content' } else if (this.cardType === '2') { ret = 'bit-allbet-content' } else { ret = 'bit-crash-content' }
         ret += this.shadow ? ' is-shadow' : ' is-none-shadow'
         ret += this.bodyStyle === 0 ? ' normal-content' : ' special-content'
         ret += !this.noHeader ? '' : ' top-left-border-radius'
@@ -65,6 +66,8 @@ export default {
 
 <style lang="scss" scoped>
 @import "~@/assets/scss/_variables.scss";
+@import "~bootstrap/scss/bootstrap";
+@import "~bootstrap-vue/src/index";
   .bit-crash-card {
     position: relative;
     border-radius: $card-border-radius;
@@ -74,11 +77,25 @@ export default {
       width: 100%;
       height: 100%;
     }
+    .bit-allbet-content {
+      border-bottom-left-radius: $card-border-radius;
+      border-bottom-right-radius: $card-border-radius;
+      width: 100%;
+      overflow-y: auto;
+      max-height: 400px;
+      @include media-breakpoint-down(sm) {
+        max-height: 300px;
+        margin-bottom: 13.5px;
+      }
+    }
     .bit-log-content {
       border-bottom-left-radius: $card-border-radius;
       border-bottom-right-radius: $card-border-radius;
       width: 100%; overflow-y: auto;
       max-height: calc( (100vh - 85px - 20px - 40px - #{$card-header-height * 2}) / 2 );
+      @include media-breakpoint-down(sm) {
+        max-height: 300px;
+      }
     }
     .normal-content {
       background-color: #313d67;
@@ -103,9 +120,18 @@ export default {
     .bit-crash-content{
       border-top-left-radius: $card-border-radius;
       border-top-right-radius: $card-border-radius;
-      // overflow-y: auto;
-    }
+      overflow-y: auto;
+      overflow-y: auto;
+      max-height: 400px;
 
+    }
+    .bit-allbet-content {
+      border-bottom-left-radius: $card-border-radius;
+      border-bottom-right-radius: $card-border-radius;
+      width: 100%;
+      overflow-y: auto;
+      max-height: 400px;
+    }
     &:hover {
       border-color: #62a1fe;
     }

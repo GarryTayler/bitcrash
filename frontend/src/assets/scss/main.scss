@@ -1,4 +1,4 @@
-@import "./_variables";
+@import "./_variables.scss";
 @import "./_fonts";
 @import "~bootstrap/scss/bootstrap";
 @import "~bootstrap-vue/src/index";
@@ -48,7 +48,7 @@ body {
   .navbar-nav-wrapper {
     position: absolute;
     bottom: 30px;
-    right: 30px;
+    right: 0px;
 
     justify-content: flex-end;
 
@@ -59,6 +59,13 @@ body {
     .nav-link {
       // text-align: right;
       // font-size: 1rem;
+    }
+    @include media-breakpoint-down(sm) {
+      flex-direction: column-reverse;
+      align-items: baseline;
+      .profile-bar-wrapper {
+        margin-bottom: 50px;
+      }
     }
   }
 }

@@ -2,10 +2,6 @@
   <div>
     <div class="flex-row root">
       <b-row align-v="start" class="flex1 content-padding main-content">
-        <b-col sm="12" md="4" lg="4" xl="4" class="bots-table-wrapper p-none m-b">
-          <bots-table :type="0" :fields="bots_tbl_fields" :items="current_users" class="bots-table m-b" />
-          <bots-table :type="1" :fields="bots_cashout_tbl_fields" :items="cashout_list" class="bots-table bots-table-1" />
-        </b-col>
         <b-col sm="12" md="8" lg="8" xl="8" class="p-none p-l">
           <bit-crash-card class="m-b">
             <div slot="header" class="card-header">
@@ -42,7 +38,7 @@
               </b-row>
             </div>
           </bit-crash-card>
-          <bit-crash-card>
+          <bit-crash-card card-type="2">
             <div slot="header" class="card-header flex-space-between-vc all-bets">
               <span>
                 All Bets
@@ -52,6 +48,10 @@
               <bit-crash-table :fields="all_tbl_fields" :items="all_tbl_items" />
             </div>
           </bit-crash-card>
+        </b-col>
+        <b-col sm="12" md="4" lg="4" xl="4" class="bots-table-wrapper p-none m-b">
+          <bots-table :type="0" :fields="bots_tbl_fields" :items="current_users" class="bots-table m-b" />
+          <bots-table :type="1" :fields="bots_cashout_tbl_fields" :items="cashout_list" class="bots-table bots-table-1" />
         </b-col>
       </b-row>
       <!-- <chat></chat> -->
@@ -615,6 +615,10 @@ export default {
 }
 .main-content {
   width: 100%;
+  flex-direction: row-reverse;
+  @include media-breakpoint-down(sm) {
+    //flex-direction: column-reverse;
+  }
 }
 .card-header {
   //min-height: $card-header-height;
@@ -714,7 +718,7 @@ export default {
 @media (min-width: 576px) and (max-width: 768px)
 {
     .card-content {
-      padding-top: 1.5vw;
+      padding-top: 20px;
       padding-left: 4vw;
       padding-bottom: 1.5vw;
       padding-right: 4vw;
@@ -724,7 +728,7 @@ export default {
 @media (max-width: 576px)
 {
     .card-content {
-      padding-top: 1.5vw;
+      padding-top: 20px;
       padding-left: 6.2vw;
       padding-bottom: 1.5vw;
       padding-right: 6.2vw;

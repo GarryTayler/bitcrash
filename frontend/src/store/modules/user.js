@@ -99,19 +99,13 @@ const actions = {
           reject('Verification failed, please Login again.')
         }
 
-        const { ID, USERNAME, EMAIL, AVATAR, AVATAR_SMALL, AVATAR_MEDIUM, WALLET, IPADDRESS, WALLET_AVAILABLE, WALLET_BLOCK } = data
-
-        // roles must be a non-empty array
-        // if (!roles || roles.length <= 0) {
-        //   reject('getInfo: roles must be a non-null array!')
-        // }
+        const { ID, USERNAME, EMAIL, AVATAR_SMALL, AVATAR_MEDIUM, WALLET, IPADDRESS, WALLET_AVAILABLE, WALLET_BLOCK } = data
 
         commit('SET_ID', ID)
-
         commit('SET_ROLES', '')
         commit('SET_NAME', USERNAME)
         commit('SET_EMAIL', EMAIL)
-        commit('SET_AVATAR', AVATAR)
+        commit('SET_AVATAR', AVATAR_SMALL)
         commit('SET_AVATAR_SMALL', AVATAR_SMALL)
         commit('SET_AVATAR_MEDIUM', AVATAR_MEDIUM)
         commit('SET_INTRODUCTION', '')

@@ -12,20 +12,19 @@ var instance = axios.create({
   });
 
 router.post('/post_msg', async function (req, res) {
-    const { CHAT_TYPE, MSG, IPADDRESS, USERID, AVATAR_MEDIUM, AVATAR_SMALL, USERNAME } = req.body
+    const { CHAT_TYPE, MSG, IPADDRESS, USERID, AVATAR, USERNAME } = req.body
     var curtime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss")
+
     var data = {
         msg: MSG,
         avatarmedium: AVATAR_MEDIUM,
-        avatar: AVATAR_SMALL,
+        avatar: AVATAR,
         username: USERNAME,
         curtime: curtime,
         type: CHAT_TYPE
     }
-    console.log(data)
 
     var ret = await instance.post("post_msg", data).then(response => {
-        console.log("Backend ret: " + response.data.error_code)
         if(response.data != null && response.data.error_code == 0) {
             return true
         } else {
@@ -42,7 +41,7 @@ router.post('/post_msg', async function (req, res) {
         chat_data["MSG"] = MSG
         chat_data["IPADDRESS"] = IPADDRESS
         chat_data["USERID"] = USERID
-
+01
         console.log(chat_data)
 
         chatModel.add(chat_data)

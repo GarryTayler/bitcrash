@@ -635,18 +635,7 @@ var game_init = function () {
     //     )
     // );
 }
-var get_profit_rate = function () {
-    return db.list(db.statement("select 'FROM', 'TO', 'PERCENT' from", "crash_game_profit", "", ""), true).then((profit_rate) => {
-        return {
-            status: true,
-            error: '',
-            data: {
-                profit_rate: profit_rate[0]
-            },
-            profit_rate: profit_rate[0]
-        }
-    })
-}
+
 var game_finish_start = function (gameNo, gameBust) {
     var retData = null
     var gameInfo = []
@@ -749,7 +738,6 @@ var crashModel = {
     game_start: game_start,
     game_bust: game_bust,
     game_init: game_init,
-    get_profit_rate: get_profit_rate,
     game_finish_start: game_finish_start,
     game_log: game_log,
     getHistory: getHistory,

@@ -41,7 +41,7 @@
           </b-nav-item>
         </b-navbar-nav>
         <div class="profile-bar-wrapper flex-row-hl-vc">
-          <profile-select v-if="token!=undefined && token!=''" :avatar-bits="wallet" :avatar-name="name" />
+          <profile-select v-if="token!=undefined && token!=''" :avatar-bits="wallet" :avatar-name="name" :avatar-image="avatar" />
           <log-in-button v-if="token==undefined || token==''" text="LogIn" class="login" @click="logIn" />
           <log-in-button v-if="token==undefined || token==''" text="SignUp" class="signup" @click="signUp" />
         </div>

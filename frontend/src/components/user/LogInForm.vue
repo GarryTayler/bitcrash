@@ -49,7 +49,6 @@ export default {
         this.$store
           .dispatch('user/login', this.form)
           .then(() => {
-            // this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
             this.$store.dispatch('user/getInfo', this.token)
             this.loading = false
             this.$bvModal.hide('login-form')

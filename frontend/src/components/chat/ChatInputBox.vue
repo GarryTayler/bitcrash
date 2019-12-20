@@ -4,6 +4,7 @@
       v-model="currentValue"
       class="text flex1"
       name="quantity"
+      placeholder="Type your message"
       :disabled="disabled"
       @keyup.enter="sendMsg"
       @focus="handleFocus"
@@ -78,7 +79,7 @@ export default {
   border-radius: $control-border-radius;
 
   .text {
-    font-size: 18px;
+    font-size: 13px;
     color: white;
     border: none;
     background: none;

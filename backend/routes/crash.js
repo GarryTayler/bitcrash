@@ -51,10 +51,6 @@ router.post('/init', async function (req, res) {
     var ret = await crashModel.game_init()
     return res.json(ret)
 })
-router.post('/profit_rate', async function (req, res) {
-    var ret = await crashModel.get_profit_rate()
-    return res.json(ret)
-})
 router.post('/game_finish_start', async function (req, res) {
     const { game_no, bust } = req.body
     var ret = await crashModel.game_finish_start(game_no, bust)

@@ -30,15 +30,11 @@ io.on('connection', function(socket) {
             type: req.body.type,
             avatar: req.body.avatar
         });
-        console.log(json)
         //broadcast messages to every body
         io.emit('chat_message', json);
         res.json({"error_code" : 0});
-
     });
-
     socket.on('disconnect', function(data) {
     });
-
 });
 

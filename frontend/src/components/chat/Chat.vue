@@ -114,10 +114,10 @@ export default {
   created: function() {
     var self = this
     this.chat_socket = io.connect(this.chat_server_url)
+    self.reload()
     // socket reference
     this.chat_socket.on('chat_message', function(item) {
       self.reload()
-      // self.addChatItem(item)
     })
   },
   methods: {
@@ -131,16 +131,7 @@ export default {
         window.removeEventListener('click', this.closeSidebar)
       }
     },
-    // insertToBody() {
-    //   const elx = this.$refs.chat
-    //   const body = document.querySelector('body')
-    //   body.insertBefore(elx, body.firstChild)
-    // }
     addChatItem(item) {
-      // const { msg, username, curtime, type, avatar } = item
-
-      // if (item.type === this.crash_chat) {
-      // }
     },
     reload() {
       list({ type: this.crash_chat }).then(response => {
@@ -161,7 +152,7 @@ export default {
       }
       emit(emitData).then(response => {
         if (response.code !== 20000) {
-          // Error
+          console.log('loaded')
         } else {
           this.reload()
         }
@@ -172,14 +163,6 @@ export default {
   }
 }
 </script>
-
-<style>
-/* .showChat {
-  overflow: hidden
-  position: relative
-  width: calc(100% - 15px)
-} */
-</style>
 
 <style lang="scss" scoped>
 @import "~@/assets/scss/_variables.scss";
@@ -281,12 +264,14 @@ export default {
   font-weight: bold;
 }
 .chat-items {
+  direction: rtl;
   padding-right: $scrollbar-width;
   height: calc(100% - 202px);
   overflow-y: auto;
   padding-bottom: 10px;
 }
 .drawer-container {
+  direction: ltr;
   padding: 1vw;
   @include media-breakpoint-down(sm) {
     padding: 24px;
