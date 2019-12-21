@@ -1,21 +1,21 @@
 <template>
   <div class="flex-row-hl-vc">
-    <div v-if="user_id!=data.user_id" class="d-flex align-items-center m-b-5">
+    <div class="d-flex align-items-center m-b-5">
       <div class="icon p-r-15">
         <img src="@/assets/img/avatar-sample.png">
-        <!-- <img :src="user.url"/> -->
       </div>
       <div class="chat-text">
         <div class="chat-user">{{ data.user }}</div>
         {{ data.message }}
       </div>
     </div>
+    <!--
     <div v-if="user_id==data.user_id" class="d-flex align-items-center m-b-5">
       <div class="right-chat-text">
-        <!-- <div class="chat-text"> -->
         {{ data.message }}
       </div>
     </div>
+    -->
   </div>
 </template>
 
@@ -29,6 +29,8 @@ export default {
     default: function() {
       return {}
     }
+  },
+  mounted() {
   },
   computed: {
     ...mapGetters([

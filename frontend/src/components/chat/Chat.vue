@@ -85,7 +85,9 @@ export default {
     self.reload()
     // socket reference
     this.chat_socket.on('chat_message', function(item) {
-      self.reload()
+      // console.log(item);
+      // self.reload()
+      self.addChatItem(item)
     })
   },
   methods: {
@@ -100,6 +102,18 @@ export default {
       }
     },
     addChatItem(item) {
+      var id = 0
+      if (this.messages.length > 0) { id = this.messages[this.messages.length - 1].id }
+      id += 1
+      item = JSON.parse(item)
+      this.messages.push({
+        id: id,
+        user_id: item.user_id,
+        CREATE_TIME: item.curtime,
+        message: item.msg,
+        user: item.username,
+        avatar: item.avatar
+      })
     },
     reload() {
       list({ type: this.crash_chat }).then(response => {
@@ -117,11 +131,21 @@ export default {
         AVATAR: this.avatar,
         USERNAME: this.name
       }
+
+      const loader = this.$loading.show({
+        container: null,
+        canCancel: false,
+        loader: 'bars',
+        color: '#3f48cc'
+      })
+
       emit(emitData).then(response => {
         if (response.code !== 20000) {
           console.log('loaded')
+          loader.hide()
         } else {
-          this.reload()
+          // this.reload()
+          loader.hide()
         }
       })
 

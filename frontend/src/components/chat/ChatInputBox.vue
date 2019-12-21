@@ -58,6 +58,7 @@ export default {
     },
     sendMsg() {
       this.$emit('sendMsg', this.currentValue)
+      this.currentValue = ''
     }
   }
 }

@@ -28,7 +28,8 @@ io.on('connection', function(socket) {
             username: req.body.username,
             curtime: req.body.curtime,
             type: req.body.type,
-            avatar: req.body.avatar
+            avatar: req.body.avatar,
+            user_id: req.body.user_id
         });
         //broadcast messages to every body
         io.emit('chat_message', json);

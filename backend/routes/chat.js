@@ -20,7 +20,8 @@ router.post('/post_msg', async function (req, res) {
         avatar: AVATAR,
         username: USERNAME,
         curtime: curtime,
-        type: CHAT_TYPE
+        type: CHAT_TYPE,
+        user_id: USERID
     }
 
     var ret = await instance.post("post_msg", data).then(response => {
@@ -63,7 +64,6 @@ router.post('/post_msg', async function (req, res) {
 
 router.post('/list', async function (req, res) {
     var chat_type = req.body.type
-    console.log(chat_type)
     var chats = await chatModel.list(chat_type)
     return res.json({
         code: 20000,
