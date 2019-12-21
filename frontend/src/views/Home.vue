@@ -54,7 +54,6 @@
           <bots-table :type="1" :fields="bots_cashout_tbl_fields" :items="cashout_list" class="bots-table bots-table-1" />
         </b-col>
       </b-row>
-      <!-- <chat></chat> -->
     </div>
   </div>
 </template>
@@ -69,16 +68,15 @@ import CrashBetButton from '@/components/main/CrashBetButton.vue'
 import CrashBetSelect from '@/components/main/CrashBetSelect.vue'
 import CrashEdit from '@/components/main/CrashEdit.vue'
 import CrashScaleItem from '@/components/main/CrashScaleItem.vue'
-// import Chat from '@/components/chat/Chat.vue'
 import CrashGraph from '@/components/main/CrashGraph.vue'
-
 import io from 'socket.io-client/dist/socket.io.js'
-// import { getNumberFormat, showToast } from '@/utils'
 import { getNumberFormat, getFloat2Decimal } from '@/utils'
 import { game_log } from '@/api/crash'
+import titleMixin from '@/mixins/titleMixin'
 
 export default {
   name: 'Home',
+  title: '',
   components: {
     BotsTable,
     BitCrashCard,
@@ -88,9 +86,9 @@ export default {
     CrashBetSelect,
     CrashEdit,
     CrashScaleItem,
-    // Chat,
     CrashGraph
   },
+  mixins: [titleMixin],
   data() {
     return {
       bots_tbl_fields: [
@@ -381,22 +379,6 @@ export default {
           )
         }
       })
-      // if (data.crash !== undefined && data.crash && data.game_no !== undefined && data.game_no) {
-      //   var crash = isNaN(parseFloat(data.crash)) ? 0 : parseFloat(data.crash)
-      //   var game_no = isNaN(parseFloat(data.game_no)) ? 0 : parseFloat(data.game_no)
-      //   if (this.headerList.length === 4) {
-      //     this.headerList.shift()
-      //   }
-      //   this.headerList.push(
-      //     {
-      //       id: game_no,
-      //       scale: getFloat2Decimal(crash / 100),
-      //       val: game_no,
-      //       type: 0,
-      //       is_active: true
-      //     }
-      //   )
-      // }
     },
     do_action() {
       if (!this.is_logged_in) return

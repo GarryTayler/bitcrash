@@ -13,7 +13,6 @@ import { faCaretRight, faChevronDown, faChevronLeft, faChevronRight, faChevronUp
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 import App from './App.vue'
-
 import CxltToastr from 'cxlt-vue2-toastr'
 import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/vue-loading.css'

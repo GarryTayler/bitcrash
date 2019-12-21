@@ -64,7 +64,8 @@ router.post('/post_msg', async function (req, res) {
 
 router.post('/list', async function (req, res) {
     var chat_type = req.body.type
-    var chats = await chatModel.list(chat_type)
+    var today = req.body.today
+    var chats = await chatModel.list(chat_type , today)
     return res.json({
         code: 20000,
         data: chats

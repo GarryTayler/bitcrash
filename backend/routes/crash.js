@@ -4,28 +4,6 @@ var dateFormat = require('dateformat');
 var crashModel = require('./model/crash');
 
 var db = require('./../utils/database');
-// function getRows(res) {
-//     var promise = new Promise((resolve, reject) => {
-//         var statement = db.statement("select * from", "crash_game_total", "", db.itemClause('STATE', 'WAITING'))
-//         db.con.query(statement, function (err, rows, fields) {
-//             if (err) {
-//                 reject(err)
-//             }
-//             resolve(rows)
-//         });
-//     })
-//     return promise
-// }
-// router.post('/temp', async function (req, res) {
-//     var gameNo = req.body.game_no
-//     console.log("Temp " + gameNo)
-//     // var temp1 = await crashModel.temp()
-//     // var temp2 =  getRows()
-//     res.json({
-//         msg: "temp1"
-//         // msg1: temp2
-//     })
-// })
 router.post('/bet', async function (req, res) {
     const { user_id, bet, game_no, is_bot } = req.body
     var ret = await crashModel.bet(user_id, bet, game_no, is_bot == undefined ? false : is_bot == 1)

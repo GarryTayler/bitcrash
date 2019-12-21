@@ -6,9 +6,12 @@
 </template>
 
 <script>
+import titleMixin from '@/mixins/titleMixin'
+
 export default {
   name: 'CrashGraph',
   components: {},
+  mixins: [titleMixin],
   props: {
     eventBus: {
       type: Object,
@@ -70,6 +73,7 @@ export default {
           case 'game-created':
             this.status = this.STATUS_PENDING
             this.duration = (payload.duration / 1000).toFixed(1)
+            this.setTitle('Bitcrash - Game Starting')
             break
           case 'game-started':
             //  i modified code below to set real start time
@@ -86,6 +90,7 @@ export default {
               this.start_time = Date.now() - Math.ceil(this.inverseGrowth(this.crash + 1))
             }
             this.crash = payload.crash
+            this.setTitle('Bitcrash - Crashed at ' + parseFloat(this.crash).toFixed(2) + 'x')
             break
           case 'resize':
             this.onWindowResizeBinded()
@@ -185,6 +190,7 @@ export default {
         this.currentTime = 0
       }
       this.currentGamePayout = this.growth(this.currentTime)
+      if (this.status !== this.STATUS_PENDING) { this.setTitle('Bitcrash - ' + parseFloat(this.currentGamePayout).toFixed(2) + 'x') }
     },
     calculatePlotValues() {
       // Plot variables

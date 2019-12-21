@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Dec 20, 2019 at 05:52 PM
+-- Generation Time: Dec 21, 2019 at 11:41 AM
 -- Server version: 5.7.25-0ubuntu0.16.04.2
 -- PHP Version: 7.0.33-0ubuntu0.16.04.1
 
@@ -63,6 +63,17 @@ CREATE TABLE `chats` (
   `USERID` bigint(20) DEFAULT NULL,
   `CHANNEL` varchar(255) COLLATE utf8_unicode_ci DEFAULT 'ENG'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ROW_FORMAT=COMPACT;
+
+--
+-- Dumping data for table `chats`
+--
+
+INSERT INTO `chats` (`ID`, `CHAT_TYPE`, `CREATE_TIME`, `UPDATE_TIME`, `MSG`, `IPADDRESS`, `DEL_YN`, `USERID`, `CHANNEL`) VALUES
+(54, 'crash_chat', 1576911329, 1576911329, 'Hi  , every one. this is chat test.', '0.0.0.0', 'N', 1, 'ENG'),
+(55, 'crash_chat', 1576911354, 1576911354, 'Please check chat feature. Can you check now?', '0.0.0.0', 'N', 1, 'ENG'),
+(56, 'crash_chat', 1576926711, 1576926711, 'I am a new user', '0.0.0.0', 'N', 19, 'ENG'),
+(57, 'crash_chat', 1576926726, 1576926726, 'Please play crash game with me. Thanks', '0.0.0.0', 'N', 19, 'ENG'),
+(58, 'crash_chat', 1576926814, 1576926814, 'How can I play this game???', '0.0.0.0', 'N', 19, 'ENG');
 
 -- --------------------------------------------------------
 
@@ -202,10 +213,10 @@ CREATE TABLE `users` (
   `STATE` int(3) NOT NULL DEFAULT '0' COMMENT '0: active\r\n	1: stop\r\n	2: block\r\n	',
   `AVATAR` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `LAST_IPADDRESS` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `WALLET` decimal(20,2) DEFAULT '0.00',
+  `WALLET` int(12) DEFAULT '0',
   `API_TOKEN` varchar(200) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `WALLET_BLOCK` decimal(20,2) DEFAULT '0.00',
-  `WALLET_AVAILABLE` decimal(20,2) DEFAULT '0.00',
+  `WALLET_BLOCK` int(12) DEFAULT '0',
+  `WALLET_AVAILABLE` int(12) DEFAULT '0',
   `LAST_VISIT` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ROW_FORMAT=COMPACT;
 
@@ -214,7 +225,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`ID`, `USERNAME`, `PASSWORD`, `EMAIL`, `CREATE_TIME`, `UPDATE_TIME`, `DEL_YN`, `IPADDRESS`, `EMAIL_VERIFIED_YN`, `STATE`, `AVATAR`, `LAST_IPADDRESS`, `WALLET`, `API_TOKEN`, `WALLET_BLOCK`, `WALLET_AVAILABLE`, `LAST_VISIT`) VALUES
-(1, 'Test Account', '912ec803b2ce49e4a541068d495ab570', 'test@test.com', '2019-12-12 11:28:38', NULL, 'N', '0.0.0.0', 'Y', 0, '', '::1', '0.00', 'tB3A2H0NA1hpcNKpsJJeu44S', '1000.00', '2040849.00', NULL);
+(1, 'Test Account', '912ec803b2ce49e4a541068d495ab570', 'test@test.com', '2019-12-12 11:28:38', NULL, 'N', '0.0.0.0', 'Y', 0, 'http://45.76.180.140:7801/img/uploads/avatar/avatar-medium.png', '::1', 100000, 'tB3A2H0NA1hpcNKpsJJeu44S', 0, 100000, NULL),
+(19, 'bituser', '912ec803b2ce49e4a541068d495ab570', 'bituser@gmail.com', '2019-12-21 11:10:36', NULL, 'N', '0.0.0.0', 'N', 0, 'http://45.76.180.140:7801/img/uploads/avatar/general_profile.png', NULL, 0, 'oNwwO1kGn78eAT0qpYRXXbioY', 0, 0, NULL);
 
 --
 -- Indexes for dumped tables
@@ -285,7 +297,7 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT for table `chats`
 --
 ALTER TABLE `chats`
-  MODIFY `ID` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 --
 -- AUTO_INCREMENT for table `crash_game_bot`
 --
@@ -315,7 +327,7 @@ ALTER TABLE `faq`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `ID` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `ID` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 --
 -- Constraints for dumped tables
 --

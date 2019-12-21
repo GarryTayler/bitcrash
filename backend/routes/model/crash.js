@@ -13,7 +13,7 @@ var bust_game = function (gameInfo) {
         },
         {
             key: "BUSTEDTIME",
-            val: dateFormat(new Date(), "yyyy-mm-dd hh:MM:ss")
+            val: Math.floor(Date.now() / 1000)
         }], ","), db.itemClause("ID", gameInfo.ID)))
 
     // updated users table ---
@@ -69,22 +69,6 @@ var bust_game = function (gameInfo) {
             ], ","), db.itemClause("ID", bustedBets[i].USERID)))
         }
     })
-    // $this->db->update('crash_game_total', array('STATE' => 'BUSTED', 'BUSTEDTIME' => $this->curTime), array('ID' => $gameInfo->ID));
-
-    // updated users table ---
-    // $bustedBets = $this -> db -> from('crash_game_log') -> where('IS_BOT', '0') -> where('GAMENO', $gameInfo -> GAMENO) -> where('CASHOUTRATE', 0) -> get() -> result();
-    // $this -> db -> set('PROFIT', '-BET_AMOUNT', false) -> where('GAMENO', $gameInfo -> GAMENO) -> where('CASHOUTRATE', 0) -> update('crash_game_log');
-    // calc profit --> from crash_game_log
-    // $profit = $this -> db -> from('crash_game_log') -> where('IS_BOT', '0') -> where('GAMENO', $gameInfo -> GAMENO)
-    //     -> select_sum('PROFIT') -> get() -> row() -> PROFIT;
-    // $this -> db -> update('crash_game_total', array('PROFIT' => -$profit), array('GAMENO' => $gameInfo -> GAMENO));
-
-    // foreach($bustedBets as $busted) {
-    //     $this -> db -> where("ID", $busted -> USERID)
-    //         -> set('WALLET', 'WALLET - '.$busted -> BET_AMOUNT, false)
-    //         -> set('WALLET_BLOCK', 'WALLET_BLOCK - '.$busted -> BET_AMOUNT, false)
-    //         -> update('users');
-    // }
 }
 
 var start_game = function (gameInfo, bust) {
@@ -99,17 +83,10 @@ var start_game = function (gameInfo, bust) {
         },
         {
             key: "STARTTIME",
-            val: dateFormat(new Date(), "yyyy-mm-dd hh:MM:ss") // Date.now()
+            val: Math.floor(Date.now() / 1000) 
         }
     ], ","), db.itemClause("ID", gameInfo.ID)))
     return next_game()
-    // $this -> db -> update(
-    //     'crash_game_total',
-    //     array('STATE' => 'STARTED', 'BUST' => $bust, 'STARTTIME' => date('Y-m-d H:i:s')),
-    //     array('ID' => $gameInfo -> ID)
-    // );
-    // // returns next game no
-    // return $this -> next_game();
 }
 
 var next_game = function () {
@@ -118,17 +95,10 @@ var next_game = function () {
         if (maxGameNos.length > 0) {
             maxGameNo = db.convInt(maxGameNos[0].GAMENO) == 0 ? 1 : (db.convInt(maxGameNos[0].GAMENO) + 1)
         }
-        db.cmd(db.statement("insert into", "crash_game_total", "(GAMENO, REGTIME)", '',
-            'VALUES (' + maxGameNo + ',' + "'" + dateFormat(new Date(), "yyyy-mm-dd hh:MM:ss") + "'" + ')'))
+        db.cmd(db.statement("insert into", "crash_game_total", "(GAMENO, REGTIME, UPDATETIME)", '',
+            'VALUES (' + maxGameNo + ',' + "'" + Math.floor(Date.now() / 1000) + "'"+ ',' + "'" + Math.floor(Date.now() / 1000) + "'" + ')'))
         return maxGameNo
     })
-    // $maxGameNo = $this -> db -> select('max(GAMENO) GAMENO') -> from('crash_game_total') -> get() -> row();
-    // if ($maxGameNo) $maxGameNo = $maxGameNo -> GAMENO + 1;
-    // else $maxGameNo = 1;
-
-    // $this -> db -> insert('crash_game_total', array('GAMENO' => $maxGameNo, 'REGTIME' => date('Y-m-d H:i:s')));
-
-    // return $maxGameNo;
 }
 
 var make_bet = function (gameNo, userID, betAmount) {
@@ -149,34 +119,16 @@ var make_bet = function (gameNo, userID, betAmount) {
         }
 
         db.cmd(db.statement("insert into", "crash_game_log",
-            "(CREATE_TIME, GAMENO, USERID, IS_BOT, BET_AMOUNT)", '',
-            'VALUES(' + "'" + dateFormat(new Date(), "yyyy-mm-dd hh:MM:ss") + "'" + ',' + gameNo + ',' + userId + ',' + 0 + ',' + betAmount + ')'), true)
+            "(CREATE_TIME, UPDATE_TIME , GAMENO, USERID, IS_BOT, BET_AMOUNT)", '',
+            'VALUES(' + "'" + Math.floor(Date.now() / 1000) + "'" + ',' +
+            "'" + Math.floor(Date.now() / 1000) + "'" + ',' +
+            gameNo + ',' +
+            userId + ',' +
+            '0' + ',' +
+            betAmount + ')'), true)
         userModel.new_bet(userID, betAmount)
         return 'success'
     })
-
-    // $userCheckResult = $this -> user_model -> bet_available($userID, $betAmount);
-    // if ($userCheckResult != 'success') return $userCheckResult;
-
-    // $gameExist = $this -> db -> from('crash_game_total') -> where("GAMENO", $gameNo) -> get() -> row();
-    // if (!$gameExist) {
-    //     return 'Invalid game no';
-    // }
-
-    // // make crash game log
-    // $this -> db -> insert(
-    //     'crash_game_log',
-    //     array(
-    //         'CREATE_TIME' => $this -> curTime,
-    //         'GAMENO' => $gameNo,
-    //         'USERID' => $userID,
-    //         'IS_BOT' => '0',
-    //         'BET_AMOUNT' => $betAmount
-    //     )
-    // );
-    // // then update user wallet
-    // $this -> user_model -> new_bet($userId, $betAmount);
-    // return 'success';
 }
 
 var bet = function (userID, betAmount, gameNo, isBot) {
@@ -228,10 +180,10 @@ var bet = function (userID, betAmount, gameNo, isBot) {
             ], ","), db.itemClause('ID', userID)), true)
         }
         var str = ''
-        str += "VALUES (" + "'" + dateFormat(new Date(), "yyyy-mm-dd hh:MM:ss") + "'" + "," + gameNo + "," + userID + "," + (isBot ? 1 : 0) + ",0" + "," + betAmount + ")"
+        str += "VALUES (" + "'" + Math.floor(Date.now() / 1000) + "'" + "," + "'" + Math.floor(Date.now() / 1000) + "'" + "," + gameNo + "," + userID + "," + (isBot ? 1 : 0) + ",0" + "," + betAmount + ")"
         console.log("Log: " + str)
         db.cmd(db.statement("insert into", "crash_game_log",
-            "(CREATE_TIME, GAMENO, USERID, IS_BOT, CASHOUTRATE, BET_AMOUNT)", '',
+            "(CREATE_TIME, UPDATE_TIME ,  GAMENO, USERID, IS_BOT, CASHOUTRATE, BET_AMOUNT)", '',
             str), true)
 
         if (isBot) {
@@ -246,58 +198,6 @@ var bet = function (userID, betAmount, gameNo, isBot) {
         }
         return retData
     })
-
-    // $userID = $this->input->post('user_id');
-    // $betAmount = $this->input->post('bet');
-    // $gameNo = $this->input->post('game_no');
-    // $isBot = $this->input->post('is_bot');
-
-    // $gameExist = $this->db->from('crash_game_total')->where("GAMENO", $gameNo)->get()->row();
-    // if ( !$gameExist ) {
-    //     $this->load_json( array('status' => false, 'error' => 'Invalid game no') );
-    // }
-
-    // if ($isBot) {
-    //     // do nothing ... ?
-    // } else {
-    //     $isBot = '0';
-
-    //     $userInfo = $this->db->from('users')->where('ID', $userID)->get()->row();
-    //     if ( !$userInfo ) {
-    //         $this->load_json( array('status' => false, 'error' => 'Invalid User ID') );
-    //     }
-    //     if ( $userInfo->WALLET_AVAILABLE < $betAmount) {
-    //         $this->load_json( array('status' => false, 'error' => 'Wallet is not enough.') );
-    //     }
-
-    //     $this->db->set('WALLET_AVAILABLE', $userInfo->WALLET_AVAILABLE - $betAmount)
-    //         ->set('WALLET_BLOCK', $userInfo->WALLET_BLOCK + $betAmount)
-    //         ->where('ID', $userID)
-    //         ->update('users');
-    // }
-
-    // $betInfo = array(
-    //     'CREATE_TIME' => $this->curTime,
-    //     'GAMENO' => $gameNo,
-    //     'USERID' => $userID,
-    //     'IS_BOT' => $isBot,
-    //     'CASHOUTRATE' => 0,
-    //     'BET_AMOUNT' => $betAmount
-    // );
-
-    // $this->db->insert(
-    //     'crash_game_log',
-    //     $betInfo
-    // );
-
-    // // update game table
-    // if ($isBot == '0') {
-    //     $this->db->set('USERS', 'USERS +1', false)->where('GAMENO', $gameNo)->update('crash_game_total');
-    // } else {
-    //     $this->db->set('BOTS', 'BOTS +1', false)->where('GAMENO', $gameNo)->update('crash_game_total');
-    // }
-
-    // $this->load_json( array('status' => true) );
 }
 
 var cashout = function (userID, gameNo, cashRate, isBot) {
@@ -412,65 +312,6 @@ var cashout = function (userID, gameNo, cashRate, isBot) {
         }
         return retData
     })
-
-    // $userID = $this->input->post('user_id');
-    // $gameNo = $this->input->post('game_no');
-    // $cashRate = $this->input->post('cash_rate') / 100;
-    // $isBot = $this->input->post('is_bot');
-
-    // $gameInfo = $this->db->from('crash_game_total')->where('GAMENO', $gameNo)->get()->row();
-    // if (!$gameInfo || $gameInfo->STATE != 'STARTED') {
-    //     $this->load_json(array(
-    //         'status' => false,
-    //         'error' => 'Invalid game id or status'
-    //     ));
-    // }
-    // if ($gameInfo->BUST < $cashRate) {
-    //     $this->load_json(array('status' => false, 'error' => 'Cash rate is bigger than bust'));
-    // }
-
-    // if ($isBot) {
-    //     $this->db->where('IS_BOT', '1'); // when get bet log from db; is_bot is '1'
-    // } else {
-    //     $userInfo = $this->db->from('users')->where('ID', $userID)->get()->row();
-    //     if (!$userInfo) {
-    //         $this->load_json( array(
-    //             'status' => false,
-    //             'error' => 'Invalid user id'
-    //         ));
-    //     }
-
-    //     $this->db->where('IS_BOT', '0');
-    // }
-
-    // $betInfo = $this->db->from('crash_game_log')->where('USERID', $userID)->where('GAMENO', $gameNo)->get()->row();
-    // if (!$betInfo) {
-    //     $this->load_json( array('status' => false, 'error' => 'No bets', 'query' => $this->db->last_query()));
-    // }
-    // if ($betInfo->CASHOUTRATE > 0) {
-    //     $this->load_json( array('status' => false, 'error' => 'Already cash out'));
-    // }
-
-    // $cashout = $betInfo->BET_AMOUNT * $cashRate;
-    // $this->db->where('ID', $betInfo->ID)
-    //         ->set('CASHOUTRATE', $cashRate)
-    //         ->set('CASHOUT', $cashout)
-    //         ->set('PROFIT', $cashout - $betInfo->BET_AMOUNT)
-    //         ->update('crash_game_log');
-
-    // if (!$isBot) {
-    //     $this->db->update(
-    //         'users',
-    //         array(
-    //             'WALLET' => $cashout + $userInfo->WALLET - $betInfo->BET_AMOUNT,
-    //             'WALLET_AVAILABLE' => $cashout + $userInfo->WALLET_AVAILABLE,
-    //             'WALLET_BLOCK' => $userInfo->WALLET_BLOCK - $betInfo->BET_AMOUNT
-    //         ),
-    //         array('ID' => $userID)
-    //     );
-    // }
-
-    // $this->load_json(array('status' => true));
 }
 var game_start = function (gameNo, gameBust) {
     var retData = null
@@ -498,23 +339,6 @@ var game_start = function (gameNo, gameBust) {
             }
         }
     })
-
-    // $gameNo = $this->input->post('game_no');
-    // $gameBust = $this->input->post('bust');
-
-    // $gameInfo = $this->db->from('crash_game_total')->where('GAMENO', $gameNo)->get()->row();
-    // if (!$gameInfo || $gameInfo->STATE != 'WAITING') {
-    //     $this->load_json(array('status' => false, 'error' => 'Invalid game no or state'));
-    // }
-
-    // $nextGameNo = $this->CRASH->start_game($gameInfo, $gameBust);
-
-    // $this->load_json(
-    //     array(
-    //         'status' => true,
-    //         'next_game_no' => $nextGameNo
-    //     )
-    // );
 }
 var game_bust = function (gameNo) {
     var gameInfo = []
@@ -535,18 +359,6 @@ var game_bust = function (gameNo) {
             data: {}
         }
     })
-
-    // $gameNo = $this->input->post('game_no');
-    // // $gameBust = $this->input->post('bust') / 100;
-
-    // $gameInfo = $this->db->from('crash_game_total')->where('GAMENO', $gameNo)->get()->row();
-    // if (!$gameInfo || $gameInfo->STATE != 'STARTED') {
-    //     $this->load_json(array('status' => false, 'error' => 'Invalid game no or state'));
-    // }
-
-    // $this->CRASH->bust_game($gameInfo);
-
-    // $this->load_json(array('status' => true));
 }
 var game_init = function () {
     var waitingGame = []
@@ -604,36 +416,6 @@ var game_init = function () {
         }
         return retData
     })
-
-    // // cur game is waiting game
-    // // if there's an waiting game, we don't need to create new...
-    // $waitingGame = $this->db->from('crash_game_total')->where('STATE', 'WAITING')->get()->row();
-    // $bots = $this->db->from('crash_game_bot')->where('ENABLE', '1')->get()->result();
-    // if ($waitingGame) {
-    //     $this->load_json(
-    //         array(
-    //             'status' => true,
-    //             'game_no' => $waitingGame->GAMENO,
-    //             // this game's player list
-    //             'game_player_list' => $this->db->from('crash_game_log')->where('GAMENO', $waitingGame->GAMENO)->get()->result(),
-    //             'bots' => $bots
-    //         )
-    //     );
-    // }
-
-    // // if game is started, then finishes it
-    // $startedGame = $this->db->from('crash_game_total')->where('STATE', 'STARTED')->get()->row();
-    // if ($startedGame) {
-    //     $this->CRASH->bust_game($startedGame);
-    // }
-
-    // $this->load_json(
-    //     array(
-    //         'status' => true,
-    //         'game_no' => $this->CRASH->next_game(),
-    //         'bots' => $bots
-    //     )
-    // );
 }
 
 var game_finish_start = function (gameNo, gameBust) {
@@ -664,19 +446,6 @@ var game_finish_start = function (gameNo, gameBust) {
             next_game_no: nextGameNo
         }
     })
-
-    // $gameNo = $this->input->post('game_no');
-    // $gameBust = $this->input->post('bust');
-
-    // $gameInfo = $this->db->from('crash_game_total')->where('GAMENO', $gameNo)->get()->row();
-    // if (!$gameInfo || $gameInfo->STATE != 'WAITING') {
-    //     $this->load_json(array('status' => false, 'error' => 'Invalid game no or state'));
-    // }
-
-    // $nextGameNo = $this->CRASH->start_game($gameInfo, $gameBust);
-    // $this->CRASH->bust_game($gameInfo);
-
-    // $this->load_json(array('status' => true, 'next_game_no' => $nextGameNo));
 }
 var game_log = function (limit) {
     return db.list(db.statement("select * from", "crash_game_total", "", db.itemClause('STATE', 'BUSTED'), 'ORDER BY ID DESC LIMIT 0, ' + limit), true).then((gameInfo) => {

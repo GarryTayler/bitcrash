@@ -6,8 +6,8 @@ var add = function(data) {
     console.log(statement)
     db.cmd(statement)
 }
-var list = function (chat_type) {
-    var today = dateFormat(new Date(), "yyyy-mm-dd") + " 00:00:00";
+var list = function (chat_type , client_today) {
+    var today = client_today + " 00:00:00";
     return db.list(db.statement("select chats.ID as id, chats.USERID as user_id, chats.CREATE_TIME, chats.MSG as message, users.USERNAME as user, users.AVATAR as avatar from", "chats",
         'LEFT JOIN users ON users.ID = chats.USERID',
         db.lineClause([
@@ -21,7 +21,7 @@ var list = function (chat_type) {
             },
             {
                 key: "chats.CREATE_TIME",
-                val: Math.floor(today.getTime() / 1000),
+                val: Math.floor(new Date(today).getTime() / 1000),
                 opt: ">="
             }
         ], "and"), ""), true).then((chatItems) => {

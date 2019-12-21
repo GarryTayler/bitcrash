@@ -10,7 +10,6 @@ app.use(bodyParser.json());
 ///////////// constant from main server
 var gameId = 1, next_gameId = 0, status = 0, firstTimerHandler, bet_max_limit = 100000, bet_min_limit = 1000, jackpot = 40778217, max_payout = 50000000, promo = true;
 var mainServerUrl = config.main_host_url + 'crash/';
-var profit_rate = [];
 ////////////
 var timeInterval = 10, resetGameTime = 0, stopGameG = false;
 var game_play_list = [], bots_list = [], cashout_list = [], socket_list = [];
@@ -52,21 +51,7 @@ app.post('/set_config', function (req, res) {
 	bet_min_limit = req.body.bet_min_limit;
 	bet_max_limit = req.body.bet_max_limit;
 	max_payout = req.body.max_payout;
-	profit_rate = req.body.profit_rate;
 	res.json({ "status": true });
-});
-
-request.post({
-        //   headers: {'content-type' : 'application/json',
-		//   'MOBIUS-API-KEY' : apiKey},
-		url: mainServerUrl + 'profit_rate',
-		form: {}
-	}, function (error, response, body) {
-		var ret = JSON.parse(body);
-		if (ret.status)
-			profit_rate = ret.profit_rate;
-		else
-			stopGameG = true;
 });
 
 request.post(
@@ -428,8 +413,6 @@ function intervalFunc()
 	elapsed_time = Date.now() - startTime;
 	tick = Math.floor(100 * Math.pow(Math.E, 0.00006 * elapsed_time));
 	if (elapsed_time - prev_time > 1000) {
-		console.log('intervalFunc() : ' + tick);
-
 		io.emit('onMessage',
 			{
 				code: 'Tick',

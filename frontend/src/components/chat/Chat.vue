@@ -136,7 +136,12 @@ export default {
       })
     },
     reload() {
-      list({ type: this.crash_chat }).then(response => {
+      var today = new Date()
+      var dd = String(today.getDate()).padStart(2, '0')
+      var mm = String(today.getMonth() + 1).padStart(2, '0') // January is 0!
+      var yyyy = today.getFullYear()
+      today = yyyy + '-' + mm + '-' + dd
+      list({ type: this.crash_chat, today: today }).then(response => {
         if (response.data != null && response.data.length > 0) {
           response.data[0].sameName = false
           response.data[0].sameTime = false

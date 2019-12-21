@@ -15,7 +15,7 @@ export const constantRoutes = [
       {
         path: '/home',
         component: () => import('../views/Home.vue'),
-        meta: { title: 'Crash' }
+        meta: { title: '' }
       },
       {
         path: '/deposit',
