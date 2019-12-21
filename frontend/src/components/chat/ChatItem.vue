@@ -6,7 +6,7 @@
     <div v-if="!data.sameName || !data.sameTime" class="flex-row-hl-vc">
       <div class="d-flex align-items-center m-b-10">
         <div class="icon p-r-15">
-          <img :src="data.avatar">
+          <v-lazy-image :src="data.avatar" class="profile-img" />
         </div>
         <div class="chat-text">
           <div class="chat-user">{{ data.user }}</div>

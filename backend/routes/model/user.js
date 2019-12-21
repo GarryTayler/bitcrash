@@ -2,7 +2,7 @@ var md5 = require('md5');
 var db = require('./../../utils/database');
 var rn = require('random-number');
 var dateFormat = require('dateformat');
-
+var config = require('../../src/config');
 var bet_available = function (userID, betAmount) {
     return db.list(db.statement("select * from", "users", '', db.itemClause('ID', userID)), true).then((userInfo) => {
         if (userInfo == null || userInfo.length <= 0) {
@@ -172,21 +172,15 @@ var signup = function (data) {
             return
         }
         var token = generateRandomString()
-
         var pwdStr = "";
-        /*var md5stream = new MD5()
-        md5stream.end(data.password)
-        pwdStr = md5stream.read().toString('hex')*/
         pwdStr = md5(data.password);
-
         var values = "(" + "'" + dateFormat(new Date(), "yyyy-mm-dd hh:MM:ss") + "'" + ", "
         values += "'" + data.username + "', "
         values += "'" + pwdStr + "', "
         values += "'" + data.email + "', "
+        values += "'" + config.general_profile_url + "',"
         values += "'" + token + "'" + ")"
-        var statement = db.statement("insert into", "users", "(CREATE_TIME, USERNAME, PASSWORD, EMAIL, API_TOKEN)", "", "VALUES " + values)
-        console.log(statement)
-
+        var statement = db.statement("insert into", "users", "(CREATE_TIME, USERNAME, PASSWORD, EMAIL, AVATAR, API_TOKEN)", "", "VALUES " + values)
         db.con.query(statement, function (err, results, fields) {
             if (err) {
                 reject(err)

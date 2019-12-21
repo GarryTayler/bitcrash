@@ -1,9 +1,6 @@
 <template>
   <b-nav-item-dropdown right class="profile_menu_container">
     <template v-slot:button-content>
-      <!--
-      <img class="profile-img" alt="avatar" :src="avatarImage">
-      -->
       <v-lazy-image :src="avatarImage" class="profile-img" />
       <div class="m-l">
         <div class="profile-name">{{ avatarName }}</div>

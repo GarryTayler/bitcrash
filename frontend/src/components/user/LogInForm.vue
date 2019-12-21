@@ -24,11 +24,13 @@
 <script>
 // import ContactButton from '@/components/ContactButton.vue'
 import LogInButton from '@/components/navbar/LogInButton'
+import global from '@/mixins/global'
 
 export default {
   components: {
     LogInButton
   },
+  mixins: [global],
   data() {
     return {
       form: {}
@@ -38,12 +40,7 @@ export default {
     onLogIn() {
       var valid = true
       if (valid) {
-        const loader = this.$loading.show({
-          container: null,
-          canCancel: false,
-          loader: 'bars',
-          color: '#3f48cc'
-        })
+        const loader = this.showOverlay(null)
         this.loading = true
         this.form['token'] = ''
         this.$store
@@ -52,17 +49,18 @@ export default {
             this.$store.dispatch('user/getInfo', this.token)
             this.loading = false
             this.$bvModal.hide('login-form')
-            this.$toast.error({
+            this.$toast.success({
               title: 'Login Success',
               message: 'You just logged in successfully.',
               position: 'top right',
-              type: 'error',
+              type: 'success',
               progressBar: true,
               color: '#51A351',
               showDuration: 4000,
               hideDuration: 6000
             })
-            loader.hide()
+            // loader.hide()
+            this.hideOverlay(loader)
           })
           .catch((err) => {
             this.$toast.error({
@@ -75,7 +73,8 @@ export default {
               showDuration: 4000,
               hideDuration: 6000
             })
-            loader.hide()
+            // loader.hide()
+            this.hideOverlay(loader)
             this.loading = false
           })
       } else {

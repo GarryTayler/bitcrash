@@ -34,11 +34,13 @@
 // import ContactButton from '@/components/ContactButton.vue';
 import LogInButton from '@/components/navbar/LogInButton'
 import { signup } from '@/api/user'
+import global from '@/mixins/global'
 
 export default {
   components: {
     LogInButton
   },
+  mixins: [global],
   data() {
     return {
       form: {}
@@ -47,21 +49,27 @@ export default {
   methods: {
     isValid() {
       if (this.form.username === undefined || this.form.username == null || this.form.username.length <= 0) {
+        this.showToast('Signup Failed', 'Username field is required.', 'error')
         return false
       }
       if (this.form.email === undefined || this.form.email == null || this.form.email.length <= 0) {
+        this.showToast('Signup Failed', 'Email field is required.', 'error')
         return false
       }
       if (this.form.password === undefined || this.form.password == null || this.form.password.length <= 0) {
+        this.showToast('Signup Failed', 'Password field is required.', 'error')
         return false
       }
       if (this.form.password_confirm === undefined || this.form.password_confirm == null || this.form.password_confirm.length <= 0) {
+        this.showToast('Signup Failed', 'Please confirm your password.', 'error')
         return false
       }
       if (this.form.password_confirm !== this.form.password) {
+        this.showToast('Signup Failed', 'Password confirm is failed. Please try again.', 'error')
         return false
       }
       if (this.form.agree === undefined || this.form.agree == null || this.form.agree === false) {
+        this.showToast('Signup Failed', 'Please tick when you agree our terms of service.', 'error')
         return false
       }
       return true
@@ -75,8 +83,10 @@ export default {
           email: this.form.email,
           password: this.form.password
         }
+        const loader = this.showOverlay(null)
         signup(data).then(response => {
           if (response.code !== 20000) {
+            this.hideOverlay(loader)
             // Error
           } else {
             this.$store
@@ -85,8 +95,11 @@ export default {
                 // this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
                 this.$store.dispatch('user/getInfo', this.token)
                 this.$bvModal.hide('signup-form')
+                this.hideOverlay(loader)
+                this.showToast('Signup Success', 'You just signed up successfully.', 'success')
               })
               .catch(() => {
+                this.hideOverlay(loader)
               })
           }
         })
