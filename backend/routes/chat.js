@@ -13,7 +13,7 @@ var instance = axios.create({
 
 router.post('/post_msg', async function (req, res) {
     const { CHAT_TYPE, MSG, IPADDRESS, USERID, AVATAR, USERNAME } = req.body
-    var curtime = new Date().getTime()
+    var curtime = Math.round(new Date().getTime() / 1000)
 
     var data = {
         msg: MSG,
@@ -37,8 +37,8 @@ router.post('/post_msg', async function (req, res) {
     if(ret) {
         var chat_data = {}
         chat_data["CHAT_TYPE"] = CHAT_TYPE
-        chat_data["CREATE_TIME"] = Date.now()
-        chat_data["UPDATE_TIME"] = Date.now()
+        chat_data["CREATE_TIME"] = Math.floor(Date.now() / 1000)
+        chat_data["UPDATE_TIME"] = Math.floor(Date.now() / 1000)
         chat_data["MSG"] = MSG
         chat_data["IPADDRESS"] = IPADDRESS
         chat_data["USERID"] = USERID

@@ -1,21 +1,26 @@
 <template>
-  <div class="flex-row-hl-vc">
-    <div class="d-flex align-items-center m-b-5">
-      <div class="icon p-r-15">
-        <img src="@/assets/img/avatar-sample.png">
-      </div>
-      <div class="chat-text">
-        <div class="chat-user">{{ data.user }}</div>
-        {{ data.message }}
+  <div>
+    <div v-if="!data.sameTime" class="flex-row-hl-vc justify-content-center m-b-8 time-color">
+      {{ getDate }}
+    </div>
+    <div v-if="!data.sameName || !data.sameTime" class="flex-row-hl-vc">
+      <div class="d-flex align-items-center m-b-10">
+        <div class="icon p-r-15">
+          <img :src="data.avatar">
+        </div>
+        <div class="chat-text">
+          <div class="chat-user">{{ data.user }}</div>
+          {{ data.message }}
+        </div>
       </div>
     </div>
-    <!--
-    <div v-if="user_id==data.user_id" class="d-flex align-items-center m-b-5">
-      <div class="right-chat-text">
-        {{ data.message }}
+    <div v-if="data.sameName && data.sameTime" class="flex-row-hl-vc">
+      <div class="d-flex align-items-center m-b-10">
+        <div class="right-chat-text">
+          {{ data.message }}
+        </div>
       </div>
     </div>
-    -->
   </div>
 </template>
 
@@ -39,7 +44,11 @@ export default {
       'name',
       'wallet',
       'avatar'
-    ])
+    ]),
+    getDate() {
+      var date = new Date(this.data.CREATE_TIME * 1000)
+      return (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes()
+    }
   }
 }
 </script>
@@ -51,11 +60,18 @@ export default {
   .p-l-r {
     padding-right: 10px;
   }
-  .m-b-5 {
-    margin-bottom: 10px;
+  .m-b-10 {
+    margin-bottom: 8px;
+  }
+  .m-b-8 {
+    margin-bottom: 6px;
+  }
+  .m-p-5 {
+    margin-top: 8px;
   }
   img {
     width: 55px;
+    height: 55px;
     border-radius: 10px;
   }
   .align-items-center{
@@ -111,5 +127,9 @@ export default {
     margin-right: -16px;
     color: white;
     width: 100%;
+  }
+
+  .time-color {
+    color: #697f9b;
   }
 </style>

@@ -9,7 +9,7 @@
         Chat
         <nation-group-flag />
       </div>
-      <div class="chat-items">
+      <div id="chat-items" class="chat-items">
         <div class="drawer-container">
           <chat-item v-for="message in messages" :key="message.id" :data="message" />
         </div>
@@ -22,6 +22,7 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import { mapGetters } from 'vuex'
 import NationGroupFlag from '@/components/chat/NationGroupFlag.vue'
 import ChatItem from '@/components/chat/ChatItem.vue'
@@ -85,12 +86,14 @@ export default {
     self.reload()
     // socket reference
     this.chat_socket.on('chat_message', function(item) {
-      // console.log(item);
-      // self.reload()
       self.addChatItem(item)
     })
   },
   methods: {
+    scrollToEnd() {
+      var container = this.$el.querySelector('#chat-items')
+      container.scrollTop = container.scrollHeight
+    },
     addEventClick() {
       window.addEventListener('click', this.closeSidebar)
     },
@@ -106,19 +109,55 @@ export default {
       if (this.messages.length > 0) { id = this.messages[this.messages.length - 1].id }
       id += 1
       item = JSON.parse(item)
+      item.sameName = false; item.sameTime = false
+      if (this.messages.length > 0) {
+        var prev_d = new Date(this.messages[this.messages.length - 1].CREATE_TIME * 1000)
+        var current_d = new Date(item.curtime * 1000)
+        if (current_d.getHours() === prev_d.getHours() && current_d.getMinutes() === prev_d.getMinutes()) {
+          item.sameTime = true
+        }
+        if (this.messages[this.messages.length - 1].user === item.username) {
+          item.sameName = true
+        }
+      }
       this.messages.push({
         id: id,
         user_id: item.user_id,
         CREATE_TIME: item.curtime,
         message: item.msg,
         user: item.username,
-        avatar: item.avatar
+        avatar: item.avatar,
+        sameName: item.sameName,
+        sameTime: item.sameTime
+      })
+      var self = this
+      Vue.nextTick(function() {
+        self.scrollToEnd()
       })
     },
     reload() {
       list({ type: this.crash_chat }).then(response => {
         if (response.data != null && response.data.length > 0) {
+          response.data[0].sameName = false
+          response.data[0].sameTime = false
+          for (var i = 1; i < response.data.length; i++) {
+            response.data[i].sameTime = false
+            response.data[i].sameName = false
+            var current_d = new Date(response.data[i].CREATE_TIME * 1000)
+            var prev_d = new Date(response.data[i - 1].CREATE_TIME * 1000)
+
+            if (current_d.getHours() === prev_d.getHours() && current_d.getMinutes() === prev_d.getMinutes()) {
+              response.data[i].sameTime = true
+            }
+            if (response.data[i - 1].user === response.data[i].user) {
+              response.data[i].sameName = true
+            }
+          }
           this.messages = response.data
+          var self = this
+          Vue.nextTick(function() {
+            self.scrollToEnd()
+          })
         }
       })
     },
@@ -144,7 +183,6 @@ export default {
           console.log('loaded')
           loader.hide()
         } else {
-          // this.reload()
           loader.hide()
         }
       })
