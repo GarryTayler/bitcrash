@@ -41,7 +41,6 @@ var bust_game = function (gameInfo) {
                 val: 0
             }], "and")))
         bustedBets = _bustedBets
-        // calc profit --> from crash_game_log
         return db.list(db.statement('select sum(PROFIT) as profit from', 'crash_game_log', '', db.lineClause([
             {
                 key: "IS_BOT",
@@ -54,19 +53,7 @@ var bust_game = function (gameInfo) {
         ], "and")), true)
     }).then((profit) => {
         if (profit.length > 0) {
-            db.cmd(db.statement('update', 'crash_game_total', "set " + db.itemClause("PROFIT", -db.convFloat(profit[0].profit)), db.itemClause("GAMENO", gameInfo.GAMENO)))
-        }
-        for (var i = 0; i < bustedBets.length; i++) {
-            db.cmd(db.statement("update", "users", "set " + db.lineClause([
-                {
-                    key: "WALLET",
-                    val: "WALLET-" + db.convFloat(bustedBets[i].BET_AMOUNT)
-                },
-                {
-                    key: "WALLET_BLOCK",
-                    val: "WALLET_BLOCK-" + db.convFloat(bustedBets[i].BET_AMOUNT)
-                }
-            ], ","), db.itemClause("ID", bustedBets[i].USERID)))
+            db.cmd(db.statement('update', 'crash_game_total', "set " + db.itemClause("PROFIT", -db.convInt(profit[0].profit)), db.itemClause("GAMENO", gameInfo.GAMENO)))
         }
     })
 }
@@ -101,37 +88,8 @@ var next_game = function () {
     })
 }
 
-var make_bet = function (gameNo, userID, betAmount) {
-    var retData = null
-    return userModel.bet_available(userID, betAmount).then((userCheckResult) => {
-        if (userCheckResult != 'success') {
-            retData = userCheckResult
-            return retData
-        }
-        return db.list(db.statement("select * from", "crash_game_total", '', db.itemClause("GAMENO", gameNo)), true)
-    }).then((rows) => {
-        if (retData != null) {
-            return retData
-        }
-        var gameExist = rows.length > 0
-        if (!gameExist) {
-            return 'Invalid game no'
-        }
-
-        db.cmd(db.statement("insert into", "crash_game_log",
-            "(CREATE_TIME, UPDATE_TIME , GAMENO, USERID, IS_BOT, BET_AMOUNT)", '',
-            'VALUES(' + "'" + Math.floor(Date.now() / 1000) + "'" + ',' +
-            "'" + Math.floor(Date.now() / 1000) + "'" + ',' +
-            gameNo + ',' +
-            userId + ',' +
-            '0' + ',' +
-            betAmount + ')'), true)
-        userModel.new_bet(userID, betAmount)
-        return 'success'
-    })
-}
-
 var bet = function (userID, betAmount, gameNo, isBot) {
+    betAmount = parseInt(betAmount)
     var userInfo = []
     var retData = null
     return db.list(db.statement("select * from", "crash_game_total", '', db.itemClause("GAMENO", gameNo)), true).then((rows) => {
@@ -160,36 +118,40 @@ var bet = function (userID, betAmount, gameNo, isBot) {
                 }
                 return retData
             }
-            if (userInfo[0].WALLET_AVAILABLE < betAmount) {
+            if (userInfo[0].WALLET < betAmount) {
                 retData = {
                     status: false,
-                    error: 'Wallet is not enough.',
+                    error: 'Wallet is not enough. Please check your wallet.',
                     data: null
                 }
                 return retData
             }
-            db.cmd(db.statement("update", "users", "set " + db.lineClause([
-                {
-                    key: "WALLET_AVAILABLE",
-                    val: userInfo[0].WALLET_AVAILABLE - betAmount
-                },
-                {
-                    key: "WALLET_BLOCK",
-                    val: userInfo[0].WALLET_BLOCK + betAmount
-                }
-            ], ","), db.itemClause('ID', userID)), true)
+            //update user wallet
+            db.cmd(db.statement("update", "users",
+            "set " + db.itemClause('WALLET', 'WALLET - ' + betAmount , '' , 1),
+            db.itemClause('ID', userID)), true)
+            //update admin wallet
+            db.cmd(db.statement("update", "admin",
+            "set " + db.itemClause('WALLET', 'WALLET + ' + betAmount , '' , 1),
+            db.itemClause('ID', 1)), true)
         }
         var str = ''
         str += "VALUES (" + "'" + Math.floor(Date.now() / 1000) + "'" + "," + "'" + Math.floor(Date.now() / 1000) + "'" + "," + gameNo + "," + userID + "," + (isBot ? 1 : 0) + ",0" + "," + betAmount + ")"
-        console.log("Log: " + str)
         db.cmd(db.statement("insert into", "crash_game_log",
             "(CREATE_TIME, UPDATE_TIME ,  GAMENO, USERID, IS_BOT, CASHOUTRATE, BET_AMOUNT)", '',
             str), true)
 
         if (isBot) {
-            db.cmd(db.statement("update", "crash_game_total", "set " + db.itemClause('BOTS', 'BOTS + 1'), db.itemClause('GAMENO', gameNo)), true)
+            db.cmd(db.statement("update", "crash_game_total",
+            "set " + db.itemClause('BOTS', 'BOTS + 1' , '' , 1) + " , " +
+            db.itemClause('TOTAL', 'TOTAL + ' + betAmount , '' , 1),
+            db.itemClause('GAMENO', gameNo)), true)
         } else {
-            db.cmd(db.statement("update", "crash_game_total", "set " + db.itemClause('USERS', 'USERS + 1'), db.itemClause('GAMENO', gameNo)), true)
+            db.cmd(db.statement("update", "crash_game_total",
+            "set " + db.itemClause('USERS', 'USERS + 1' , '' , 1) + " , " +
+            db.itemClause('TOTAL', 'TOTAL + ' + betAmount , '' , 1) + " , " + 
+            db.itemClause('TOTAL_REAL', 'TOTAL_REAL + ' + betAmount , '' , 1),
+            db.itemClause('GAMENO', gameNo)), true)
         }
         retData = {
             status: true,
@@ -215,7 +177,7 @@ var cashout = function (userID, gameNo, cashRate, isBot) {
             }
             return retData
         }
-        if (gameInfo[0].BUST < cashRate) {
+        if (gameInfo[0].BUST < cashRate * 100) {
             retData = {
                 status: false,
                 error: 'Cash rate is bigger than bust',
@@ -223,8 +185,23 @@ var cashout = function (userID, gameNo, cashRate, isBot) {
             }
             return retData
         }
+
+        // get crash game log for individual user
         if (isBot == false) {
-            return db.list(db.statement("select * from", "users", "", db.itemClause('ID', userID)), true)
+            return db.list(db.statement("select * from", "crash_game_log", "", db.lineClause([
+                {
+                    key: 'USERID',
+                    val: userID
+                },
+                {
+                    key: 'GAMENO',
+                    val: gameNo
+                },
+                {
+                    key: 'IS_BOT',
+                    val: 0
+                }
+            ], "and")), true)
         } else {
             return db.list(db.statement("select * from", "crash_game_log", "", db.lineClause([
                 {
@@ -234,6 +211,10 @@ var cashout = function (userID, gameNo, cashRate, isBot) {
                 {
                     key: 'GAMENO',
                     val: gameNo
+                },
+                {
+                    key: 'IS_BOT',
+                    val: 1
                 }
             ], "and")), true)
         }
@@ -241,23 +222,11 @@ var cashout = function (userID, gameNo, cashRate, isBot) {
         if (retData != null) {
             return retData
         }
-        if (isBot == false) {
-            userInfo = _rows
-        } else {
-            betInfo = _rows
-        }
-        if (isBot == false && (userInfo == null || userInfo.length <= 0)) {
+        betInfo = _rows
+        if(betInfo == null || betInfo.length < 1) {
             retData = {
                 status: false,
-                error: 'Invalid user id',
-                data: null
-            }
-            return retData
-        }
-        if (betInfo == null || betInfo.length <= 0) {
-            retData = {
-                status: false,
-                error: 'No bets',
+                error: 'There is no bet information',
                 data: null
             }
             return retData
@@ -270,10 +239,7 @@ var cashout = function (userID, gameNo, cashRate, isBot) {
             }
             return retData
         }
-        console.log("cashRate: " + cashRate)
-        var cashout = db.convFloat(betInfo[0].BET_AMOUNT) * cashRate
-        console.log("BET_AMOUNT: " + betInfo[0].BET_AMOUNT)
-        console.log("cashOut: " + cashout)
+        var cashout = db.convInt(betInfo[0].BET_AMOUNT * cashRate)
         db.cmd(db.statement("update", "crash_game_log", "set " + db.lineClause([
             {
                 key: 'CASHOUTRATE',
@@ -288,23 +254,16 @@ var cashout = function (userID, gameNo, cashRate, isBot) {
                 val: cashout - betInfo[0].BET_AMOUNT
             }
         ], ","), db.itemClause('ID', betInfo[0].ID)))
-        if (isBot == false) {
-            db.cmd(db.statement("update", "users", "set " + db.lineClause([
-                {
-                    key: 'WALLET',
-                    val: cashout + db.convFloat(userInfo[0].WALLET) - db.convFloat(betInfo[0].BET_AMOUNT)
-                },
-                {
-                    key: 'WALLET_AVAILABLE',
-                    val: cashout + db.convFloat(userInfo[0].WALLET_AVAILABLE)
-                },
-                {
-                    key: 'WALLET_BLOCK',
-                    val: db.convFloat(userInfo[0].WALLET_BLOCK) - db.convFloat(betInfo[0].BET_AMOUNT)
-                }
-            ], ","), db.itemClause('ID', userID)))
+        if(!isBot) {
+            //update user wallet
+            db.cmd(db.statement("update", "users",
+                "set " + db.itemClause('WALLET', 'WALLET + ' +  cashout, '' , 1),
+                db.itemClause('ID', userID)), true)
+            //update admin wallet
+            db.cmd(db.statement("update", "admin",
+                "set " + db.itemClause('WALLET', 'WALLET - ' +  cashout, '' , 1),
+                db.itemClause('ID', 1)), true)
         }
-
         retData = {
             status: true,
             error: '',
@@ -342,7 +301,6 @@ var game_start = function (gameNo, gameBust) {
 }
 var game_bust = function (gameNo) {
     var gameInfo = []
-
     return db.list(db.statement("select * from", "crash_game_total", "", db.itemClause('GAMENO', gameNo)), true).then((_gameInfo) => {
         gameInfo = _gameInfo
         if (gameInfo == null || gameInfo.length <= 0 || gameInfo[0].STATE != 'STARTED') {
@@ -501,7 +459,6 @@ var crashModel = {
     bust_game: bust_game,
     start_game: start_game,
     next_game: next_game,
-    // make_bet: make_bet,
     bet: bet,
     cashout: cashout,
     game_start: game_start,

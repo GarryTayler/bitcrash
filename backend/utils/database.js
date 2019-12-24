@@ -25,9 +25,12 @@ function handleDisconnect() {
 handleDisconnect();
 ////////////////////////////
 
-var itemClause = function (key, val, opt = '') {
-    if (typeof (val) == 'string') {
+var itemClause = function (key, val, opt = '', type = 0) {
+    if (typeof (val) == 'string' && type == 0) {
         return key + " " + (opt === '' ? "=" : opt) + " " + "'" + val + "'"
+    }
+    if(type == 1) {
+        return key + " " + (opt === '' ? "=" : opt) + " " + val
     }
     return key + " " + (opt === '' ? "=" : opt) + " " + val
 }
@@ -42,8 +45,6 @@ var lineClause = function (items, delimiter) {
     return ret
 }
 var statement = function (cmd, tbl_name, set_c, where_c, extra = '') {
-    // console.log("where_c: " + where_c)
-    // console.log("extra: " + extra)
     return cmd + " " + tbl_name + " " + (set_c == undefined || set_c == '' ? '' : set_c) + (where_c == undefined || where_c == '' ? '' : ' where ' + where_c) + (extra == undefined || extra == '' ? '' : ' ' + extra)
 }
 var cmd = function (statement, shouldWait = false) {
@@ -56,7 +57,6 @@ var cmd = function (statement, shouldWait = false) {
 }
 var list = function (statement, shouldWait = false) {
     return new Promise((resolve, reject) => {
-        console.log(statement)
         con.query(statement, function (err, rows, fields) {
             if (err) {
                 reject(err)

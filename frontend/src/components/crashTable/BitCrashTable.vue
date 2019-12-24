@@ -10,9 +10,9 @@
         <tr v-if="items.length <= 0">
           <td colspan="20" style="text-align: center;line-height: 40px;">Empty</td>
         </tr>
-        <tr v-for="item in items" :key="item.id">
+        <tr v-for="item in items" :key="item.name" :class="{'active-background':item.name===name}">
           <td v-for="field in fields" :key="field.id">
-            <user-profile v-if="field.type == 'profile'" :user="item[field.key]" />
+            <user-profile v-if="field.type == 'profile'" :user="item[field.key]" :avatar="item.avatar" />
             <coin-label v-if="field.type=='bet'" :bet="setNumberFormat(item[field.key])" />
             <div v-if="field.type==='text' && field.key!=='bet' && field.key!=='profit'">
               {{ item[field.key] }}
@@ -31,6 +31,8 @@
 import CoinLabel from '@/components/crashTable/CoinLabel.vue'
 import UserProfile from '@/components/crashTable/UserProfile.vue'
 import { getNumberFormat } from '@/utils/index'
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'BitCrashCard',
   components: {
@@ -56,6 +58,18 @@ export default {
       striped: true
     }
   },
+  computed: {
+    ...mapGetters([
+      'is_logged_in',
+      'chat_server_url',
+      'user_id',
+      'name',
+      'ipaddress',
+      'token',
+      'crash_chat',
+      'avatar'
+    ])
+  },
   methods: {
     setNumberFormat(num) {
       return getNumberFormat(num)
@@ -69,13 +83,10 @@ export default {
 @import "~bootstrap/scss/bootstrap";
 @import "~bootstrap-vue/src/index";
 .bit-crash-table-wrapper {
-  // padding-left: 40px;
-  // padding-right: 10px;
   display: block;
   width: 100%;
   overflow: auto;
   height: 100%;
-
   .bit-crash-table {
     font-size: $user-tbl-header-text-size;
     width: 100%;
@@ -98,7 +109,6 @@ export default {
 
     tbody {
       color: white;
-
       td {
 
         padding: 0.5vw;
@@ -114,13 +124,14 @@ export default {
           border-radius: $navbar-profile-border-radius;
         }
       }
-
+      .active-background {
+        background-color: #17a2b8 !important;
+      }
       tr:nth-child(even) {
         background-color: #485992;
       }
     }
   }
-
   .p-r-15 {
     padding-right: 15px;
     padding-left: 5px;

@@ -90,7 +90,7 @@ export default {
               this.start_time = Date.now() - Math.ceil(this.inverseGrowth(this.crash + 1))
             }
             this.crash = payload.crash
-            this.setTitle('Bitcrash - Crashed at ' + parseFloat(this.crash).toFixed(2) + 'x')
+            this.setTitle('Bitcrash - Crashed at ' + parseFloat(this.crash / 100).toFixed(2) + 'x')
             break
           case 'resize':
             this.onWindowResizeBinded()
@@ -114,6 +114,9 @@ export default {
     this.startRendering()
   },
   methods: {
+    setTick(tick) {
+      this.$emit('interface', parseFloat(tick).toFixed(2))
+    },
     handleResize() {
       if (window.innerWidth >= 1700) {
         this.canvasSetHeight = 420
@@ -190,6 +193,7 @@ export default {
         this.currentTime = 0
       }
       this.currentGamePayout = this.growth(this.currentTime)
+      this.setTick(this.currentGamePayout)
       if (this.status !== this.STATUS_PENDING) { this.setTitle('Bitcrash - ' + parseFloat(this.currentGamePayout).toFixed(2) + 'x') }
     },
     calculatePlotValues() {

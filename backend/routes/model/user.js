@@ -8,89 +8,15 @@ var bet_available = function (userID, betAmount) {
         if (userInfo == null || userInfo.length <= 0) {
             return 'Invalid User ID'
         }
-        if (db.convInt(userInfo[0].WALLET_AVAILABLE) < betAmount) {
+        if (db.convInt(userInfo[0].WALLET) < betAmount) {
             return 'Wallet is not enough.'
         }
         return 'success'
     })
-
-    // $userInfo = $this->db->from('users')->where('ID', $userID)->get()->row();
-    // if ( !$userInfo ) {
-    //     return 'Invalid User ID';
-    // }
-    // if ( $userInfo->WALLET_AVAILABLE < $betAmount) {
-    //     return 'Wallet is not enough.';
-    // }
-    // return 'success';
-}
-var new_bet = function (userID, betAmount) {
-    db.cmd(db.statement("update", "users", "set " + db.lineClause([
-        {
-            key: "WALLET_BLOCK",
-            val: "WALLET_BLOCK + " + betAmount
-        },
-        {
-            key: "WALLET_AVAILABLE",
-            val: "WALLET_AVAILABLE - " + betAmount
-        }
-    ], ","), db.itemClause("ID", userID)))
-    // $this->db->where('ID', $userID)
-    //     ->set('WALLET_BLOCK', 'WALLET_BLOCK + '.$betAmount, false)
-    //     ->set('WALLET_AVAILABLE', 'WALLET_AVAILABLE - '.$betAmount, false)
-    //     ->update('users');
 }
 
-var lose_game = function (userID, betAmount) {
-    db.cmd(db.statement("update", "users", "set " + db.lineClause([
-        {
-            key: "WALLET_BLOCK",
-            val: "WALLET_BLOCK - " + betAmount
-        },
-        {
-            key: "WALLET",
-            val: "WALLET - " + betAmount
-        }
-    ], ","), db.itemClause('ID', userID)))
-    // // when user loses bet, block amount and wallet reduces
-    // $this->db->where('ID', $userID)
-    //     ->set('WALLET_BLOCK', 'WALLET_BLOCK - '.$betAmount, false)
-    //     ->set('WALLET', 'WALLET - '.$betAmount, false)
-    //     ->update('users');
-}
-
-var win_game = function (
-    userID,
-    betAmount, // his bet amount
-    totalProfit // that game's total bet --> his total profit
-) {
-    db.cmd(db.statement("update", "users", "set " + db.lineClause([
-        {
-            key: "WALLET",
-            val: "WALLET + " + totalProfit
-        },
-        {
-            key: "WALLET_AVAILABLE",
-            val: "WALLET_AVAILABLE + " + (betAmount + totalProfit)
-        },
-        {
-            key: "WALLET_BLOCK",
-            val: "WALLET_BLOCK - " + betAmount
-        }
-    ], ","), db.itemClause('ID', userID)))
-    // // when user wins game, he should get money from that game
-    // $this->db->where('ID', $userID)
-    //     ->set('WALLET', 'WALLET +' . $totalProfit, false)
-    //     ->set('WALLET_AVAILABLE', 'WALLET_AVAILABLE + '.($betAmount + $totalProfit), false)
-    //     ->set('WALLET_BLOCK', 'WALLET_BLOCK - '.$betAmount, false)
-    //     ->update('users');
-}
 var getUserInfo = function (query, callback) {
     var pwdStr = '';
-    /*if (query.password != undefined) {
-        var md5stream = new MD5()
-        md5stream.end(query.password)
-        pwdStr = md5stream.read().toString('hex')
-    }*/
     if (query.password != undefined) {
         pwdStr = md5(query.password);
     }
@@ -253,12 +179,7 @@ var update = function (params) {
 var userModel = {
     getUserInfo: getUserInfo,
     signup: signup,
-
     bet_available: bet_available,
-    new_bet: new_bet,
-    lose_game: lose_game,
-    win_game: win_game,
-
     getList: getList,
     update: update
 }

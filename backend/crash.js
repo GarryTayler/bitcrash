@@ -141,7 +141,8 @@ io.on('connection', function(socket){
                     form: {
                         user_id : data.user_id,
                         game_no: data.game_id,
-                        bet : data.bet
+						bet : data.bet,
+						is_bot : 0
                     }
                 }, function(error, response, body){
 					var ret = JSON. parse(body);
@@ -152,15 +153,16 @@ io.on('connection', function(socket){
 					});
                     if (ret.status) {
                         var betInfo = {
-                            bet: data.bet,
-                            user_id: data.user_id,
+							bet: parseInt(data.bet),
+							user_id: data.user_id,
 							name: data.user_name,
 							avatar: data.avatar,
                             option: 0,
                             game_id: data.game_id,
                             is_bot: 0,
                             done: false,
-                            new: '1'
+							new: '1',
+							profit: 0
                         };
                         game_play_list.push(betInfo);
                         io.emit(
@@ -182,7 +184,7 @@ io.on('connection', function(socket){
 						{
 							code: 'Cashout',
 							status: false,
-							error: 'Cashrate is not valid'
+							error: 'Cash Rate is not valid'
 						}
 					);
 					return;
@@ -194,7 +196,6 @@ io.on('connection', function(socket){
                             game_no: gameId,
                             user_id: data.user_id,
 							cash_rate: data.stopped_at
-							//is_bot: 0
                         }
                     },
                     function(error, response, body) {
@@ -209,7 +210,7 @@ io.on('connection', function(socket){
 						if (ret.status) {
                             var cashout_player = false;
                             for (var i = 0; i < game_play_list.length; i += 1) {
-                                if (game_play_list[i].new == '0' 
+                                if (game_play_list[i].new == '0'
                                     && game_play_list[i].is_bot == 0
                                     && game_play_list[i].user_id == data.user_id) {
                                     // this user cashout
@@ -220,9 +221,11 @@ io.on('connection', function(socket){
                             if (cashout_player) {
                                 cashout_player = cashout_player[0];
                                 // we set them at the top
-                                cashout_player.option = data.stopped_at;
-                                cashout_player.done = true;
-                                cashout_list.push(cashout_player);
+                                cashout_player.option = data.stopped_at * 100;
+								cashout_player.done = true;
+								cashout_player.cashout = parseFloat(data.stopped_at).toFixed(2).toString() + 'x';
+								cashout_player.profit = parseFloat(data.stopped_at) * cashout_player.bet;
+								cashout_list.push(cashout_player);
                             }
                             io.emit('onMessage',
                                 {
@@ -264,7 +267,7 @@ io.on('connection', function(socket){
     });
 
     // when socket first connnects, tell them about game rule, max/min limits, max_payout ...
-    socket.emit('onMessage', 
+    socket.emit('onMessage',
         {
             code: 'GameRule',
             bet_max_limit: bet_max_limit,
@@ -274,7 +277,7 @@ io.on('connection', function(socket){
         }
 	);
 });
-	
+
 function addBot(bot) {
 	var bust_val , random_option;
 	random_option = {
@@ -295,7 +298,8 @@ function addBot(bot) {
 		'done': bust_val > crash ? true : false,
 		'is_bot': 1,
 		'bust': bust_val,
-		'profit': 0
+		'profit': 0 ,
+		'avatar': bot.avatar
 	};
 
 	request.post({
@@ -310,7 +314,7 @@ function addBot(bot) {
 		var ret = JSON.parse(body);
 		if (ret.status) {
 			// bot added successfully ...
-		} else { 
+		} else {
 			stopGameG = true;
 		}
 	});
@@ -435,7 +439,7 @@ function intervalFunc()
 				form: {
 					user_id: cashout.user_id,
 					game_no: cashout.game_id,
-					cash_rate: cashout.bust,
+					cash_rate: parseFloat(cashout.bust / 100).toFixed(2),
 					is_bot: 1
 				}
 			}, function(error, response, body) {
@@ -472,7 +476,7 @@ function intervalFunc()
 		request.post({
 				url:    mainServerUrl + 'game_bust',
 				form: {
-					game_no: gameId, 
+					game_no: gameId,
 					hash_value: hash
 				}
 		}, function(error, response, body){
@@ -483,7 +487,7 @@ function intervalFunc()
 				elapsed_time = 0;
 				// wait for 3 seconds to show BUSTED VALUE
 				setTimeout(function() {
-					waitGame();        
+					waitGame();
 				}, 3000);
 				io.emit('onMessage',
 					{
@@ -492,7 +496,7 @@ function intervalFunc()
 						game_no: gameId
 					}
 				);
-			} 
+			}
 			else {
 				// no response //main server destroyed ... waiting request from main server.
 				stopGameG = true;

@@ -35,7 +35,7 @@
 import LogInButton from '@/components/navbar/LogInButton'
 import { signup } from '@/api/user'
 import global from '@/mixins/global'
-
+import message from '@/filters/message'
 export default {
   components: {
     LogInButton
@@ -49,27 +49,27 @@ export default {
   methods: {
     isValid() {
       if (this.form.username === undefined || this.form.username == null || this.form.username.length <= 0) {
-        this.showToast('Signup Failed', 'Username field is required.', 'error')
+        this.showToast('Signup Failed', message.signup_failed_msg1, 'error')
         return false
       }
       if (this.form.email === undefined || this.form.email == null || this.form.email.length <= 0) {
-        this.showToast('Signup Failed', 'Email field is required.', 'error')
+        this.showToast('Signup Failed', message.signup_failed_msg2, 'error')
         return false
       }
       if (this.form.password === undefined || this.form.password == null || this.form.password.length <= 0) {
-        this.showToast('Signup Failed', 'Password field is required.', 'error')
+        this.showToast('Signup Failed', message.signup_failed_msg3, 'error')
         return false
       }
       if (this.form.password_confirm === undefined || this.form.password_confirm == null || this.form.password_confirm.length <= 0) {
-        this.showToast('Signup Failed', 'Please confirm your password.', 'error')
+        this.showToast('Signup Failed', message.signup_failed_msg4, 'error')
         return false
       }
       if (this.form.password_confirm !== this.form.password) {
-        this.showToast('Signup Failed', 'Password confirm is failed. Please try again.', 'error')
+        this.showToast('Signup Failed', message.signup_failed_msg5, 'error')
         return false
       }
       if (this.form.agree === undefined || this.form.agree == null || this.form.agree === false) {
-        this.showToast('Signup Failed', 'Please tick when you agree our terms of service.', 'error')
+        this.showToast('Signup Failed', message.signup_failed_msg6, 'error')
         return false
       }
       return true

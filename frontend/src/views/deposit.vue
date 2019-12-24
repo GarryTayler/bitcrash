@@ -163,7 +163,6 @@
         </bit-crash-card>
       </div>
     </b-row>
-    <!-- <menu-bar @showOrHide="menuShowed"></menu-bar> -->
   </div>
 </template>
 
@@ -172,15 +171,18 @@ import { mapGetters } from 'vuex'
 import BitCrashCard from '@/components/crashTable/BitCrashCard.vue'
 import DepositBtn from '@/components/deposit/DepositBtn.vue'
 import ChatInputBox from '@/components/chat/ChatInputBox'
+import titleMixin from '@/mixins/titleMixin'
 
 export default {
   name: 'Home',
+  title: 'Deposit - Bitcrash',
   components: {
     BitCrashCard,
     DepositBtn,
     ChatInputBox
     // MenuBar
   },
+  mixins: [titleMixin],
   data() {
     return {
     //   menu: true

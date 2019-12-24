@@ -15,7 +15,7 @@
             </div>
             <div class="card-content">
               <b-row>
-                <crash-graph :event-bus="eventBus" />
+                <crash-graph :event-bus="eventBus" @interface="getTick" />
               </b-row>
               <b-row>
                 <b-col sm="12" md="4" lg="4" xl="4" class="m-b">
@@ -25,7 +25,7 @@
                   <crash-edit v-model="auto_cashout" label="AUTO CASHOUT" sup="X" />
                 </b-col>
                 <b-col sm="12" md="4" lg="4" xl="4">
-                  <crash-bet-button :is-disabled="!is_logged_in" :text="betBtnText" :size="betBtnSize" @click="do_action" />
+                  <crash-bet-button :is-disabled="!is_logged_in" :text="betBtnText" :size="betBtnSize" :background="betBtnBackground" @click="do_action" />
                 </b-col>
               </b-row>
               <b-row>
@@ -73,6 +73,8 @@ import io from 'socket.io-client/dist/socket.io.js'
 import { getNumberFormat, getFloat2Decimal } from '@/utils'
 import { game_log } from '@/api/crash'
 import titleMixin from '@/mixins/titleMixin'
+import global from '@/mixins/global'
+import message from '@/filters/message'
 
 export default {
   name: 'Home',
@@ -88,7 +90,7 @@ export default {
     CrashScaleItem,
     CrashGraph
   },
-  mixins: [titleMixin],
+  mixins: [titleMixin, global],
   data() {
     return {
       bots_tbl_fields: [
@@ -164,10 +166,13 @@ export default {
       interval: 10,
       betBtnText: 'BET',
       betBtnSize: 'large',
+      betBtnBackground: '',
       state: 'waiting', // there are three status, WAITING, STARTED, CRASHED
       bet_temp: 0, // for temporary save -- when game started, and you bet your bet is store in this variable
       bet_amount: 0, // real betting amount  when state becomes waiting, bet_amount = bet_temp and bet_temp becomes 0
-      tick: 0,
+      tick: 0, // this is server tick
+      client_tick: 0, // this is client tick which is calculated in client side
+      prev_tick: 0,
       time_stamp: 0,
 
       bet_input: 0,
@@ -258,8 +263,6 @@ export default {
           break
         case 'ReloadPlayers':
           self.reload(data)
-          // self.addHistory(data)
-          // recalc bet_sum, cashout_sum, and add count-up/down animation ...
           break
         case 'WaitGame':
           // game-created
@@ -273,9 +276,6 @@ export default {
         case 'Tick':
           // from server
           if (Date.now() - self.time_stamp > 500) {
-            // $('title').html(
-            //   parseFloat(data.tick / 100).toFixed(2) + 'x - Crash'
-            // )
             self.time_stamp = Date.now()
           }
           self.do_tick(data.tick)
@@ -287,12 +287,9 @@ export default {
         case 'GameStartCrash':
           data.finish = 1
           self.start(data)
-
           self.sendEvent('game-finished', { crash: data.crash })
-
           self.close_timer()
           self.state = 'CRASHED'
-
           self.tick = data.crash
           self.update_btn()
           break
@@ -301,7 +298,7 @@ export default {
             // update_wallet()
             self.$store.dispatch('user/getInfo', self.token)
           } else {
-            // showToast('error', data.error)
+            self.showToast('Error', data.error, 'error')
           }
           break
         case 'Cashout':
@@ -310,7 +307,7 @@ export default {
             // update_wallet()
             self.$store.dispatch('user/getInfo', self.token)
           } else {
-            // showToast('error', data.error)
+            self.showToast('Error', data.error, 'error')
           }
           break
         default:
@@ -319,13 +316,21 @@ export default {
     })
 
     this.crash_socket.on('disconnect', function() {
-      // showToast('error', 'Game server might have network problem. Please check  your interent connection.')
       // stop game
       self.stop()
+      self.showToast('Error', message.disconnect_err_msg, 'error')
     })
     this.updateHistory(null)
   },
   methods: {
+    getTick(event) {
+      // console.log(this.client_tick)
+      this.client_tick = event
+      if (this.client_tick !== this.prev_tick) {
+        this.update_btn()
+        this.prev_tick = this.client_tick
+      }
+    },
     scaleItemClick(item) {
       if (this.bet_input == null) {
         this.bet_input = 0
@@ -333,7 +338,7 @@ export default {
       this.bet_input = parseFloat(this.bet_input)
       switch (item.id) {
         case 0:
-          this.bet_input = 0
+          this.bet_input = 1000
           break
         case 1:
           this.bet_input += 10
@@ -381,28 +386,36 @@ export default {
       })
     },
     do_action() {
-      if (!this.is_logged_in) return
-      if (this.bet_temp > 0) this.bet_temp = 0
-      else if (this.bet_amount > 0) {
-        // cancel current bet
+      // when you are not logged in, betting button is not working.
+      if (!this.is_logged_in) {
+        this.showToast('Error', message.bet_err_msg1, 'error')
+        return
+      }
+      if (this.bet_temp > 0) {
+        // cancel betting when graph is drawing  (betting is for next round)
+        this.bet_temp = 0
+      } else if (this.bet_amount > 0) {
         if (this.state === 'WAITING') return // when waiting status, you can do nothing but bet...
-        if (this.state === 'STARTED') {
+        if (this.state === 'STARTED') { // you can bet now (bet_amount > 0)
           if (this.crash_socket != null) {
             this.crash_socket.emit('onMessage', {
               code: 'CashOut',
               user_id: this.user_id,
               game_id: this.game_id,
-              stopped_at: this.tick
+              stopped_at: this.client_tick
             })
+            this.bet_amount = 0
           }
-          this.bet_amount = 0
         }
       } else {
         // place bet
         var t_bet = parseInt(this.bet_input)
         if (isNaN(t_bet) || t_bet === 0) {
-          // invalid inputs
-          // showToast('error', 'Please input correct number.')
+          this.showToast('Error', 'Please input correct number.', 'error')
+          return
+        }
+        if (t_bet > this.wallet) {
+          this.showToast('Error', message.wallet_err_msg, 'error')
           return
         }
         if (this.state === 'WAITING') {
@@ -416,30 +429,24 @@ export default {
       this.update_btn()
     },
     update_btn() {
-      var label = 'BET'
-      if (this.bet_temp > 0) label = 'Cancel'
-      else if (this.bet_amount > 0) {
-        if (this.state === 'WAITING') label = 'Cancel'
-        else if (this.state === 'STARTED') {
+      var label = 'BET'; var class_label = ''
+      if (this.bet_temp > 0) {
+        label = 'Cancel' // when you bet when graph is drawing
+        class_label = 'cancel_bg'
+      } else if (this.bet_amount > 0) {
+        if (this.state === 'WAITING') {
+          label = 'Betting...' // stand by with betting amount
+          class_label = 'betting_bg'
+        } else if (this.state === 'STARTED') {
+          class_label = 'cashout_bg'
           label = 'Cashout '
-          var cashVal = getNumberFormat(this.bet_amount * this.tick / 100)
-          if (cashVal.length > 5) label += '@'
-
-          if (cashVal.length > 9) {
-            this.betBtnSize = 'small'
-          } else {
-            this.betBtnSize = 'large'
-          }
-          label += ' ' + cashVal
+          var cashVal = getNumberFormat(this.bet_amount * this.client_tick)
+          this.betBtnSize = 'large'
+          label += '@ ' + cashVal
         }
       }
-      // if (label == 'Place Bet' || label == 'Cancel') {
-      //   $('.btn-place-bet').removeClass('cashout')
-      // } else {
-      //   $('.btn-place-bet').addClass('cashout')
-      // }
-
       this.betBtnText = label
+      this.betBtnBackground = class_label
     },
     init_timer() {
       if (this.timerHandler) return
@@ -484,7 +491,6 @@ export default {
         user_id: this.user_id,
         game_id: this.game_id,
         bet: this.bet_amount,
-        // extra info
         user_name: this.name,
         avatar: this.avatar
       })
@@ -526,7 +532,6 @@ export default {
       this.update_btn()
 
       this.updateHistory(data)
-      // $('title').html('Crashed at ' + this.tick / 100 + 'x - Crash | Tarobet')
     },
     start(data) {
       this.close_timer()
@@ -543,7 +548,6 @@ export default {
         this.state = 'STARTED'
         this.sendEvent('game-started', { crash: this.tick })
       }
-
       this.update_btn()
     },
     stop() {
@@ -581,6 +585,8 @@ export default {
         data['bet'] = list[index]['bet']
         data['bonus'] = '-'
         data['profit'] = list[index]['profit']
+        data['name'] = list[index]['name']
+        data['avatar'] = list[index]['avatar']
         this.all_tbl_items.push(data)
       }
     }
@@ -746,4 +752,5 @@ export default {
     padding-right: 0.5vw;
     padding-left: 0.5vw;
 }
+
 </style>

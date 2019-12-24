@@ -1,5 +1,5 @@
 <template>
-  <div class="bg flex-space-between-vc" :class="isDisabled ? 'disabled' : ''" @click="click">
+  <div class="bg flex-space-between-vc" :class="[isDisabled ? 'disabled' : '' , background]" @click="click">
     <span class="text" :class="'text-' + size">{{ text }}</span>
     <img src="@/assets/img/ic_bet.png">
   </div>
@@ -23,6 +23,10 @@ export default {
     size: {
       type: String,
       default: 'large'
+    },
+    background: {
+      type: String,
+      default: ''
     }
   },
   methods: {
@@ -54,10 +58,6 @@ export default {
   .text-small {
     font-size: 14px;
   }
-  .text-large {
-    font-size: 24px;
-    font-weight: bold;
-  }
   .text-normal {
     font-size: 18px;
     font-weight: bold;
@@ -68,5 +68,69 @@ export default {
       background: linear-gradient(90deg, #cca300, #cc8710);
     }
   }
+  @media (min-width: 1700px)
+  {
+    .text-large {
+      font-size: 24px;
+      font-weight: bold;
+    }
+  }
+  @media (min-width: 1500px) and (max-width: 1700px)
+  {
+    .text-large {
+      font-size: 20px;
+      font-weight: bold;
+    }
+  }
+  @media (min-width: 1310px) and (max-width: 1500px)
+  {
+    .text-large {
+      font-size: 18px;
+      font-weight: bold;
+    }
+  }
+  @media (min-width: 1120px) and (max-width: 1310px)
+  {
+    .text-large {
+      font-size: 16px;
+      font-weight: bold;
+    }
+  }
+  @media (min-width: 768px) and (max-width: 1120px)
+  {
+   .text-large {
+      font-size: 14px;
+      font-weight: bold;
+    }
+  }
+  @media (max-width: 768px)
+  {
+   .text-large {
+      font-size: 24px;
+      font-weight: bold;
+    }
+  }
 }
+.betting_bg {
+  background: linear-gradient(90deg, #1fbd82, #14a191);
+}
+.betting_bg:hover {
+  background: linear-gradient(90deg, #1fbd82, #14a191);
+}
+
+.cancel_bg {
+  background: linear-gradient(90deg, #6e7371, #454c4c);
+}
+
+.cancel_bg:hover {
+  background: linear-gradient(90deg, #5a5f5d, #353a3a) !important;
+}
+
+.cashout_bg {
+  background: linear-gradient(90deg, #05adf6, #1c8bcf);
+}
+.cashout_bg:hover {
+  background: linear-gradient(90deg, #0d9ddc, #1c7fbb) !important;
+}
+
 </style>

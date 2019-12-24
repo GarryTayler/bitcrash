@@ -25,7 +25,7 @@
 // import ContactButton from '@/components/ContactButton.vue'
 import LogInButton from '@/components/navbar/LogInButton'
 import global from '@/mixins/global'
-
+import message from '@/filters/message.js'
 export default {
   components: {
     LogInButton
@@ -51,7 +51,7 @@ export default {
             this.$bvModal.hide('login-form')
             this.$toast.success({
               title: 'Login Success',
-              message: 'You just logged in successfully.',
+              message: message.login_success_msg,
               position: 'top right',
               type: 'success',
               progressBar: true,

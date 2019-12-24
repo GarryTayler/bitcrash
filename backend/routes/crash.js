@@ -4,14 +4,19 @@ var dateFormat = require('dateformat');
 var crashModel = require('./model/crash');
 
 var db = require('./../utils/database');
-router.post('/bet', async function (req, res) {
+ router.post('/bet', async function (req, res) {
+    const { user_id, bet, game_no, is_bot } = req.body
+    var ret = await crashModel.bet(user_id, bet, game_no, is_bot == undefined ? false : is_bot == 1)
+    return res.json(ret)
+})
+router.post('/addbet', async function (req, res) {
     const { user_id, bet, game_no, is_bot } = req.body
     var ret = await crashModel.bet(user_id, bet, game_no, is_bot == undefined ? false : is_bot == 1)
     return res.json(ret)
 })
 router.post('/cashout', async function (req, res) {
     const { user_id, game_no, cash_rate, is_bot } = req.body
-    var ret = await crashModel.cashout(user_id, game_no, cash_rate / 100, is_bot == undefined ? false : is_bot == 1)
+    var ret = await crashModel.cashout(user_id, game_no, cash_rate, is_bot == undefined ? false : is_bot == 1)
     return res.json(ret)
 })
 router.post('/game_start', async function (req, res) {
