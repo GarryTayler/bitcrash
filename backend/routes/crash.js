@@ -21,7 +21,6 @@ router.post('/cashout', async function (req, res) {
 })
 router.post('/game_start', async function (req, res) {
     const { game_no, bust } = req.body
-    console.log("game_start " + game_no + " " + bust)
     var ret = await crashModel.game_start(game_no, bust)
     return res.json(ret)
 })
@@ -40,7 +39,6 @@ router.post('/game_finish_start', async function (req, res) {
     return res.json(ret)
 })
 router.post('/game_log', async function (req, res) {
-    console.log("game_log")
     const { limit } = req.body
     var ret = await crashModel.game_log(limit)
     return res.json({
@@ -49,7 +47,6 @@ router.post('/game_log', async function (req, res) {
     });
 })
 router.post('/history', async function (req, res) {
-    console.log("history")
     const { id, start_date, end_date, page, limit } = req.body
     var i_page = isNaN(parseInt(page)) ? 1 : parseInt(page)
     var i_limit = isNaN(parseInt(limit)) ? 1 : parseInt(limit)
@@ -60,7 +57,6 @@ router.post('/history', async function (req, res) {
     });
 })
 router.post('/log', async function (req, res) {
-    console.log("log")
     const { id } = req.body
     if (id == undefined || isNaN(parseInt(id))) {
         return res.json({

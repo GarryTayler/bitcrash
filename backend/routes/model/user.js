@@ -49,7 +49,6 @@ var getUserInfo = function (query, callback) {
         return;
     }
     sql = sql + (whereClause == '' ? '' : ' where ' + whereClause)
-    console.log(sql)
     db.con.query(sql, function (err, rows, fields) {
         if (err) {
             if (callback != null) {
@@ -57,7 +56,6 @@ var getUserInfo = function (query, callback) {
             }
             throw err
         }
-        console.log(rows)
         callback(rows)
     });
 }

@@ -45,10 +45,7 @@ router.post('/login', function (req, res) {
 
 router.post('/info', function (req, res) {
   const { token } = req.body
-
-  console.log(token)
   userModel.getUserInfo({ token: token }, function (rows) {
-    console.log(rows)
     if(rows.length < 1 || rows[0]['DEL_YN'] != 'N') {
       return res.json({
         code: 50008,

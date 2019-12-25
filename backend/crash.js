@@ -31,17 +31,13 @@ function gameResult(seed, salt) {
 	const hmac = crypto.createHmac("sha256", salt)
 	hmac.update(seed)
 	seed = hmac.digest("hex")
-
 	// 2. r = 52 most significant bits
 	seed = seed.slice(0, nBits / 4)
 	const r = parseInt(seed, 16)
-
 	// 3. X = r / 2^52
 	let X = r / Math.pow(2, nBits) // uniformly distributed in [0; 1)
-
 	// 4. X = 99 / (1-X)
 	X = 99 / (1 - X)
-
 	// 5. return max(trunc(X), 100)
 	const result = Math.floor(X)
 	return Math.max(1, result / 100)
@@ -53,7 +49,6 @@ app.post('/set_config', function (req, res) {
 	max_payout = req.body.max_payout;
 	res.json({ "status": true });
 });
-
 request.post(
     {
         url: mainServerUrl + 'init',
@@ -69,7 +64,6 @@ request.post(
 			stopGameG = true;
 	}
 )
-
 function generateBustValue(currentHash) 
 {
 	currentHash = genGameHash(currentHash);   
@@ -87,7 +81,7 @@ io.on('connection', function(socket){
         clearInterval(firstTimerHandler);
 		next_gameId = gameId;
         waitGame();
-	} 
+	}
 	else {
 		// send socket current game status
 		if (status == 2) {
@@ -112,9 +106,9 @@ io.on('connection', function(socket){
 				current_users: game_play_list,
 				cashout_list: cashout_list
 			});
-		} 
+		}
 		else if (status == 4) {
-			// when game crashed ... 
+			// when game crashed ...
 			// we do nothing here, just wait for next game, it won't take more than 3 seconds
 			// we should change if you want to show something. ^0^
 		}
@@ -122,13 +116,7 @@ io.on('connection', function(socket){
 
     globalVariable = 1;
 
-    socket.on('disconnect', function(){    
-        for(i = 0; i < socket_list.length; i ++) {
-            if(socket_list[i].id == socket.id) {
-                socket_list.splice(i , 1);
-                break;
-            }
-        }
+    socket.on('disconnect', function(){
     });
 
     socket.on('onMessage' , function(data) {
@@ -162,9 +150,14 @@ io.on('connection', function(socket){
                             is_bot: 0,
                             done: false,
 							new: '1',
-							profit: 0
-                        };
-                        game_play_list.push(betInfo);
+							profit: 0,
+							bust: parseInt(data.auto_cashout * 100)
+						};
+						game_play_list.push(betInfo);
+						socket_list.push({
+							socket: socket,
+							username: data.user_name
+						});
                         io.emit(
 							'onMessage',
                             {
@@ -204,7 +197,8 @@ io.on('connection', function(socket){
 							{
 								code: 'Cashout',
 								status: ret.status,
-								error: ret.error
+								error: ret.error,
+								type: 'manual'
 							}
 						);
 						if (ret.status) {
@@ -213,7 +207,8 @@ io.on('connection', function(socket){
                                 if (game_play_list[i].new == '0'
                                     && game_play_list[i].is_bot == 0
                                     && game_play_list[i].user_id == data.user_id) {
-                                    // this user cashout
+									// this user cashout
+									socket_list.splice(i , 1);
                                     cashout_player = game_play_list.splice(i, 1);
                                     break;
                                 }
@@ -243,7 +238,7 @@ io.on('connection', function(socket){
 			case 'Reload':
                 // when new socket tries to connect
                 // remove old socket, previously registered to socket_list
-                var run_time = 0;
+				/*var run_time = 0;
                 if(status == 2) {
                     run_time = Date.now() - resetGameTime;
                 }
@@ -258,7 +253,13 @@ io.on('connection', function(socket){
                     },
                     'code': 'GameInfo',
                 }
-                socket.emit('onMessage' , obj);
+				socket.emit('onMessage' , obj); */
+				for( var i = 0; i < socket_list.length; i ++ ) {
+					if(socket_list[i].username == data.username)  {
+						socket_list[i].socket = socket;
+						break;
+					}
+				}
                 break;
             default:
                 console.log('unknown code', data.code);
@@ -299,7 +300,8 @@ function addBot(bot) {
 		'is_bot': 1,
 		'bust': bust_val,
 		'profit': 0 ,
-		'avatar': bot.avatar
+		'avatar': bot.avatar,
+		'socket': null
 	};
 
 	request.post({
@@ -320,6 +322,10 @@ function addBot(bot) {
 	});
 
 	game_play_list.push(obj);
+	socket_list.push({
+		username: bot.F_ID ,
+		socket: null
+	});
 	io.emit("onMessage" ,
 		{
 			code: 'ReloadPlayers',
@@ -351,6 +357,7 @@ function startGame() {
 					next_gameId = ret.next_game_no;
 					cashout_list = [];
 					game_play_list = [];
+					socket_list = [];
 					status = 4;
 					elapsed_time = 0;
 					setTimeout(function() {
@@ -412,6 +419,34 @@ function startGame() {
 		}
 	);
 }
+function doCashOut(cashout , socket)
+{
+	request.post({
+		url: mainServerUrl + 'cashout',
+		form: {
+			user_id: cashout.user_id,
+			game_no: cashout.game_id,
+			cash_rate: parseFloat(cashout.bust / 100).toFixed(2),
+			is_bot: cashout.is_bot
+		}
+	}, function(error, response, body) {
+		var ret = JSON.parse(body);
+		if(socket != null && socket.socket != null) {
+			socket.socket.emit('onMessage',
+			{
+				code: 'Cashout',
+				status: ret.status,
+				error: ret.error,
+				type: 'auto'
+			});
+		}
+		if (ret.status) {
+			// server side done ...
+		} else {
+			stopGameG = true;
+		}
+	});
+}
 function intervalFunc()
 {
 	elapsed_time = Date.now() - startTime;
@@ -429,27 +464,24 @@ function intervalFunc()
 	// check for bot to be cashed out
 	var old_len = game_play_list.length;
 	for (var i = 0; i < game_play_list.length; i += 1) {
-		if (game_play_list[i].is_bot == 0) 
+		if(game_play_list[i].bust < 100)
 			continue;
 		if (game_play_list[i].bust <= tick) {
 			var cashout = game_play_list[i];
+			var socket = null;
+			for(var j = 0; j < socket_list.length; j ++) {
+				if(socket_list[j].socket == null)
+					continue;
+				if(socket_list[j].username == cashout.name) 
+				{
+					socket = socket_list[j];
+					socket_list.splice(j, 1);
+					break;
+				}
+			}
 			// bot cashout ...
-			request.post({
-				url: mainServerUrl + 'cashout',
-				form: {
-					user_id: cashout.user_id,
-					game_no: cashout.game_id,
-					cash_rate: parseFloat(cashout.bust / 100).toFixed(2),
-					is_bot: 1
-				}
-			}, function(error, response, body) {
-				var ret = JSON.parse(body);
-				if (ret.status) {
-					// server side done ...
-				} else {
-					stopGameG = true;
-				}
-			});
+			doCashOut(cashout , socket)
+			//
 			game_play_list.splice(i, 1); i -= 1;
 			cashout.done = true;
 			cashout.option = cashout.bust;

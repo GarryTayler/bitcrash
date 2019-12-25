@@ -141,6 +141,8 @@ export default {
       var mm = String(today.getMonth() + 1).padStart(2, '0') // January is 0!
       var yyyy = today.getFullYear()
       today = yyyy + '-' + mm + '-' + dd
+      today = today + ' 00:00:00'
+      today = Math.floor(new Date(today).getTime() / 1000)
       list({ type: this.crash_chat, today: today }).then(response => {
         if (response.data != null && response.data.length > 0) {
           response.data[0].sameName = false

@@ -4,8 +4,6 @@ var router = express.Router();
 var model = require('./model/faq');
 router.post('/list', async function (req, res) {
     const { search_key, type, page, limit } = req.body
-
-    console.log(search_key)
     var i_page = isNaN(parseInt(page)) ? 1 : parseInt(page)
     var i_limit = isNaN(parseInt(limit)) ? 1 : parseInt(limit)
     var i_type = type === undefined ? -1 : (isNaN(parseInt(type)) ? -1 : parseInt(type))

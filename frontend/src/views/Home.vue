@@ -174,16 +174,13 @@ export default {
       client_tick: 0, // this is client tick which is calculated in client side
       prev_tick: 0,
       time_stamp: 0,
-
       bet_input: 0,
       auto_cashout: 0,
+      auto_cashout_server: 0, // Auto Cashout Server Value
       auto_bet: false,
-
       current_users: [],
       cashout_list: [],
-
       game_id: 0,
-
       timeLeft: 5000,
       on_win: {
         return_base: true,
@@ -255,8 +252,12 @@ export default {
   created: function() {
     var self = this
     this.crash_socket = io.connect(this.crash_server_url)
-    // socket reference
 
+    this.crash_socket.emit('onMessage', {
+      code: 'Reload',
+      username: this.name
+    })
+    // socket reference
     this.crash_socket.on('onMessage', function(data) {
       switch (data.code) {
         case 'GameRule': // i don't know what to do here ...
@@ -305,6 +306,10 @@ export default {
           // the result of cashout
           if (data.status) {
             // update_wallet()
+            if (data.type === 'auto') {
+              self.bet_amount = 0
+              self.update_btn()
+            }
             self.$store.dispatch('user/getInfo', self.token)
           } else {
             self.showToast('Error', data.error, 'error')
@@ -438,6 +443,7 @@ export default {
           label = 'Betting...' // stand by with betting amount
           class_label = 'betting_bg'
         } else if (this.state === 'STARTED') {
+          if (this.client_tick > this.auto_cashout_server) { return }
           class_label = 'cashout_bg'
           label = 'Cashout '
           var cashVal = getNumberFormat(this.bet_amount * this.client_tick)
@@ -486,13 +492,15 @@ export default {
       this.update_btn()
     },
     do_bet() {
+      this.auto_cashout_server = (this.auto_cashout === undefined || this.auto_cashout === null || isNaN(parseFloat(this.auto_cashout)) || parseFloat(this.auto_cashout) < 1 ? 0 : parseFloat(this.auto_cashout))
       this.crash_socket.emit('onMessage', {
         code: 'addBet',
         user_id: this.user_id,
         game_id: this.game_id,
         bet: this.bet_amount,
         user_name: this.name,
-        avatar: this.avatar
+        avatar: this.avatar,
+        auto_cashout: (this.auto_cashout === undefined || this.auto_cashout === null || isNaN(parseFloat(this.auto_cashout)) || parseFloat(this.auto_cashout) < 1 ? 0 : parseFloat(this.auto_cashout))
       })
     },
     do_tick(tick) {
@@ -514,6 +522,7 @@ export default {
           this.current_users[i].user_id === this.user_id
         ) {
           this.bet_amount = this.current_users[i].bet
+          this.auto_cashout_server = parseFloat(this.current_users[i].bust / 100).toFixed(2)
           break
         }
       }

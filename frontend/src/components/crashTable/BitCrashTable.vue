@@ -6,10 +6,12 @@
           {{ element.label }}
         </th>
       </thead>
-      <tbody>
-        <tr v-if="items.length <= 0">
+      <tbody v-if="items.length <= 0">
+        <tr>
           <td colspan="20" style="text-align: center;line-height: 40px;">Empty</td>
         </tr>
+      </tbody>
+      <transition-group v-if="items.length > 0" name="fade" tag="tbody">
         <tr v-for="item in items" :key="item.name" :class="{'active-background':item.name===name}">
           <td v-for="field in fields" :key="field.id">
             <user-profile v-if="field.type == 'profile'" :user="item[field.key]" :avatar="item.avatar" />
@@ -22,7 +24,7 @@
             </div>
           </td>
         </tr>
-      </tbody>
+      </transition-group>
     </table>
   </div>
 </template>

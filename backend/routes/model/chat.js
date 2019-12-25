@@ -3,11 +3,9 @@ var dateFormat = require('dateformat');
 var add = function(data) {
     var statement = db.statement("insert into", "chats", "(CHAT_TYPE, CREATE_TIME, UPDATE_TIME, MSG, IPADDRESS, USERID)", "",
     "VALUES (" + "'" + data.CHAT_TYPE + "'" + "," + "'" + data.CREATE_TIME + "'" + "," + "'" + data.UPDATE_TIME + "'" + "," + "'" + data.MSG + "'" + "," + "'" + data.IPADDRESS + "'" + "," + data.USERID + ")")
-    console.log(statement)
     db.cmd(statement)
 }
 var list = function (chat_type , client_today) {
-    var today = client_today + " 00:00:00";
     return db.list(db.statement("select chats.ID as id, chats.USERID as user_id, chats.CREATE_TIME, chats.MSG as message, users.USERNAME as user, users.AVATAR as avatar from", "chats",
         'LEFT JOIN users ON users.ID = chats.USERID',
         db.lineClause([
@@ -21,7 +19,7 @@ var list = function (chat_type , client_today) {
             },
             {
                 key: "chats.CREATE_TIME",
-                val: Math.floor(new Date(today).getTime() / 1000),
+                val: client_today,
                 opt: ">="
             }
         ], "and"), ""), true).then((chatItems) => {

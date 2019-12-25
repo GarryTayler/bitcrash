@@ -15,7 +15,6 @@ router.post('/login', function (req, res) {
       password: password
     }
   }
-  console.log(token)
   model.getUserInfo(data, function (rows) {
     var token = null
     if(rows.length < 1) {
@@ -46,10 +45,7 @@ router.post('/login', function (req, res) {
 
 router.post('/info', function (req, res) {
   const { token } = req.body
-
-  console.log(token)
   model.getUserInfo({ token: token }, function (rows) {
-    console.log(rows)
     if(rows.length < 1 || rows[0]['STATE'] != 0) {
       return res.json({
         code: 50008,
@@ -90,8 +86,6 @@ router.post('/logout', function (req, res) {
 });
 router.post('/list', async function (req, res) {
   const { search_key, page, limit } = req.body
-
-  console.log(search_key)
   var i_page = isNaN(parseInt(page)) ? 1 : parseInt(page)
   var i_limit = isNaN(parseInt(limit)) ? 1 : parseInt(limit)
   var data = await model.getList(search_key, i_page, i_limit)

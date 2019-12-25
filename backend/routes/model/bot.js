@@ -36,11 +36,9 @@ var getList = function (search_key, page, limit) {
 var update = function (params) {
     const {id, enable, deleted} = params
     if (id === undefined || id == 0) {
-        console.log("ID unde")
         return false
     } else {
         var whereClause = db.itemClause('ID', parseInt(id))
-        console.log("where" + whereClause)
         var setItems = []
         if (enable !== undefined) {
             setItems.push({
@@ -54,7 +52,6 @@ var update = function (params) {
                 val: parseInt(deleted)
             })
         }
-        console.log(db.lineClause(setItems, ","))
         db.cmd(db.statement("update", "crash_game_bot", "set " + db.lineClause(setItems, ","), whereClause))
         return true
     }
@@ -74,7 +71,6 @@ var add = function (params) {
         insertFields += "F_ID,"
     }
     if (enable !== undefined) {
-        console.log("Enable State")
         setItems.push({
             key: 'ENABLE',
             val: enable

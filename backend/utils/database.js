@@ -48,7 +48,6 @@ var statement = function (cmd, tbl_name, set_c, where_c, extra = '') {
     return cmd + " " + tbl_name + " " + (set_c == undefined || set_c == '' ? '' : set_c) + (where_c == undefined || where_c == '' ? '' : ' where ' + where_c) + (extra == undefined || extra == '' ? '' : ' ' + extra)
 }
 var cmd = function (statement, shouldWait = false) {
-    console.log(statement)
     con.query(statement, function (err, rows, fields) {
         if (err) {
             throw err

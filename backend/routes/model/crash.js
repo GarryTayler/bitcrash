@@ -338,7 +338,7 @@ var game_init = function () {
         game_player_list = _game_player_list
         return db.list(db.statement("select * from", "crash_game_total", "", db.itemClause('STATE', 'STARTED')), true)
     }).then((_startedGame) => {
-        startedGame = _startedGame
+    startedGame = _startedGame
         if (waitingGame != null && waitingGame.length > 0) {
             retData = {
                 status: true,
@@ -355,7 +355,7 @@ var game_init = function () {
             return retData
         }
         if (startedGame != null && startedGame.length > 0) {
-            bust_game(startedGame)
+            bust_game(startedGame[0])
         }
         return next_game()
     }).then((next_game_no) => {
