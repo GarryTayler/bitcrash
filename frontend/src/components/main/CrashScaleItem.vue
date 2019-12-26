@@ -13,7 +13,7 @@
 <script>
 
 export default {
-  name: 'CrashBetButton',
+  name: 'CrashScaleItem',
   components: {
   },
   props: {

@@ -8,5 +8,6 @@ export default {
   'signup_failed_msg6': 'Please tick when you agree our terms of service.',
   'bet_err_msg1': 'You can bet after you log in.',
   'wallet_err_msg': 'Wallet is not enough.',
-  'disconnect_err_msg': 'You are disconnected now. Please check your network status.'
+  'disconnect_err_msg': 'You are disconnected now. Please check your network status.',
+  'betting_method_err_msg': 'You cannot change the betting method unless you terminate the current betting operation.'
 }

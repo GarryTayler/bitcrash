@@ -1,7 +1,7 @@
 <template>
   <div class="dropdown">
     <button class="dropbtn flex-space-between-vc text" @click="showDropDown()">
-      {{ items[activeItem].lbl }}
+      {{ items[selectedItem].lbl }}
       <font-awesome-icon icon="chevron-down" />
     </button>
     <div id="crashBetDropdown" class="dropdown-content">
@@ -13,6 +13,8 @@
 </template>
 
 <script>
+import global from '@/mixins/global'
+import message from '@/filters/message'
 // Close the dropdown menu if the user clicks outside of it
 window.onclick = function(event) {
   if (!event.target.matches('.dropbtn')) {
@@ -30,11 +32,13 @@ export default {
   name: 'CrashBetSelect',
   components: {
   },
+  mixins: [global],
   props: {
     activeItem: {
       type: Number,
       default: 0
-    }
+    },
+    isbusy: Boolean
   },
   data() {
     return {
@@ -47,17 +51,26 @@ export default {
           id: 1,
           lbl: 'Auto Bet'
         }
-      ]
+      ],
+      selectedItem: 0
     }
   },
   computed: {
+  },
+  created() {
+    this.selectedItem = this.activeItem
   },
   methods: {
     showDropDown() {
       document.getElementById('crashBetDropdown').classList.toggle('show')
     },
     onItemClick(id) {
-      this.activeItem = id
+      if (this.isbusy) {
+        this.showToast('Error', message.betting_method_err_msg, 'error')
+        return
+      }
+      this.selectedItem = id
+      this.$emit('click', id)
     }
   }
 }
@@ -119,6 +132,13 @@ export default {
       background-color: #384779;
     }
   }
+}
+
+@media (min-width: 768px) and (max-width: 1120px)
+{
+   .dropdown .text {
+      font-size: 14px;
+    }
 }
 
 /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */

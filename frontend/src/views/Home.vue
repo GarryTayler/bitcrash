@@ -17,23 +17,55 @@
               <b-row>
                 <crash-graph :event-bus="eventBus" @interface="getTick" />
               </b-row>
-              <b-row>
+              <b-row class="betting-row">
                 <b-col sm="12" md="4" lg="4" xl="4" class="m-b">
-                  <crash-edit v-model="bet_input" label="BET" sup="BTC" />
+                  <crash-edit v-if="!auto_bet" v-model="bet_input" label="Your bet" sup="Clear" type="1" :disabled="!is_logged_in" />
+                  <crash-edit v-if="auto_bet" v-model="bet_input" label="Base bet" sup="Clear" type="1" :disabled="!is_logged_in" />
                 </b-col>
                 <b-col sm="12" md="4" lg="4" xl="4" class="m-b">
-                  <crash-edit v-model="auto_cashout" label="AUTO CASHOUT" sup="X" />
+                  <crash-edit v-model="auto_cashout" label="Auto-cashout" sup="X" type="2" :disabled="!is_logged_in" />
                 </b-col>
                 <b-col sm="12" md="4" lg="4" xl="4">
-                  <crash-bet-button :is-disabled="!is_logged_in" :text="betBtnText" :size="betBtnSize" :background="betBtnBackground" @click="do_action" />
+                  <crash-bet-button
+                    :is-disabled="!is_logged_in"
+                    :text="betBtnText"
+                    :size="betBtnSize"
+                    :background="betBtnBackground"
+                    margin="1"
+                    @click="do_action"
+                  />
                 </b-col>
               </b-row>
-              <b-row>
-                <b-col sm="12" md="8" lg="8" xl="8">
+              <b-row class="betting-row">
+                <b-col v-if="!auto_bet" sm="12" md="8" lg="8" xl="8">
                   <crash-scale-item @click="scaleItemClick" />
                 </b-col>
+                <b-col v-if="auto_bet" sm="12" md="4" lg="4" xl="4">
+                  <crash-edit v-model="auto_bet_stop_amount" label="Stop if bet is >" sup="Clear" type="1" :disabled="!is_logged_in" />
+                </b-col>
+                <b-col v-if="auto_bet" sm="12" md="4" lg="4" xl="4">
+                  <crash-edit v-model="auto_bet_session_profit" label="Session Profit" type="2" disabled />
+                </b-col>
                 <b-col sm="12" md="4" lg="4" xl="4">
-                  <crash-bet-select />
+                  <crash-bet-select :isbusy="(bet_amount > 0 || bet_temp > 0)" @click="betTypeClick" />
+                </b-col>
+              </b-row>
+              <b-row class="betting-row m-t">
+                <b-col v-if="auto_bet" sm="12" md="6" lg="6" xl="6">
+                  <crash-auto-win-loss
+                    v-model="auto_bet_win_increase_value"
+                    label="On Win"
+                    dropdown-id="crashBetDropdown1"
+                    @click="autoWinClick"
+                  />
+                </b-col>
+                <b-col v-if="auto_bet" sm="12" md="6" lg="6" xl="6">
+                  <crash-auto-win-loss
+                    v-model="auto_bet_loss_increase_value"
+                    label="On Loss"
+                    dropdown-id="crashBetDropdown2"
+                    @click="autoLossClick"
+                  />
                 </b-col>
               </b-row>
             </div>
@@ -69,6 +101,7 @@ import CrashBetSelect from '@/components/main/CrashBetSelect.vue'
 import CrashEdit from '@/components/main/CrashEdit.vue'
 import CrashScaleItem from '@/components/main/CrashScaleItem.vue'
 import CrashGraph from '@/components/main/CrashGraph.vue'
+import CrashAutoWinLoss from '@/components/main/CrashAutoWinLoss.vue'
 import io from 'socket.io-client/dist/socket.io.js'
 import { getNumberFormat, getFloat2Decimal } from '@/utils'
 import { game_log } from '@/api/crash'
@@ -88,7 +121,8 @@ export default {
     CrashBetSelect,
     CrashEdit,
     CrashScaleItem,
-    CrashGraph
+    CrashGraph,
+    CrashAutoWinLoss
   },
   mixins: [titleMixin, global],
   data() {
@@ -177,7 +211,16 @@ export default {
       bet_input: 0,
       auto_cashout: 0,
       auto_cashout_server: 0, // Auto Cashout Server Value
+
       auto_bet: false,
+      auto_bet_session_profit: 'Autobet off',
+      auto_bet_stop_amount: 0,
+      auto_bet_win_increase_by: false,
+      auto_bet_loss_increase_by: false,
+      auto_bet_win_increase_value: 0,
+      auto_bet_loss_increase_value: 0,
+      auto_betting: false,
+
       current_users: [],
       cashout_list: [],
       game_id: 0,
@@ -369,6 +412,30 @@ export default {
         default:
       }
     },
+    betTypeClick(id) {
+      // when change another bet method , we should check if prev-method is free
+      if (id === 0) {
+        this.auto_bet = false
+        this.betBtnText = 'BET'
+      } else {
+        this.auto_bet = true
+        this.betBtnText = 'AUTO BET'
+      }
+    },
+    autoWinClick(id) {
+      if (id === 0) {
+        this.auto_bet_win_increase_by = false
+      } else {
+        this.auto_bet_win_increase_by = true
+      }
+    },
+    autoLossClick(id) {
+      if (id === 0) {
+        this.auto_bet_loss_increase_by = false
+      } else {
+        this.auto_bet_loss_increase_by = true
+      }
+    },
     updateHistory(data) {
       let limitVal = 6
       if (window.innerWidth > 1310 && window.innerWidth <= 1700) {
@@ -396,44 +463,77 @@ export default {
         this.showToast('Error', message.bet_err_msg1, 'error')
         return
       }
-      if (this.bet_temp > 0) {
-        // cancel betting when graph is drawing  (betting is for next round)
-        this.bet_temp = 0
-      } else if (this.bet_amount > 0) {
-        if (this.state === 'WAITING') return // when waiting status, you can do nothing but bet...
-        if (this.state === 'STARTED') { // you can bet now (bet_amount > 0)
-          if (this.crash_socket != null) {
-            this.crash_socket.emit('onMessage', {
-              code: 'CashOut',
-              user_id: this.user_id,
-              game_id: this.game_id,
-              stopped_at: this.client_tick
-            })
-            this.bet_amount = 0
+      if (!this.auto_bet) {
+        if (this.bet_temp > 0) {
+          // cancel betting when graph is drawing  (betting is for next round)
+          this.bet_temp = 0
+        } else if (this.bet_amount > 0) {
+          if (this.state === 'WAITING') return // when waiting status, you can do nothing but bet...
+          if (this.state === 'STARTED') { // you can bet now (bet_amount > 0)
+            if (this.crash_socket != null) {
+              this.crash_socket.emit('onMessage', {
+                code: 'CashOut',
+                user_id: this.user_id,
+                game_id: this.game_id,
+                stopped_at: this.client_tick
+              })
+              this.bet_amount = 0
+            }
+          }
+        } else {
+          // place bet
+          var t_bet = parseInt(this.bet_input)
+          if (isNaN(t_bet) || t_bet === 0) {
+            this.showToast('Error', 'Please input correct number.', 'error')
+            return
+          }
+          if (t_bet > this.wallet) {
+            this.showToast('Error', message.wallet_err_msg, 'error')
+            return
+          }
+          if (this.state === 'WAITING') {
+            this.bet_amount = t_bet
+            this.do_bet()
+          } else {
+            // when it's after started, then ...
+            this.bet_temp = t_bet
           }
         }
+        this.update_btn()
       } else {
-        // place bet
-        var t_bet = parseInt(this.bet_input)
+        this.auto_betting = !this.auto_betting
+        var tt_bet = parseInt(this.bet_input)
         if (isNaN(t_bet) || t_bet === 0) {
           this.showToast('Error', 'Please input correct number.', 'error')
           return
         }
-        if (t_bet > this.wallet) {
-          this.showToast('Error', message.wallet_err_msg, 'error')
-          return
-        }
-        if (this.state === 'WAITING') {
-          this.bet_amount = t_bet
-          this.do_bet()
+
+        if (this.auto_betting) {
+          if (this.crash_socket != null) {
+            this.crash_socket.emit('onMessage', {
+              code: 'AutoBet',
+              user_id: this.user_id,
+              user_name: this.name,
+              base_amount: tt_bet,
+              auto_cashout: (this.auto_cashout === undefined || this.auto_cashout === null || isNaN(parseFloat(this.auto_cashout)) || parseFloat(this.auto_cashout) < 1 ? 0 : parseFloat(this.auto_cashout)),
+              stop_bet_amount: (this.auto_bet_stop_amount === undefined || this.auto_bet_stop_amount === null || isNaN(parseFloat(this.auto_bet_stop_amount)) ? 0 : parseFloat(this.auto_bet_stop_amount)),
+              session_profit: (isNaN(parseFloat(this.auto_bet_session_profit)) ? 0 : parseFloat(this.auto_bet_session_profit)),
+              on_win_increase_by: this.auto_bet_win_increase_by,
+              on_win_increase_by_amount: (isNaN(parseFloat(this.auto_bet_win_increase_value)) ? 0 : parseFloat(this.auto_bet_win_increase_value)),
+              on_loss_increase_by: this.auto_bet_loss_increase_by,
+              on_loss_increase_by_amount: (isNaN(parseFloat(this.auto_bet_loss_increase_value)) ? 0 : parseFloat(this.auto_bet_loss_increase_value))
+            })
+            this.betBtnText = 'STOP AUTOBET'
+            this.betBtnBackground = 'cashout_bg'
+          }
         } else {
-          // when it's after started, then ...
-          this.bet_temp = t_bet
+          this.betBtnText = 'AUTOBET'
+          this.betBtnBackground = ''
         }
       }
-      this.update_btn()
     },
     update_btn() {
+      if (this.auto_bet) { return }
       var label = 'BET'; var class_label = ''
       if (this.bet_temp > 0) {
         label = 'Cancel' // when you bet when graph is drawing
@@ -443,7 +543,7 @@ export default {
           label = 'Betting...' // stand by with betting amount
           class_label = 'betting_bg'
         } else if (this.state === 'STARTED') {
-          if (this.client_tick > this.auto_cashout_server) { return }
+          if (this.client_tick > this.auto_cashout_server && this.auto_cashout_server !== '0.00') { return }
           class_label = 'cashout_bg'
           label = 'Cashout '
           var cashVal = getNumberFormat(this.bet_amount * this.client_tick)
@@ -632,6 +732,9 @@ export default {
 .m-b {
   margin-bottom: $normal-margin-bottom-sm;
 }
+.m-t {
+  margin-top: $normal-margin-bottom-sm;
+}
 .all-bets {
   color: white;
 }
@@ -760,6 +863,10 @@ export default {
 .col-1, .col-2, .col-3, .col-4, .col-5, .col-6, .col-7, .col-8, .col-9, .col-10, .col-11, .col-12, .col, .col-auto, .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm, .col-sm-auto, .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12, .col-md, .col-md-auto, .col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg, .col-lg-auto, .col-xl-1, .col-xl-2, .col-xl-3, .col-xl-4, .col-xl-5, .col-xl-6, .col-xl-7, .col-xl-8, .col-xl-9, .col-xl-10, .col-xl-11, .col-xl-12, .col-xl, .col-xl-auto {
     padding-right: 0.5vw;
     padding-left: 0.5vw;
+}
+
+.betting-row {
+  align-items: flex-end;
 }
 
 </style>

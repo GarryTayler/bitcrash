@@ -12,7 +12,7 @@ var gameId = 1, next_gameId = 0, status = 0, firstTimerHandler, bet_max_limit = 
 var mainServerUrl = config.main_host_url + 'crash/';
 ////////////
 var timeInterval = 10, resetGameTime = 0, stopGameG = false;
-var game_play_list = [], bots_list = [], cashout_list = [], socket_list = [];
+var game_play_list = [], bots_list = [], cashout_list = [], socket_list = [], auto_bet_play_list = [];
 var startTime = Date.now(), globalVariable = 0, elapsed_time = 0; prev_time = 0;
 var crash = 283, hash = 'This is our server seed and how do you think our server seed , can you give me your opinion?';
 var clientSeed = '000000000000000007a9a31ff7f07463d91af6b5454241d5faf282e5e0fe1b3a';
@@ -117,6 +117,13 @@ io.on('connection', function(socket){
     globalVariable = 1;
 
     socket.on('disconnect', function(){
+		for( var i = 0; i < auto_bet_play_list.length; i ++) {
+			if(auto_bet_play_list[i].socket == socket) {
+				auto_bet_play_list[i].disconnected = true;
+				auto_bet_play_list[i].disconnected_timestamp = Math.round(new Date().getTime() / 1000)
+				break;
+			}
+		}
     });
 
     socket.on('onMessage' , function(data) {
@@ -236,37 +243,48 @@ io.on('connection', function(socket){
                 break;
             // reload at first
 			case 'Reload':
-                // when new socket tries to connect
-                // remove old socket, previously registered to socket_list
-				/*var run_time = 0;
-                if(status == 2) {
-                    run_time = Date.now() - resetGameTime;
-                }
-                obj = {
-                    'game_info': {
-                        'elapsed_time': elapsed_time,
-                        'game_id': gameId,
-                        'graph_colour': 1,
-                        'player_list': game_play_list,
-                        'run_time': run_time,
-                        'status': status
-                    },
-                    'code': 'GameInfo',
-                }
-				socket.emit('onMessage' , obj); */
 				for( var i = 0; i < socket_list.length; i ++ ) {
 					if(socket_list[i].username == data.username)  {
 						socket_list[i].socket = socket;
 						break;
 					}
 				}
-                break;
+				for( var i = 0; i < auto_bet_play_list.length; i ++) {
+					if(auto_bet_play_list[i].username == data.username) {
+						auto_bet_play_list[i].disconnected = false;
+						auto_bet_play_list[i].disconnected_timestamp = 0;
+					}
+				}
+				break;
+			case 'AutoBet':
+				for( var i = 0; i < auto_bet_play_list.length; i ++ ) {
+					if(auto_bet_play_list.user_id == data.user_id) {
+						auto_bet_play_list.splice(i , 1)
+						break;
+					}
+				}
+				auto_bet_play_list.push({
+					socket: socket,
+					user_id: data.user_id,
+					username: data.user_name,
+					base_amount: data.base_amount,
+					auto_cashout: data.auto_cashout,
+					stop_bet_amount: data.stop_bet_amount,
+					session_profit: data.session_profit,
+					on_win_increase_by: data.on_win_increase_by,
+					on_win_increase_by_amount: data.on_win_increase_by_amount,
+					on_loss_increase_by: data.on_loss_increase_by,
+					on_loss_increase_by_amount: data.on_loss_increase_by_amount,
+					disconnected: false,
+					disconnected_timestamp: 0,
+					current_amount: data.base_amount
+				})
+				break;
             default:
                 console.log('unknown code', data.code);
                 break;
         }
     });
-
     // when socket first connnects, tell them about game rule, max/min limits, max_payout ...
     socket.emit('onMessage',
         {

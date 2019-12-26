@@ -1,12 +1,12 @@
 <template>
   <div>
-    <div v-if="label == ''" class="caption">
+    <div v-if="label != ''" class="caption">
       {{ label }}
     </div>
     <div class="bg flex-space-between-vc">
       <input
         v-model="currentValue"
-        class="text"
+        :class="{text: true , disabled: disabled}"
         name="quantity"
         min="0"
         max="10000000"
@@ -15,7 +15,8 @@
         @blur="handleBlur"
         @input="handleInput"
       >
-      <span class="sup">{{ sup }}</span>
+      <span v-if="type==='1'" class="sup sup_event" @click="clear">{{ sup }}</span>
+      <span v-if="type==='2'" class="sup sup_label">{{ sup }}</span>
     </div>
   </div>
 
@@ -24,7 +25,7 @@
 <script>
 
 export default {
-  name: 'CrashBetButton',
+  name: 'CrashEdit',
   components: {
   },
   props: {
@@ -33,6 +34,10 @@ export default {
       default: ''
     },
     sup: {
+      type: String,
+      default: ''
+    },
+    type: {
       type: String,
       default: ''
     },
@@ -51,6 +56,9 @@ export default {
     }
   },
   methods: {
+    clear() {
+      this.currentValue = 0
+    },
     handleInput(event) {
       const value = event.target.value
       this.$emit('input', value)
@@ -99,6 +107,15 @@ export default {
     font-size: 18px;
     color: $control-sup-text-color;
     font-weight: bold;
+  }
+  .sup_event {
+    cursor: pointer;
+  }
+  .sup_event:hover {
+    color: #fff;
+  }
+  .disabled {
+    color: #939fad;
   }
 }
 </style>

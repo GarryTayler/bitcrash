@@ -1,5 +1,9 @@
 <template>
-  <div class="bg flex-space-between-vc" :class="[isDisabled ? 'disabled' : '' , background]" @click="click">
+  <div
+    class="bg flex-space-between-vc"
+    :class="[margin==='1'?'m26':'' , isDisabled?'disabled':'' , background]"
+    @click="click"
+  >
     <span class="text" :class="'text-' + size">{{ text }}</span>
     <img src="@/assets/img/ic_bet.png">
   </div>
@@ -12,6 +16,10 @@ export default {
   components: {
   },
   props: {
+    margin: {
+      type: String,
+      default: '0'
+    },
     text: {
       type: String,
       default: 'BET'
@@ -117,20 +125,19 @@ export default {
 .betting_bg:hover {
   background: linear-gradient(90deg, #1fbd82, #14a191);
 }
-
 .cancel_bg {
   background: linear-gradient(90deg, #6e7371, #454c4c);
 }
-
 .cancel_bg:hover {
   background: linear-gradient(90deg, #5a5f5d, #353a3a) !important;
 }
-
 .cashout_bg {
   background: linear-gradient(90deg, #05adf6, #1c8bcf);
 }
 .cashout_bg:hover {
   background: linear-gradient(90deg, #0d9ddc, #1c7fbb) !important;
 }
-
+.m26 {
+  margin-bottom: 13.5px;
+}
 </style>
