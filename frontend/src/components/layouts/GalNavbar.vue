@@ -1,5 +1,5 @@
 <template>
-  <b-navbar toggleable="lg" type="dark" variant="dark" sticky class="">
+  <b-navbar toggleable="xl" type="dark" variant="dark" sticky class="">
     <b-navbar-brand>
       <img src="@/assets/img/brand_logo.png" class="logo mr-sm-3">
       <img src="@/assets/img/brand_text.png" class="text">

@@ -64,12 +64,12 @@ request.post(
 			stopGameG = true;
 	}
 )
-function generateBustValue(currentHash) 
+function generateBustValue(currentHash)
 {
-	currentHash = genGameHash(currentHash);   
+	currentHash = genGameHash(currentHash);
 	finalBust = Math.floor(gameResult(clientSeed , currentHash) * 100);
 
-	return {"hash": currentHash ,  "crash": finalBust};  
+	return {"hash": currentHash ,  "crash": finalBust};
 }
 
 io.on('connection', function(socket){
@@ -129,6 +129,14 @@ io.on('connection', function(socket){
     socket.on('onMessage' , function(data) {
 		// this is where we process client - server communication
         switch(data.code) {
+			case 'AutoBetStop':
+				for(var i = 0; i < auto_bet_play_list.length; i ++) {
+					if(auto_bet_play_list[i].user_id === data.user_id) {
+						auto_bet_play_list.splice(i , 1);
+						break;
+					}
+				}
+				break;
             //when you click bet button
 			case 'addBet':
 				request.post({
@@ -249,22 +257,49 @@ io.on('connection', function(socket){
 						break;
 					}
 				}
+				var is_user_auto_bet = false;
 				for( var i = 0; i < auto_bet_play_list.length; i ++) {
 					if(auto_bet_play_list[i].username == data.username) {
+						is_user_auto_bet = true;
 						auto_bet_play_list[i].disconnected = false;
 						auto_bet_play_list[i].disconnected_timestamp = 0;
+						auto_bet_play_list[i].socket = socket;
+						socket.emit('onMessage',
+							{
+								code: 'RestoreBetType',
+								autoBetting: true,
+								base_amount: auto_bet_play_list[i].base_amount,
+								auto_cashout: auto_bet_play_list[i].auto_cashout,
+								stop_bet_amount: auto_bet_play_list[i].stop_bet_amount,
+								session_profit: auto_bet_play_list[i].session_profit,
+								on_win_increase_by: auto_bet_play_list[i].on_win_increase_by,
+								on_win_increase_by_amount: auto_bet_play_list[i].on_win_increase_by_amount,
+								on_loss_increase_by: auto_bet_play_list[i].on_loss_increase_by,
+								on_loss_increase_by_amount: auto_bet_play_list[i].on_loss_increase_by_amount
+							}
+						);
+						break;
 					}
+				}
+				if(!is_user_auto_bet) {
+					socket.emit('onMessage',
+						{
+							code: 'RestoreBetType',
+							autoBetting: false
+						}
+					);
 				}
 				break;
 			case 'AutoBet':
 				for( var i = 0; i < auto_bet_play_list.length; i ++ ) {
-					if(auto_bet_play_list.user_id == data.user_id) {
+					if(auto_bet_play_list[i].user_id == data.user_id) {
 						auto_bet_play_list.splice(i , 1)
 						break;
 					}
 				}
 				auto_bet_play_list.push({
 					socket: socket,
+					first: false,
 					user_id: data.user_id,
 					username: data.user_name,
 					base_amount: data.base_amount,
@@ -277,7 +312,9 @@ io.on('connection', function(socket){
 					on_loss_increase_by_amount: data.on_loss_increase_by_amount,
 					disconnected: false,
 					disconnected_timestamp: 0,
-					current_amount: data.base_amount
+					current_amount: data.base_amount,
+					avatar: data.avatar,
+					win: false
 				})
 				break;
             default:
@@ -296,7 +333,59 @@ io.on('connection', function(socket){
         }
 	);
 });
-
+function addAutoBetPlayer(player) {
+	if(player.disconnected)
+		return;
+	var obj = {
+		'user_id': player.user_id ,
+		'game_id': gameId,
+		'type': 'auto',
+		'name': player.username,
+		'bet': parseInt(player.current_amount),
+		'cashoutrate': 0,
+		'cashout': 0,
+		'new': '1',
+		'done': parseInt(player.auto_cashout * 100) > crash ? true : false,
+		'is_bot': 0,
+		'bust': parseInt(player.auto_cashout * 100),
+		'profit': 0,
+		'avatar': player.avatar,
+		'socket': null
+	};
+	request.post({
+		url: mainServerUrl + 'bet',
+		form: {
+			user_id: obj.user_id,
+			game_no: obj.game_id,
+			is_bot: obj.is_bot,
+			bet: obj.bet
+		}
+	}, function (error, response, body) {
+		var ret = JSON.parse(body);
+		if (ret.status) {
+			// bot added successfully ...
+			player.socket.emit("onMessage" , {
+				code: 'BetResult',
+				status: true,
+				error: false
+			});
+		} else {
+			stopGameG = true;
+		}
+	});
+	game_play_list.push(obj);
+	socket_list.push({
+		username: player.username ,
+		socket: player.socket
+	});
+	io.emit("onMessage" ,
+		{
+			code: 'ReloadPlayers',
+			current_users: game_play_list,
+			cashout_list: []
+		}
+	);
+}
 function addBot(bot) {
 	var bust_val , random_option;
 	random_option = {
@@ -437,7 +526,7 @@ function startGame() {
 		}
 	);
 }
-function doCashOut(cashout , socket)
+function doCashOut(cashout , socket , profit = 0 , afterAmount = 0)
 {
 	request.post({
 		url: mainServerUrl + 'cashout',
@@ -455,9 +544,19 @@ function doCashOut(cashout , socket)
 				code: 'Cashout',
 				status: ret.status,
 				error: ret.error,
-				type: 'auto'
+				type: 'auto',
+				profit: parseInt(profit)
 			});
 		}
+
+		for(var i = 0; i < auto_bet_play_list.length; i ++) {
+			if(auto_bet_play_list[i].user_id == cashout.user_id && cashout.is_bot == 0) {
+				auto_bet_play_list[i].win = true;
+				auto_bet_play_list[i].session_profit += parseInt(profit);
+				break;
+			}
+		}
+
 		if (ret.status) {
 			// server side done ...
 		} else {
@@ -498,7 +597,7 @@ function intervalFunc()
 				}
 			}
 			// bot cashout ...
-			doCashOut(cashout , socket)
+			doCashOut(cashout , socket , parseFloat(cashout.bust / 100) * cashout.bet - cashout.bet , parseFloat(cashout.bust / 100) * cashout.bet)
 			//
 			game_play_list.splice(i, 1); i -= 1;
 			cashout.done = true;
@@ -533,6 +632,7 @@ function intervalFunc()
 			var ret = JSON.parse(body);
 			if(ret.status) {
 				game_play_list = [];
+				socket_list = [];
 				cashout_list = [];
 				elapsed_time = 0;
 				// wait for 3 seconds to show BUSTED VALUE
@@ -546,6 +646,30 @@ function intervalFunc()
 						game_no: gameId
 					}
 				);
+				for(var i = 0; i < auto_bet_play_list.length; i ++) {
+					if(!auto_bet_play_list[i].win && auto_bet_play_list[i].first) {
+						auto_bet_play_list[i].session_profit = parseInt(auto_bet_play_list[i].session_profit) - parseInt(auto_bet_play_list[i].current_amount);
+					}
+					if(auto_bet_play_list[i].on_win_increase_by && auto_bet_play_list[i].win) {
+						auto_bet_play_list[i].current_amount = auto_bet_play_list[i].current_amount + auto_bet_play_list[i].on_win_increase_by_amount;
+					}
+					else if(!auto_bet_play_list[i].on_win_increase_by && auto_bet_play_list[i].win) {
+						auto_bet_play_list[i].current_amount = auto_bet_play_list[i].base_amount;
+					}
+					if(auto_bet_play_list[i].on_loss_increase_by && !auto_bet_play_list[i].win) {
+						auto_bet_play_list[i].current_amount = auto_bet_play_list[i].current_amount + auto_bet_play_list[i].on_loss_increase_by_amount;
+					}
+					else if(!auto_bet_play_list[i].on_loss_increase_by && !auto_bet_play_list[i].win) {
+						auto_bet_play_list[i].current_amount = auto_bet_play_list[i].base_amount;
+					}
+					if( auto_bet_play_list[i].stop_bet_amount != 0 && auto_bet_play_list[i].stop_bet_amount < auto_bet_play_list[i].current_amount ) {
+						auto_bet_play_list[i].socket.emit('onMessage',
+						{
+							code: 'AutoBetStop'
+						})
+						auto_bet_play_list.splice(i , 1); i = i - 1;
+					}
+				}
 			}
 			else {
 				// no response //main server destroyed ... waiting request from main server.
@@ -570,6 +694,17 @@ function waitGame() {
 			index += 1;
 		}, Math.random() * 4500);
 	}
+	var index1 = 0;
+	for(var i = 0; i < auto_bet_play_list.length; i += 1) {
+		setTimeout(function() {
+			if(auto_bet_play_list[index1] != undefined) {
+				auto_bet_play_list[index1].win = false;
+				auto_bet_play_list[index1].first = true;
+				addAutoBetPlayer(auto_bet_play_list[index1]);
+				index1 += 1;
+			}
+		}, Math.random() * 4500);
+	}
 	io.emit('onMessage',
 		{
 			code: 'WaitGame',
@@ -583,10 +718,19 @@ function waitGame() {
 	setTimeout(function() {
 		sendWaitTime();
 	}, 500);
-
 	setTimeout(function() {
 		startGame();
 	}, 5000);
+	//remove autobet disconnected player
+	var store_index = 0;
+	for( var i = 0; i < auto_bet_play_list.length; i ++) {
+		if(auto_bet_play_list[store_index].disconnected && (Math.round(new Date().getTime() / 1000) - auto_bet_play_list[store_index].disconnected_timestamp > 5)) {
+			auto_bet_play_list.splice(store_index , 1)
+		}
+		else {
+			store_index ++;
+		}
+	}
 }
 
 //For wait time synchronize

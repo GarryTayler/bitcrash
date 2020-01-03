@@ -5,11 +5,20 @@
     </div>
     <div class="row-flex-alignc">
       <div class="dropdown">
-        <button class="dropbtn flex-space-between-vc text" @click="showDropDown()">
-          {{ items[selectedItem].lbl }}
+        <button
+          :id="dropdownId+'-button'"
+          class="dropbtn flex-space-between-vc text"
+          :class="['dropbtn-' + classify]"
+          @click="showDropDown()"
+        >
+          {{ items[activeItem].lbl }}
           <font-awesome-icon icon="chevron-down" />
         </button>
-        <div :id="dropdownId" class="dropdown-content">
+        <div
+          :id="dropdownId"
+          class="dropdown-content"
+          :class="['dropdown-content-' + classify]"
+        >
           <div v-for="item in items" :key="item.id" class="dropdown-item" @click="onItemClick(item.id)">
             {{ item.lbl }}
           </div>
@@ -32,18 +41,6 @@
 </template>
 
 <script>
-window.onclick = function(event) {
-  if (!event.target.matches('.dropbtn')) {
-    var dropdowns = document.getElementsByClassName('dropdown-content')
-    var i
-    for (i = 0; i < dropdowns.length; i++) {
-      var openDropdown = dropdowns[i]
-      if (openDropdown.classList.contains('show')) {
-        openDropdown.classList.remove('show')
-      }
-    }
-  }
-}
 export default {
   name: 'CrashAutoWinLoss',
   components: {
@@ -61,11 +58,18 @@ export default {
     dropdownId: {
       type: String,
       default: 'crashBetDropdown'
+    },
+    disabled: {
+      type: Boolean,
+      default: true
+    },
+    classify: {
+      type: String,
+      default: 'win'
     }
   },
   data() {
     return {
-      disabled: true,
       currentValue: this.value,
       focus: false,
       items: [
@@ -77,8 +81,7 @@ export default {
           id: 1,
           lbl: 'Increase By'
         }
-      ],
-      selectedItem: 0
+      ]
     }
   },
   watch: {
@@ -86,10 +89,25 @@ export default {
       this.currentValue = newValue
     }
   },
-  created() {
-    this.selectedItem = this.activeItem
-  },
   methods: {
+    getPosition(el) {
+      var yPos = 0
+      while (el) {
+        if (el.tagName === 'BODY') {
+          // deal with browser quirks with body/window/document and page scroll
+          var yScroll = el.scrollTop || document.documentElement.scrollTop
+          yPos += (el.offsetTop - yScroll + el.clientTop)
+        } else {
+          // for all other non-BODY elements
+          yPos += (el.offsetTop - el.scrollTop + el.clientTop)
+        }
+        el = el.offsetParent
+      }
+      if (yPos + 160 > window.innerHeight) {
+        return false
+      }
+      return true
+    },
     handleInput(event) {
       const value = event.target.value
       this.$emit('input', value)
@@ -104,12 +122,15 @@ export default {
       this.$emit('blur', event)
     },
     showDropDown() {
+      if (!this.getPosition(document.getElementById(this.dropdownId + '-button'))) {
+        document.getElementById(this.dropdownId).classList.add('bottomClass')
+      } else {
+        document.getElementById(this.dropdownId).classList.remove('bottomClass')
+      }
       document.getElementById(this.dropdownId).classList.toggle('show')
     },
     onItemClick(id) {
-      if (id === 0) { this.disabled = true } else { this.disabled = false }
-      this.selectedItem = id
-      this.$emit('click', this.selectedItem)
+      this.$emit('click', id)
     }
   }
 }
@@ -220,6 +241,9 @@ export default {
 /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
 .show {
   display: block;
+}
+.bottomClass {
+  bottom: 54px;
 }
 .disabled {
     color: #939fad;

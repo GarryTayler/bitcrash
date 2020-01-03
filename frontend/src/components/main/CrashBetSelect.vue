@@ -1,33 +1,20 @@
 <template>
   <div class="dropdown">
-    <button class="dropbtn flex-space-between-vc text" @click="showDropDown()">
-      {{ items[selectedItem].lbl }}
+    <button id="betmethod-dropdown" class="dropbtn dropbtn-bet-select flex-space-between-vc text" @click="showDropDown()">
+      {{ items[activeItem].lbl }}
       <font-awesome-icon icon="chevron-down" />
     </button>
-    <div id="crashBetDropdown" class="dropdown-content">
+    <div id="crashBetDropdown" class="dropdown-content dropdown-content-bet-select">
       <div v-for="item in items" :key="item.id" class="dropdown-item" @click="onItemClick(item.id)">
         {{ item.lbl }}
       </div>
     </div>
   </div>
 </template>
-
 <script>
 import global from '@/mixins/global'
 import message from '@/filters/message'
 // Close the dropdown menu if the user clicks outside of it
-window.onclick = function(event) {
-  if (!event.target.matches('.dropbtn')) {
-    var dropdowns = document.getElementsByClassName('dropdown-content')
-    var i
-    for (i = 0; i < dropdowns.length; i++) {
-      var openDropdown = dropdowns[i]
-      if (openDropdown.classList.contains('show')) {
-        openDropdown.classList.remove('show')
-      }
-    }
-  }
-}
 export default {
   name: 'CrashBetSelect',
   components: {
@@ -51,17 +38,36 @@ export default {
           id: 1,
           lbl: 'Auto Bet'
         }
-      ],
-      selectedItem: 0
+      ]
     }
   },
   computed: {
   },
-  created() {
-    this.selectedItem = this.activeItem
-  },
   methods: {
+    getPosition(el) {
+      var yPos = 0
+      while (el) {
+        if (el.tagName === 'BODY') {
+          // deal with browser quirks with body/window/document and page scroll
+          var yScroll = el.scrollTop || document.documentElement.scrollTop
+          yPos += (el.offsetTop - yScroll + el.clientTop)
+        } else {
+          // for all other non-BODY elements
+          yPos += (el.offsetTop - el.scrollTop + el.clientTop)
+        }
+        el = el.offsetParent
+      }
+      if (yPos + 160 > window.innerHeight) {
+        return false
+      }
+      return true
+    },
     showDropDown() {
+      if (!this.getPosition(document.getElementById('betmethod-dropdown'))) {
+        document.getElementById('crashBetDropdown').classList.add('bottomClass')
+      } else {
+        document.getElementById('crashBetDropdown').classList.remove('bottomClass')
+      }
       document.getElementById('crashBetDropdown').classList.toggle('show')
     },
     onItemClick(id) {
@@ -69,7 +75,6 @@ export default {
         this.showToast('Error', message.betting_method_err_msg, 'error')
         return
       }
-      this.selectedItem = id
       this.$emit('click', id)
     }
   }
@@ -145,5 +150,7 @@ export default {
 .show {
   display: block;
 }
-
+.bottomClass {
+  bottom: 54px;
+}
 </style>

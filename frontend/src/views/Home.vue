@@ -47,23 +47,33 @@
                   <crash-edit v-model="auto_bet_session_profit" label="Session Profit" type="2" disabled />
                 </b-col>
                 <b-col sm="12" md="4" lg="4" xl="4">
-                  <crash-bet-select :isbusy="(bet_amount > 0 || bet_temp > 0)" @click="betTypeClick" />
+                  <crash-bet-select
+                    :active-item="auto_bet?1:0"
+                    :isbusy="(auto_betting && auto_bet) || (!auto_bet && (bet_amount > 0 || bet_temp > 0))"
+                    @click="betTypeClick"
+                  />
                 </b-col>
               </b-row>
               <b-row class="betting-row m-t">
                 <b-col v-if="auto_bet" sm="12" md="6" lg="6" xl="6">
                   <crash-auto-win-loss
                     v-model="auto_bet_win_increase_value"
+                    :active-item="auto_bet_win_increase_by?1:0"
+                    :disabled="auto_bet_win_increase_by?false:true"
                     label="On Win"
                     dropdown-id="crashBetDropdown1"
+                    classify="win"
                     @click="autoWinClick"
                   />
                 </b-col>
                 <b-col v-if="auto_bet" sm="12" md="6" lg="6" xl="6">
                   <crash-auto-win-loss
                     v-model="auto_bet_loss_increase_value"
+                    :active-item="auto_bet_loss_increase_by?1:0"
+                    :disabled="auto_bet_loss_increase_by?false:true"
                     label="On Loss"
                     dropdown-id="crashBetDropdown2"
+                    classify="loss"
                     @click="autoLossClick"
                   />
                 </b-col>
@@ -219,6 +229,7 @@ export default {
       auto_bet_loss_increase_by: false,
       auto_bet_win_increase_value: 0,
       auto_bet_loss_increase_value: 0,
+
       auto_betting: false,
 
       current_users: [],
@@ -295,7 +306,6 @@ export default {
   created: function() {
     var self = this
     this.crash_socket = io.connect(this.crash_server_url)
-
     this.crash_socket.emit('onMessage', {
       code: 'Reload',
       username: this.name
@@ -351,11 +361,38 @@ export default {
             // update_wallet()
             if (data.type === 'auto') {
               self.bet_amount = 0
+              if (self.auto_betting) { self.auto_bet_session_profit += data.profit }
               self.update_btn()
             }
             self.$store.dispatch('user/getInfo', self.token)
           } else {
             self.showToast('Error', data.error, 'error')
+          }
+          break
+        case 'AutoBetStop':
+          self.auto_betting = false
+          self.auto_bet = true
+          self.betBtnText = 'AUTO BET'
+          self.betBtnBackground = ''
+          self.auto_bet_session_profit = 'Autobet off'
+          break
+        case 'RestoreBetType':
+          if (!data.autoBetting) {
+            self.auto_bet = false
+            self.auto_betting = false
+          } else {
+            self.auto_bet = true
+            self.auto_betting = true
+            self.bet_input = data.base_amount
+            self.auto_cashout = data.auto_cashout
+            self.auto_bet_stop_amount = data.stop_bet_amount
+            if (self.auto_betting) { self.auto_bet_session_profit = data.session_profit }
+            self.auto_bet_win_increase_by = data.on_win_increase_by
+            self.auto_bet_win_increase_value = data.on_win_increase_by_amount
+            self.auto_bet_loss_increase_by = data.on_loss_increase_by
+            self.auto_bet_loss_increase_value = data.on_loss_increase_by_amount
+            self.betBtnText = 'STOP AUTOBET'
+            self.betBtnBackground = 'cashout_bg'
           }
           break
         default:
@@ -503,7 +540,7 @@ export default {
       } else {
         this.auto_betting = !this.auto_betting
         var tt_bet = parseInt(this.bet_input)
-        if (isNaN(t_bet) || t_bet === 0) {
+        if (isNaN(tt_bet) || tt_bet === 0) {
           this.showToast('Error', 'Please input correct number.', 'error')
           return
         }
@@ -517,18 +554,28 @@ export default {
               base_amount: tt_bet,
               auto_cashout: (this.auto_cashout === undefined || this.auto_cashout === null || isNaN(parseFloat(this.auto_cashout)) || parseFloat(this.auto_cashout) < 1 ? 0 : parseFloat(this.auto_cashout)),
               stop_bet_amount: (this.auto_bet_stop_amount === undefined || this.auto_bet_stop_amount === null || isNaN(parseFloat(this.auto_bet_stop_amount)) ? 0 : parseFloat(this.auto_bet_stop_amount)),
-              session_profit: (isNaN(parseFloat(this.auto_bet_session_profit)) ? 0 : parseFloat(this.auto_bet_session_profit)),
+              session_profit: (isNaN(parseInt(this.auto_bet_session_profit)) ? 0 : parseInt(this.auto_bet_session_profit)),
               on_win_increase_by: this.auto_bet_win_increase_by,
-              on_win_increase_by_amount: (isNaN(parseFloat(this.auto_bet_win_increase_value)) ? 0 : parseFloat(this.auto_bet_win_increase_value)),
+              on_win_increase_by_amount: (isNaN(parseInt(this.auto_bet_win_increase_value)) ? 0 : parseInt(this.auto_bet_win_increase_value)),
               on_loss_increase_by: this.auto_bet_loss_increase_by,
-              on_loss_increase_by_amount: (isNaN(parseFloat(this.auto_bet_loss_increase_value)) ? 0 : parseFloat(this.auto_bet_loss_increase_value))
+              on_loss_increase_by_amount: (isNaN(parseInt(this.auto_bet_loss_increase_value)) ? 0 : parseInt(this.auto_bet_loss_increase_value)),
+              avatar: this.avatar
             })
             this.betBtnText = 'STOP AUTOBET'
             this.betBtnBackground = 'cashout_bg'
+            if (this.auto_betting) { this.auto_bet_session_profit = 0 }
           }
         } else {
-          this.betBtnText = 'AUTOBET'
-          this.betBtnBackground = ''
+          if (this.crash_socket != null) {
+            this.crash_socket.emit('onMessage', {
+              code: 'AutoBetStop',
+              user_id: this.user_id,
+              user_name: this.name
+            })
+            this.betBtnText = 'AUTOBET'
+            this.betBtnBackground = ''
+            this.auto_bet_session_profit = 'Autobet off'
+          }
         }
       }
     },
@@ -581,7 +628,6 @@ export default {
         cashout_list: []
       })
       this.init_timer()
-
       // here ... we make bet if bet_temp is no 0
       if (this.bet_temp > 0) {
         // real bet here ...
@@ -631,15 +677,10 @@ export default {
     crash(data) {
       this.state = 'CRASHED'
       this.tick = data.crash
-      if (this.bet_amount > 0) {
-        // you loose money ...
-        // update_wallet()
-        this.$store.dispatch('user/getInfo', this.token)
-      }
+      if (this.auto_betting) { this.auto_bet_session_profit = parseInt(this.auto_bet_session_profit) - parseInt(this.bet_amount) }
       this.bet_amount = 0
       this.sendEvent('game-finished', { crash: this.tick })
       this.update_btn()
-
       this.updateHistory(data)
     },
     start(data) {

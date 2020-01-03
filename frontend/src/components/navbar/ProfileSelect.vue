@@ -71,7 +71,7 @@ export default {
     background: #4b5e9a;
     a {
       color: #fff;
-      font-size: 0.8vw;
+      font-size: 14px;
     }
     a:hover {
       background: transparent !important;
@@ -84,7 +84,7 @@ export default {
    outline: none;
     a {
       color: #fff;
-      font-size: 0.8vw;
+      font-size: 14px;
       @include media-breakpoint-down(md) {
         font-size: 14px;
       }

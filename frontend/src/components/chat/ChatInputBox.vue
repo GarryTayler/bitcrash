@@ -6,6 +6,7 @@
       name="quantity"
       placeholder="Type your message"
       :disabled="disabled"
+      :readonly="readonly"
       @keyup.enter="sendMsg"
       @focus="handleFocus"
       @blur="handleBlur"
@@ -26,6 +27,7 @@ export default {
   props: {
     value: [String, Number],
     disabled: Boolean,
+    readonly: Boolean,
     text: {
       type: String,
       default: ''

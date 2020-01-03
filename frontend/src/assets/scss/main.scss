@@ -272,6 +272,11 @@ body {
         padding-bottom: 15px;
       }
 
+      @include media-breakpoint-down(lg) {
+        padding-top: 8px;
+        padding-bottom: 8px;
+      }
+
       font-family: OpenSans;
       font-size: 0.85rem;
 
