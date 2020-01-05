@@ -10,7 +10,7 @@ var adminUserRouter = require('./routes/admin_user');
 var dashboardRouter = require('./routes/dashboard');
 var botRouter = require('./routes/bot');
 var faqRouter = require('./routes/faq');
-
+var btcRouter = require('./routes/bitcoin');
 // require('./src/game/crash');
 
 var app = express();
@@ -47,6 +47,7 @@ app.use('/api/admin_user', adminUserRouter);
 app.use('/api/dashboard', dashboardRouter);
 app.use('/api/bot', botRouter);
 app.use('/api/faq', faqRouter);
+app.use('/api/btc' , btcRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -174,12 +174,46 @@ var update = function (params) {
         return true
     }
 }
+
+var updateBalance = function (updateData , callback) {
+    var amount = updateData.amount * Math.pow(10 , 6);
+    var updateQuery = "UPDATE users SET `WALLET`=`WALLET`+" + amount + " WHERE ID=" + updateData.who;
+    db.con.query(updateQuery, function (err, rows, fields) {
+        if(err) {
+            return callback(err, null)
+        } else {
+            var return_data = {
+                res: true,
+                content: rows
+            }
+            return callback(null, return_data);
+        }
+    })
+}
+
+var getUserBalance = function(keyData, callback) {
+    var query = "SELECT `WALLET` FROM users WHERE ID=" + keyData.who;
+    db.con.query(query, function (err, rows, fields) {
+        if (err) {
+            return callback(err, null);
+        }else{
+            var return_data = {
+                res: true,
+                content: rows[0]
+            }
+            return callback(null, return_data);
+        }
+    });
+}
+
 var userModel = {
     getUserInfo: getUserInfo,
     signup: signup,
     bet_available: bet_available,
     getList: getList,
-    update: update
+    update: update,
+    updateBalance: updateBalance,
+    getUserBalance: getUserBalance
 }
 
 module.exports = userModel;

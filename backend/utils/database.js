@@ -4,25 +4,68 @@ var config = require('./../src/config');
 
 //database handle
 var con;
-function handleDisconnect() {
-    con = mysql.createConnection(config.mysql);
-    con.connect(function (err) {
-        if (err) {
-            console.log('error when connecting to db:', err);
-            setTimeout(handleDisconnect, 2000);
-        }
-    });
-    con.on('error', function (err) {
-        console.log('db error', err);
-        if (err.code == 'PROTOCOL_CONNECTION_LOST') {
-            handleDisconnect();
-        } else {
-            throw err;
-        }
 
+con = mysql.createPool(config.mysql);
+
+//-
+//- Establish a new connection
+//-
+con.getConnection(function(err){
+    if(err) {
+        console.log("\n\t *** Cannot establish a connection with the database. ***");
+        handleDisconnect();
+    }else {
+        console.log("\n\t *** New connection established with the database. ***")
+    }
+});
+//-
+//- Reconnection function
+//-
+function handleDisconnect(){
+    console.log("\n New connection tentative...");
+
+    //- Create a new one
+    con = mysql.createPool(config.mysql);
+
+    //- Try to reconnect
+    con.getConnection(function(err){
+        if(err) {
+            //- Try to connect every 2 seconds.
+            setTimeout(handleDisconnect, 2000);
+        }else {
+            console.log("\n\t *** New connection established with the database. ***")
+        }
     });
 }
-handleDisconnect();
+
+//-
+//- Error listener
+//-
+
+con.on('error', function(err) {
+    //-
+    //- The server close the connection.
+    //-
+    if(err.code === "PROTOCOL_CONNECTION_LOST"){    
+        console.log("/!\\ Cannot establish a connection with the database. /!\\ ("+err.code+")");
+        return handleDisconnect();
+    }
+    else if(err.code === "PROTOCOL_ENQUEUE_AFTER_QUIT"){
+        console.log("/!\\ Cannot establish a connection with the database. /!\\ ("+err.code+")");
+        return handleDisconnect();
+    }
+    else if(err.code === "PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR"){
+        console.log("/!\\ Cannot establish a connection with the database. /!\\ ("+err.code+")");
+        return handleDisconnect();
+    }
+    else if(err.code === "PROTOCOL_ENQUEUE_HANDSHAKE_TWICE"){
+        console.log("/!\\ Cannot establish a connection with the database. /!\\ ("+err.code+")");
+    }
+    else{
+        console.log("/!\\ Cannot establish a connection with the database. /!\\ ("+err.code+")");
+        return handleDisconnect();
+    }
+});
 ////////////////////////////
 
 var itemClause = function (key, val, opt = '', type = 0) {

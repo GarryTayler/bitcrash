@@ -1,5 +1,13 @@
 var app = require('express')();
-var http = require('http').Server(app);
+var http = require('http');
+var server = http.createServer(app);
+
+/*var https = require('https');
+var privateKey  = fs.readFileSync('/etc/letsencrypt/live/cryptoonline.ml-0001/privkey.pem', 'utf8');
+var certificate = fs.readFileSync('/etc/letsencrypt/live/cryptoonline.ml-0001/fullchain.pem', 'utf8');
+var credentials = {key: privateKey, cert: certificate};
+var server = https.createServer(credentials , app);*/
+
 var io = require('socket.io')(http);
 var bodyParser = require('body-parser');
 var crypto = require('crypto');
@@ -764,6 +772,6 @@ app.use(function (req, res, next) {
 	next();
 });
 
-http.listen(config.crash_port, function(){
+server.listen(config.crash_port, function(){
 	console.log('listening on *:' + config.crash_port);
 });

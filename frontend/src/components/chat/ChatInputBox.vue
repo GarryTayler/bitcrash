@@ -18,12 +18,14 @@
 
 <script>
 import CrashButton from '@/components/ui/CrashButton'
+import global from '@/mixins/global'
 
 export default {
   name: 'CrashBetButton',
   components: {
     CrashButton
   },
+  mixins: [global],
   props: {
     value: [String, Number],
     disabled: Boolean,
@@ -31,6 +33,10 @@ export default {
     text: {
       type: String,
       default: ''
+    },
+    inputtype: {
+      type: Number,
+      default: 0
     }
   },
   data() {
@@ -59,8 +65,17 @@ export default {
       this.$emit('blur', event)
     },
     sendMsg() {
-      this.$emit('sendMsg', this.currentValue)
-      this.currentValue = ''
+      if (this.inputtype === 0) {
+        this.$emit('sendMsg', this.currentValue)
+        this.currentValue = ''
+      } else {
+        var self = this
+        this.$copyText(this.currentValue).then(function(e) {
+          self.showToast('Success', 'The token has been copied to the clipboard.', 'success')
+        }, function(e) {
+          self.showToast('Error', 'Can not copy to the clipboard', 'error')
+        })
+      }
     }
   }
 }

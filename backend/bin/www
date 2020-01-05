@@ -8,6 +8,12 @@ var app = require('../app');
 var debug = require('debug')('backend:server');
 var http = require('http');
 
+//var https = require('https');
+
+//var privateKey  = fs.readFileSync('/etc/letsencrypt/live/cryptoonline.ml-0001/privkey.pem', 'utf8');
+//var certificate = fs.readFileSync('/etc/letsencrypt/live/cryptoonline.ml-0001/fullchain.pem', 'utf8');
+//var credentials = {key: privateKey, cert: certificate};
+
 /**
  * Get port from environment and store in Express.
  */
@@ -20,6 +26,8 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
+
+//var server = https.createServer(credentials , app);
 
 /**
  * Listen on provided port, on all network interfaces.

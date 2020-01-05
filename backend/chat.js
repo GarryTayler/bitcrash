@@ -1,6 +1,13 @@
 var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
+
+//var privateKey  = fs.readFileSync('/etc/letsencrypt/live/cryptoonline.ml-0001/privkey.pem', 'utf8');
+//var certificate = fs.readFileSync('/etc/letsencrypt/live/cryptoonline.ml-0001/fullchain.pem', 'utf8');
+//var credentials = {key: privateKey, cert: certificate};
+//var server = require('https').createServer(credentials , app);
+
+
 var io = require('socket.io')(server);
 var mysql = require('mysql');
 var dateFormat = require('dateformat');

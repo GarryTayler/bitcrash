@@ -19,7 +19,16 @@ var config = {
     base_domain: base_domain,
     main_host_url : "http://" + base_domain + ":" + main_port + "/api/",
     //general_profile_url : "http://" + base_domain + ":7801/img/uploads/avatar/general_profile.png"c
-    general_profile_url : "http://" + base_domain + ":8080/img/uploads/avatar/general_profile.png"
+    general_profile_url : "http://" + base_domain + ":8080/img/uploads/avatar/general_profile.png",
+
+    BTC_SITE_WALLET_ADDRESS : "19ejNRyHmqgotgztP7XeLsXbHD7K5tkTJo",
+    BTC_SITE_PRIVATE_KEY : "fb422f196446b71f851240984d92baa2fc229f9fdf71335a68db161cebe75ac9",
+    BTC_SITE_PUBLIC_KEY : "0284673d7f6b73990999cf16cf03394069e1bca2b8536213ee3e23b50e7fb71b1c",
+
+    BLOCKCYPHER_TOKEN : "f00484c44b6c457abf570448470af78c",
+    BLOCKCYPHER_CALLBACK_HOST_URL : "http://" + base_domain + ":" + main_port + "/",
+    BTC_withdraw_fee: 0.00005,
+    BTC_min_withdraw_amount: 0.0001,
 }
 
 module.exports = config

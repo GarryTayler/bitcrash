@@ -24,3 +24,12 @@ export function getLog(data) {
   })
 }
 
+export function getToken() {
+  var data = {}
+  return request({
+    url: 'api/crash/get_token',
+    method: 'post',
+    data
+  })
+}
+

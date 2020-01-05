@@ -6,7 +6,7 @@ import config from '@/config'
 
 // create an axios instance
 const service = axios.create({
-  baseURL: 'http://' + config.base_domain + ':' + config.main_port + '/', // process.env.VUE_APP_BASE_API,
+  baseURL: config.base_domain + ':' + config.main_port + '/', // process.env.VUE_APP_BASE_API,
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 5000 // request timeout
 })

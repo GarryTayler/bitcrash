@@ -14,6 +14,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 import App from './App.vue'
 import CxltToastr from 'cxlt-vue2-toastr'
+import VueClipboard from 'vue-clipboard2'
 import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/vue-loading.css'
 import 'cxlt-vue2-toastr/dist/css/cxlt-vue2-toastr.css'
@@ -43,6 +44,7 @@ Vue.use(BootstrapVue)
 Vue.use(VLazyImagePlugin)
 Vue.use(Loading)
 Vue.use(CxltToastr)
+Vue.use(VueClipboard)
 
 Vue.config.productionTip = false
 

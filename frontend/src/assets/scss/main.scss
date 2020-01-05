@@ -54,6 +54,7 @@ body {
 
     .navbar-nav {
       border-right: 1px solid $navbar-text-color;
+      padding: 0px 15px 0px 15px;
     }
 
     .nav-link {
@@ -109,6 +110,9 @@ body {
       border-radius: 20px;
       // border-bottom: 1px solid white;
       // color: white;
+      @include media-breakpoint-down(lg) {
+        padding-left: 12px;
+      }
     }
   }
   .vert-seperator {

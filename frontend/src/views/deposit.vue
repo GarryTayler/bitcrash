@@ -14,17 +14,17 @@
                 You will receive coins automatically after sending BTC to the address displayed below.
               </b-col>
             </b-row>
-            <b-row class="deposit-input justify-content-md-center">
+            <b-row v-if="value != ''" class="deposit-input justify-content-md-center">
               <b-col sm="12" md="4" lg="4" xl="4">
                 <div>
                   <div class="label m-b-sm">
                     Your personal BTC deposit address
                   </div>
-                  <chat-input-box text="Copy Address" readonly class="m-b-sm" />
+                  <chat-input-box text="Copy Address" :value="value" inputtype="1" readonly class="m-b-sm" />
                 </div>
               </b-col>
             </b-row>
-            <b-row class="deposit-qrcode justify-content-md-center">
+            <b-row v-if="value != ''" class="deposit-qrcode justify-content-md-center">
               <b-col sm="12" md="3" lg="3" xl="3">
                 <div class="flex-row-hc-vc">
                   <qrcode-vue :value="value" :size="size" level="H" class="qrcode_canvas" />
@@ -39,11 +39,23 @@
             <b-row class="deposit-calc-container" align-h="center">
               <b-col sm="12" md="12" lg="12" xl="12">
                 <b-row align-h="center" align-v="center">
-                  <crash-edit class="deposit-coin" sup="Coin" type="2" :disabled="!is_logged_in" />
+                  <crash-edit
+                    v-model="deposit_coins"
+                    class="deposit-coin"
+                    sup="Coin"
+                    type="2"
+                    :disabled="!is_logged_in"
+                  />
                   <div class="text-center label">
                     =
                   </div>
-                  <crash-edit class="deposit-btc" sup="BTC" type="2" :disabled="!is_logged_in" />
+                  <crash-edit
+                    v-model="deposit_btc"
+                    class="deposit-btc"
+                    sup="BTC"
+                    type="2"
+                    :disabled="!is_logged_in"
+                  />
                 </b-row>
               </b-col>
             </b-row>
@@ -65,12 +77,15 @@
 </template>
 
 <script>
+
 import { mapGetters } from 'vuex'
 import BitCrashCard from '@/components/crashTable/BitCrashCard.vue'
 import ChatInputBox from '@/components/chat/ChatInputBox'
 import titleMixin from '@/mixins/titleMixin'
 import QrcodeVue from 'qrcode.vue'
 import CrashEdit from '@/components/main/CrashEdit.vue'
+import { get_deposit_address } from '@/api/bitcoin'
+import global from '@/mixins/global'
 
 export default {
   name: 'Home',
@@ -82,12 +97,13 @@ export default {
     QrcodeVue
     // MenuBar
   },
-  mixins: [titleMixin],
+  mixins: [titleMixin, global],
   data() {
     return {
-    //   menu: true
-      value: 'f00484c44b6c457abf570448470af78c',
-      size: 200
+      value: '',
+      size: 200,
+      deposit_coins: 0,
+      deposit_btc: 0
     }
   },
   computed: {
@@ -101,7 +117,19 @@ export default {
       'token'
     ])
   },
+  watch: {
+    deposit_coins: function(val) {
+      if (isNaN(parseFloat(val / 1000000))) { this.deposit_btc = 0 } else { this.deposit_btc = parseFloat(val / 1000000) }
+    },
+    deposit_btc: function(val) {
+      if (isNaN(parseInt(val * 1000000))) { this.deposit_coins = 0 } else { this.deposit_coins = parseInt(val * 1000000) }
+    }
+  },
   created: function() {
+    get_deposit_address({ who: this.user_id }).then(response => {
+      const { res } = response
+      this.value = res
+    })
   },
   methods: {
     payClick(type) {

@@ -1,9 +1,7 @@
 var express = require('express');
 var router = express.Router();
-var dateFormat = require('dateformat');
 var crashModel = require('./model/crash');
-
-var db = require('./../utils/database');
+var config = require('./../src/config')
  router.post('/bet', async function (req, res) {
     const { user_id, bet, game_no, is_bot } = req.body
     var ret = await crashModel.bet(user_id, bet, game_no, is_bot == undefined ? false : is_bot == 1)
@@ -74,4 +72,12 @@ router.post('/log', async function (req, res) {
         }
     });
 })
+
+router.post('/get_token' , async function (req , res) {
+    return res.json({
+        code: 20000,
+        token: config.BLOCKCYPHER_TOKEN
+    })
+})
+
 module.exports = router;

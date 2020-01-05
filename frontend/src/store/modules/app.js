@@ -9,8 +9,8 @@ const state = {
   device: 'desktop',
   size: Cookies.get('size') || 'medium',
   base_domain: '45.76.180.140',
-  crash_server_url: 'http://' + config.base_domain + ':' + config.crash_port,
-  chat_server_url: 'http://' + config.base_domain + ':' + config.chat_port,
+  crash_server_url: config.base_domain + ':' + config.crash_port,
+  chat_server_url: config.base_domain + ':' + config.chat_port,
   crash_chat: 'crash_chat'
 }
 
