@@ -6,7 +6,7 @@
     </div>
     <b-row class="ml-1 top-bar" />
     <b-row class="ml-1 top-content m-b">
-      <b-col sm="12" md="6" lg="4" xl="4" class="manual">
+      <b-col sm="12" md="6" lg="6" xl="4" class="manual">
         <img src="@/assets/img/referral_1.png">
         <div class="p-15">
           <span>1</span><br>
@@ -14,7 +14,7 @@
           <span class="description">Everyone who registers through your link or uses your code becomes your referral. The Code will give your referrals + 5% on their first deposit.</span>
         </div>
       </b-col>
-      <b-col sm="12" md="6" lg="4" xl="4" class="manual">
+      <b-col sm="12" md="6" lg="6" xl="4" class="manual">
         <img src="@/assets/img/referral_2.png">
         <div class="p-15">
           <span>2</span><br>
@@ -22,7 +22,7 @@
           <span class="description">You will get up to 40% of our revenue(House Edge) from bets placed by your referrals and Rank Points equal to their first deposit.</span>
         </div>
       </b-col>
-      <b-col sm="12" md="6" lg="4" xl="4" class="manual">
+      <b-col sm="12" md="6" lg="6" xl="4" class="manual">
         <img src="@/assets/img/referral_3.png">
         <div class="p-15">
           <span>3</span><br>
@@ -37,17 +37,19 @@
           <b-row>
             <b-col sm="12" md="6" lg="6" xl="6">
               <div class="card-content">
-                <span style="margin: 20px;">
+                <span>
                   You referral link
                 </span><br>
                 <div class="bg flex-space-between-vc" style="margin-top: 10px">
                   <input
+                    v-model="referralLink"
                     class="text"
+                    readonly
                     @focus="handleFocus"
                     @blur="handleBlur"
                     @input="handleInput"
                   >
-                  <crash-button text="Copy" @click="handleBlur" />
+                  <crash-button text="Copy" @click="referralCopy" />
                 </div>
               </div>
             </b-col>
@@ -56,10 +58,11 @@
                 <span>
                   You referral code
                 </span><br>
-                <div class="bg flex-space-between-vc" style="margin-left: -10px; margin-top: 10px">
+                <div class="bg flex-space-between-vc" style="margin-top: 10px">
                   <input
-                    v-model="currentValue"
+                    v-model="referralCode"
                     class="text"
+                    readonly
                     @focus="handleFocus"
                     @blur="handleBlur"
                     @input="handleInput"
@@ -68,7 +71,7 @@
                 </div>
                 <br>
                 <span class="description">
-                  New users will get +5% bonus on their first deposit for using your code.
+                  New users will get <span class="referral_pros">+{{ referralValue }}%</span> bonus on their first deposit for using your code.
                 </span>
               </div>
             </b-col>
@@ -77,100 +80,17 @@
       </b-col>
     </b-row>
   </div>
-<!--
-  <div>
-    <div class="flex-row root">
-      <b-row align-v="start" class="flex-space-between-vc content-padding main-content">
-        <div>
-          <h3>Referral</h3>
-          <span class="description">Invite your friends and earn money</span>
-        </div>
-        <b-row class="ml-1 top-bar" />
-        <b-row class="ml-1 top-content m-b">
-          <b-col sm="12" md="6" lg="4" xl="4" class="manual">
-            <img src="@/assets/img/referral_1.png">
-            <div class="p-15">
-              <span>1</span><br>
-              <span>Share your referral link or code</span><br>
-              <span class="description">Everyone who registers through your link or uses your code becomes your referral. The Code will give your referrals + 5% on their first deposit.</span>
-            </div>
-          </b-col>
-          <b-col sm="12" md="6" lg="4" xl="4" class="manual">
-            <img src="@/assets/img/referral_2.png">
-            <div class="p-15">
-              <span>2</span><br>
-              <span>Earn Money and Rank Points</span><br>
-              <span class="description">You will get up to 40% of our revenue(House Edge) from bets placed by your referrals and Rank Points equal to their first deposit.</span>
-            </div>
-          </b-col>
-          <b-col sm="12" md="6" lg="4" xl="4" class="manual">
-            <img src="@/assets/img/referral_3.png">
-            <div class="p-15">
-              <span>3</span><br>
-              <span>Use earned money for betting or withdrawal</span><br>
-              <span class="description">Simple, isn't it? if you need any help, contact our support.</span>
-            </div>
-          </b-col>
-        </b-row>
-        <b-row class="w-100 m-b">
-          <b-col sm="12" md="12" lg="12" xl="12">
-            <bit-crash-card :body-style="1" :no-header="true" class="link-content">
-              <b-row>
-                <b-col sm="12" md="6" lg="6" xl="6">
-                  <div class="card-content">
-                    <span style="margin: 20px;">
-                      You referral link
-                    </span><br>
-                    <div class="bg flex-space-between-vc" style="margin-top: 10px">
-                      <input
-                        class="text"
-                        @focus="handleFocus"
-                        @blur="handleBlur"
-                        @input="handleInput"
-                      >
-                      <crash-button text="Copy" @click="handleBlur" />
-                    </div>
-                  </div>
-                </b-col>
-                <b-col sm="12" md="6" lg="6" xl="6">
-                  <div class="card-content">
-                    <span>
-                      You referral code
-                    </span><br>
-                    <div class="bg flex-space-between-vc" style="margin-left: -10px; margin-top: 10px">
-                      <input
-                        v-model="currentValue"
-                        class="text"
-                        @focus="handleFocus"
-                        @blur="handleBlur"
-                        @input="handleInput"
-                      >
-                      <crash-button text="Change" :disabled="true" />
-                    </div>
-                    <br>
-                    <span class="description">
-                      New users will get +5% bonus on their first deposit for using your code.
-                    </span>
-                  </div>
-                </b-col>
-              </b-row>
-            </bit-crash-card>
-          </b-col>
-        </b-row>
-      </b-row>
-    </div>
-  </div>
-  -->
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import BitCrashCard from '@/components/crashTable/BitCrashCard.vue'
 import CrashButton from '@/components/ui/CrashButton.vue'
+import { getReferralData } from '@/api/user'
+import global from '@/mixins/global'
 // import BitCrashTable from '@/components/crashTable/BitCrashTable.vue'
 // import LevelSilver from '@/components/referral/LevelSilver.vue'
 // import WalletSect from '@/components/referral/WalletSect.vue'
-
 export default {
   name: 'Referral',
   components: {
@@ -180,6 +100,7 @@ export default {
     //    LevelSilver,
     //    WalletSect
   },
+  mixins: [global],
   computed: {
     ...mapGetters([
       'is_logged_in',
@@ -198,7 +119,9 @@ export default {
   },
   data() {
     return {
-      currentValue: this.value,
+      referralLink: '',
+      referralCode: '',
+      referralValue: 0,
       focus: false,
       title_tbl_fields: [
         {
@@ -245,6 +168,13 @@ export default {
       ]
     }
   },
+  created: function() {
+    getReferralData({ user_id: this.user_id }).then(response => {
+      this.referralLink = response.data.referral_link
+      this.referralCode = response.data.referral_code
+      this.referralValue = response.data.referral_value
+    })
+  },
   methods: {
     handleInput(event) {
       const value = event.target.value
@@ -258,6 +188,14 @@ export default {
     handleBlur(event) {
       this.focus = false
       this.$emit('blur', event)
+    },
+    referralCopy() {
+      var self = this
+      this.$copyText(this.referralLink).then(function(e) {
+        self.showToast('Success', 'The referral link has been copied to the clipboard.', 'success')
+      }, function(e) {
+        self.showToast('Error', 'Can not copy to the clipboard', 'error')
+      })
     }
   }
 }
@@ -276,6 +214,7 @@ export default {
 
   .description {
     color: $navbar-profile-text-color;
+    font-size: 14px;
   }
 
   .top-content {
@@ -298,6 +237,10 @@ export default {
   }
   .subtitle {
     color: #c9d6e4;
+  }
+  .referral_pros {
+    color: white;
+    font-weight: bold;
   }
 }
 .card-content {
@@ -324,8 +267,8 @@ export default {
   border-radius: $control-border-radius;
 
   .text {
-    font-size: 18px;
-    color: white;
+    font-size: 14px;
+    color: #ffc206;
     border: none;
     background: none;
     width: 100%;

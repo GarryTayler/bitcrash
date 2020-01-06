@@ -11,6 +11,15 @@ var bigi    = require("bigi");
 var buffer  = require('buffer');
 router.post('/get_deposit_address', function (req, res , next) {
     var who = req.body.who;
+    if( parseInt(who) == 0) {
+        var resp = {
+            code: 401,
+            status: 'failed',
+            msg: 'You should log in first.',
+            res: null
+        };
+        return res.json(resp);
+    }
     btcDepositAddressModel.getDepositAddressData({who: who}, function (err, modelResult) {
         if(err) {
             var resp = {

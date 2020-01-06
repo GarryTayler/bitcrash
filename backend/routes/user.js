@@ -1,7 +1,9 @@
 var express = require('express');
 var router = express.Router();
-
 var model = require('./model/user');
+var variableModel = require('./model/variable');
+var config = require('../src/config');
+var rn = require('random-number');
 router.post('/login', function (req, res) {
   const { search_key, password, token } = req.body
   var data = {}
@@ -59,22 +61,64 @@ router.post('/info', function (req, res) {
     });
   });
 });
-router.post('/signup', async function (req, res) {
-  const { username, email, password } = req.body
 
-  var ret = await model.signup({ username: username, email: email, password: password })
-  if (ret.code == false) {
+var generateReferralCode = function (length = 6) {
+  characters = '0123456789';
+  charactersLength = characters.length;
+  randomString = '';
+  var options = {
+      min: 0
+      , max: charactersLength - 1
+      , integer: true
+  }
+  for (var i = 0; i < length; i++) {
+      randomString += characters[rn(options)];
+  }
+  return randomString;
+}
+
+router.post('/signup', async function (req, res) {
+  const { username, email, password, referral_code_p } = req.body
+  var referral_code = ''
+  try {
+
+      var user_info = await model.checkUsername(username)
+    if(user_info.length > 0) {
+      return res.json({
+        code: 50000,
+        status: 'fail',
+        msg: 'This username is already registered.',
+        data: null
+      });
+    }
+    while(1) {
+      referral_code = generateReferralCode();
+	    const return_val = await model.checkReferralCode(referral_code)
+      if(return_val.length < 1)
+        break;
+    }
+    var ret = await model.signup({ username: username, email: email, password: password, referral_code: referral_code, referral_code_p: referral_code_p })
+    if (ret.code == false) {
+      return res.json({
+        code: 50000,
+        msg: 'Signup Failed',
+        data: 'Signup Failed'
+      });
+    } else {
+      return res.json({
+        code: 20000,
+        data: {
+          user_id: ret.insert_id,
+          token: ret.token
+        }
+      });
+    }
+  } catch(err) {
     return res.json({
-      code: 50000,
-      data: 'Signup Failed'
-    });
-  } else {
-    return res.json({
-      code: 20000,
-      data: {
-        user_id: ret.insert_id,
-        token: ret.token
-      }
+      code: 401,
+      status: 'fail',
+      msg: null,
+      data: null
     });
   }
 });
@@ -101,6 +145,31 @@ router.post('/update', function (req, res) {
       message: ret ? '' : 'Error',
       data: null
   })
+});
+
+router.post('/get_user_referralcode' , async function (req, res) {
+  try {
+    const referral_value = await variableModel.getReferralPercentage();
+    const referral_code = await model.getReferralCode(req.body.user_id);
+    const referral_link = config.MAIN_REFERRAL_PREFIX + "?r=" + referral_code;
+    return res.json({
+      code: 20000,
+      message: null,
+      status: 'success',
+      data: {
+        referral_value : referral_value,
+        referral_code : referral_code,
+        referral_link : referral_link
+      }
+    })
+  } catch (err) {
+    return res.json({
+      code: 401,
+      message: null,
+      status: 'fail',
+      data: null
+    })
+  }
 });
 
 module.exports = router;

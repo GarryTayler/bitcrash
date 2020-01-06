@@ -35,8 +35,8 @@ export default {
       default: ''
     },
     inputtype: {
-      type: Number,
-      default: 0
+      type: String,
+      default: '0'
     }
   },
   data() {
@@ -65,7 +65,7 @@ export default {
       this.$emit('blur', event)
     },
     sendMsg() {
-      if (this.inputtype === 0) {
+      if (this.inputtype === '0') {
         this.$emit('sendMsg', this.currentValue)
         this.currentValue = ''
       } else {

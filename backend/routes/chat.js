@@ -7,7 +7,7 @@ var dateFormat = require('dateformat');
 var axios = require('axios')
 
 var instance = axios.create({
-    baseURL: 'http://' + config.base_domain + ":" + config.chat_port + "/",
+    baseURL: 'https://' + config.base_domain + ":" + config.chat_port + "/",
     timeout: 5000
   });
 

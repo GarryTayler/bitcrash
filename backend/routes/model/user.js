@@ -75,6 +75,34 @@ var generateRandomString = function (length = 25) {
     }
     return randomString;
 }
+var checkUsername = function(username) {
+    var sql = "SELECT * FROM users WHERE USERNAME = '" + username + "'"
+    return new Promise((resolve , reject) => {
+        db.con.query(sql , function(err , result , fields) {
+            if(err)
+                reject(err)
+            else {
+                result = JSON.stringify(result);
+                result = JSON.parse(result);
+                resolve(result);
+            }
+        });
+    });
+}
+var checkReferralCode = function(referralcode) {
+    var sql = "SELECT * FROM users WHERE REFERRAL_CODE = '" + referralcode + "'"
+    return new Promise((resolve , reject) => {
+        db.con.query(sql , function(err , result , fields) {
+            if(err)
+                reject(err)
+            else {
+                result = JSON.stringify(result);
+                result = JSON.parse(result);
+                resolve(result);
+            }
+        });
+    });
+}
 var signup = function (data) {
     return new Promise((resolve, reject) => {
         if (data.username == undefined || data.username == null || data.username == '') {
@@ -97,14 +125,17 @@ var signup = function (data) {
         }
         var token = generateRandomString()
         var pwdStr = "";
+        data.referral_code = 'REF_' + data.referral_code
         pwdStr = md5(data.password);
         var values = "(" + "'" + dateFormat(new Date(), "yyyy-mm-dd hh:MM:ss") + "'" + ", "
         values += "'" + data.username + "', "
         values += "'" + pwdStr + "', "
         values += "'" + data.email + "', "
         values += "'" + config.general_profile_url + "',"
+        values += "'" + data.referral_code + "',"
+        values += "'" + data.referral_code_p + "',"
         values += "'" + token + "'" + ")"
-        var statement = db.statement("insert into", "users", "(CREATE_TIME, USERNAME, PASSWORD, EMAIL, AVATAR, API_TOKEN)", "", "VALUES " + values)
+        var statement = db.statement("insert into", "users", "(CREATE_TIME, USERNAME, PASSWORD, EMAIL, AVATAR, REFERRAL_CODE, REFERRAL_CODE_P, API_TOKEN)", "", "VALUES " + values)
         db.con.query(statement, function (err, results, fields) {
             if (err) {
                 reject(err)
@@ -174,6 +205,35 @@ var update = function (params) {
         return true
     }
 }
+var getUserBalance = function(keyData, callback) {
+    var query = "SELECT `WALLET` FROM users WHERE ID=" + keyData.who;
+    db.con.query(query, function (err, rows, fields) {
+        if (err) {
+            return callback(err, null);
+        }else{
+            var return_data = {
+                res: true,
+                content: rows[0]
+            }
+            return callback(null, return_data);
+        }
+    });
+}
+
+var getReferralCode = function(user_id) {
+    var query = "SELECT REFERRAL_CODE FROM users WHERE ID=" + user_id;
+    return new Promise((resolve , reject) => {
+        db.con.query(query , function(err , result , fields) {
+            if(err)
+                reject(err);
+            else {
+                result = JSON.stringify(result);
+                result = JSON.parse(result);
+                resolve(result[0]['REFERRAL_CODE'])
+            }
+        });
+    });
+}
 
 var updateBalance = function (updateData , callback) {
     var amount = updateData.amount * Math.pow(10 , 6);
@@ -191,19 +251,7 @@ var updateBalance = function (updateData , callback) {
     })
 }
 
-var getUserBalance = function(keyData, callback) {
-    var query = "SELECT `WALLET` FROM users WHERE ID=" + keyData.who;
-    db.con.query(query, function (err, rows, fields) {
-        if (err) {
-            return callback(err, null);
-        }else{
-            var return_data = {
-                res: true,
-                content: rows[0]
-            }
-            return callback(null, return_data);
-        }
-    });
+var updateAdminBalance = function (updateData , callback) {
 }
 
 var userModel = {
@@ -213,7 +261,10 @@ var userModel = {
     getList: getList,
     update: update,
     updateBalance: updateBalance,
-    getUserBalance: getUserBalance
+    getUserBalance: getUserBalance,
+    getReferralCode: getReferralCode,
+    checkUsername: checkUsername,
+    checkReferralCode: checkReferralCode
 }
 
 module.exports = userModel;

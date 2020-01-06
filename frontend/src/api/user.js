@@ -46,3 +46,11 @@ export function updateUser(data) {
     data
   })
 }
+
+export function getReferralData(data) {
+  return request({
+    url: 'api/user/get_user_referralcode',
+    method: 'post',
+    data
+  })
+}

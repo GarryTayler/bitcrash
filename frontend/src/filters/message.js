@@ -9,5 +9,6 @@ export default {
   'bet_err_msg1': 'You can bet after you log in.',
   'wallet_err_msg': 'Wallet is not enough.',
   'disconnect_err_msg': 'You are disconnected now. Please check your network status.',
+  'disconnect_err_msg1': 'Network Connection Error',
   'betting_method_err_msg': 'You cannot change the betting method unless you terminate the current betting operation.'
 }

@@ -43,8 +43,13 @@ export default {
   mixins: [global],
   data() {
     return {
-      form: {}
+      form: {},
+      referral_code_p: ''
     }
+  },
+  created: function() {
+  },
+  mounted: function() {
   },
   methods: {
     isValid() {
@@ -75,18 +80,21 @@ export default {
       return true
     },
     onSignup() {
+      this.referral_code_p = this.$route.query.r
       var valid = this.isValid()
       if (valid) {
         this.loading = true
         var data = {
           username: this.form.username,
           email: this.form.email,
-          password: this.form.password
+          password: this.form.password,
+          referral_code_p: ((this.referral_code_p === undefined || this.referral_code_p === null) ? '' : this.referral_code_p)
         }
         const loader = this.showOverlay(null)
         signup(data).then(response => {
           if (response.code !== 20000) {
             this.hideOverlay(loader)
+            this.showToast('Signup Failed', response.msg, 'error')
             // Error
           } else {
             this.$store
@@ -103,6 +111,10 @@ export default {
               })
           }
         })
+          .catch(() => {
+            this.showToast('Error', message.disconnect_err_msg1, 'error')
+            this.hideOverlay(loader)
+          })
       } else {
         return false
       }
