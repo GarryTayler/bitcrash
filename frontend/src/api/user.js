@@ -54,3 +54,19 @@ export function getReferralData(data) {
     data
   })
 }
+
+export function getReferralValue(data) {
+  return request({
+    url: 'api/user/get_user_referral_value',
+    method: 'post',
+    data
+  })
+}
+
+export function updateReferralValue(data) {
+  return request({
+    url: 'api/user/update_referral_value',
+    method: 'post',
+    data
+  })
+}

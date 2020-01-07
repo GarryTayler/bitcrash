@@ -4,6 +4,7 @@ var config = require('./../src/config')
 var btcDepositAddressModel = require('./model/btc_deposit_address')
 var userModel = require('./model/user')
 var txnModel = require('./model/txn')
+var variableModel = require('./model/variable');
 var request = require('request');
 
 var bitcoin = require("bitcoinjs-lib");
@@ -75,7 +76,7 @@ router.post('/get_deposit_address', function (req, res , next) {
     })
 })
 
-router.post('/deposit/:who', function(req, res, next) {
+router.post('/deposit/:who', async function(req, res, next) {
     var who = req.params.who;
     var satoshi_amount = req.body.value;
     var amount = satoshi_amount / Math.pow(10, 8);
@@ -89,7 +90,7 @@ router.post('/deposit/:who', function(req, res, next) {
         url: 'https://api.blockcypher.com/v1/btc/main/txs/' + destination_txhash
     };
 
-    request(options, function (error, response, body) {
+    /*request(options, function (error, response, body) {
         if (error) {
             var resp = {
                 code: 401,
@@ -99,6 +100,8 @@ router.post('/deposit/:who', function(req, res, next) {
             };
             return res.json(resp);
         } else {
+*/
+
             userModel.updateBalance({who: who, amount: amount}, function(err, modelResult) {
                 if (!err) {
                     var txnData = {
@@ -119,13 +122,99 @@ router.post('/deposit/:who', function(req, res, next) {
                             };
                             return res.json(resp);
                         } else {
-                            var resp = {
-                                code: 20000,
-                                status: 'success',
-                                msg: null,
-                                res: null
-                            };
-                            return res.json(resp);
+                            txnModel.checkFirstDeposit(who)
+                            .then((check_result) => {
+                                if(!check_result) {
+                                    var resp = { code: 20000, status: 'success', msg: null, res: null };
+                                    return res.json(resp);
+                                }
+                                //get my parent referral code
+                                userModel.getParentReferralCode(who)
+                                .then((my_parent_referral) => {
+                                    if(my_parent_referral == '')  {
+                                        var resp = {
+                                            code: 20000,
+                                            status: 'success',
+                                            msg: null,
+                                            res: null
+                                        };
+                                        return res.json(resp);
+                                    }
+                                    //get my parent userid using parent referral code
+                                    userModel.getUseridByParentReferralCode(my_parent_referral)
+                                    .then((parent_user_id) => {
+                                        //get referral percentage from database
+                                        variableModel.getReferralPercentage()
+                                        .then((referral_value) => {
+                                            var referral_amount = parseInt(amount * Math.pow(10 , 6)) * referral_value / 100
+                                            referral_amount = parseInt(referral_amount)
+                                            if(referral_amount == 0) {
+                                                var resp = { code: 20000, status: 'success', msg: null, res: null };
+                                                return res.json(resp);
+                                            }
+                                            //update parent-user balance
+                                            userModel.updateUserBalance({who: parent_user_id, amount: referral_amount})
+                                            .then((ret) => {
+                                                //update admin balance
+                                                userModel.updateAdminBalance({who: 1, amount: referral_amount})
+                                                .then((ret1) => {
+                                                    var txnData1 = {
+                                                        who : parent_user_id,
+                                                        type : 3,
+                                                        amount : parseFloat(amount * referral_value / 100).toFixed(8),
+                                                        fees : 0,
+                                                        detail : my_parent_referral,
+                                                        txhash : my_parent_referral
+                                                    }
+                                                    txnModel.insertTxn(txnData1 , function(err , subModelResult) {
+                                                        if (err) {
+                                                            var resp = { code: 401, status: 'failed', msg: null, res: null };
+                                                            return res.json(resp);
+                                                        } else {
+                                                            var resp = {
+                                                                code: 20000,
+                                                                status: 'success',
+                                                                msg: null,
+                                                                res: null
+                                                            };
+                                                            return res.json(resp);
+                                                        }
+                                                    });
+                                                })
+                                                .catch((err) => {
+                                                    var resp = { code: 401, status: 'failed', msg: null, res: null };
+                                                    return res.json(resp);
+                                                })
+                                            })
+                                            .catch((err) => {
+                                                var resp = { code: 401, status: 'failed', msg: null, res: null };
+                                                return res.json(resp);
+                                            })
+                                        })
+                                        .catch((err) => {
+                                            var resp = { code: 401, status: 'failed', msg: null, res: null };
+                                            return res.json(resp);
+                                        })
+                                    })
+                                    .catch((err) => {
+                                        var resp = { code: 401, status: 'failed', msg: null, res: null };
+                                        return res.json(resp);
+                                    })
+                                })
+                                .catch((err) => {
+                                    var resp = { code: 401, status: 'failed', msg: null, res: null };
+                                    return res.json(resp);
+                                })
+                            })
+                            .catch((err) => {
+                                var resp = {
+                                    code: 401,
+                                    status: 'failed',
+                                    msg: null,
+                                    res: null
+                                };
+                                return res.json(resp);
+                            })
                         }
                     });
                 }
@@ -139,8 +228,12 @@ router.post('/deposit/:who', function(req, res, next) {
                     return res.json(resp);
                 }
             });
-        }
-    });
+
+   
+            
+
+        //}
+    //});
 })
 
 router.post('/withdraw' , function(req, res, next) {

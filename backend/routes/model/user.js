@@ -220,21 +220,6 @@ var getUserBalance = function(keyData, callback) {
     });
 }
 
-var getReferralCode = function(user_id) {
-    var query = "SELECT REFERRAL_CODE FROM users WHERE ID=" + user_id;
-    return new Promise((resolve , reject) => {
-        db.con.query(query , function(err , result , fields) {
-            if(err)
-                reject(err);
-            else {
-                result = JSON.stringify(result);
-                result = JSON.parse(result);
-                resolve(result[0]['REFERRAL_CODE'])
-            }
-        });
-    });
-}
-
 var updateBalance = function (updateData , callback) {
     var amount = updateData.amount * Math.pow(10 , 6);
     var updateQuery = "UPDATE users SET `WALLET`=`WALLET`+" + amount + " WHERE ID=" + updateData.who;
@@ -250,8 +235,69 @@ var updateBalance = function (updateData , callback) {
         }
     })
 }
-
-var updateAdminBalance = function (updateData , callback) {
+var getReferralCode = function(user_id) {
+    var query = "SELECT REFERRAL_CODE FROM users WHERE ID=" + user_id;
+    return new Promise((resolve , reject) => {
+        db.con.query(query , function(err , result , fields) {
+            if(err)
+                reject(err);
+            else {
+                result = JSON.stringify(result);
+                result = JSON.parse(result);
+                resolve(result[0]['REFERRAL_CODE'])
+            }
+        });
+    });
+}
+var getParentReferralCode = function(user_id) {
+    var query = "SELECT REFERRAL_CODE_P FROM users WHERE ID=" + user_id;
+    return new Promise((resolve , reject) => {
+        db.con.query(query , function(err , result , fields) {
+            if(err)
+                reject(err);
+            else {
+                result = JSON.stringify(result);
+                result = JSON.parse(result);
+                resolve(result[0]['REFERRAL_CODE_P'])
+            }
+        });
+    });
+}
+var getUseridByParentReferralCode = function(referral_code_p) {
+    var query = "SELECT ID FROM users WHERE REFERRAL_CODE='" + referral_code_p + "'";
+    return new Promise((resolve , reject) => {
+        db.con.query(query , function(err , result , fields) {
+            if(err)
+                reject(err);
+            else {
+                result = JSON.stringify(result);
+                result = JSON.parse(result);
+                resolve(result[0]['ID'])
+            }
+        });
+    });
+}
+var updateAdminBalance = function (updateData) {
+    var updateQuery = "UPDATE admin SET `REFERRAL_WALLET`=`REFERRAL_WALLET`+" + updateData.amount + " WHERE ID=" + updateData.who;
+    return new Promise((resolve , reject) => {
+        db.con.query(updateQuery , function(err , result) {
+            if(err)
+                reject(err)
+            else
+                resolve(true)
+        })
+    })
+}
+var updateUserBalance = function (updateData) {
+    var updateQuery = "UPDATE users SET `WALLET`=`WALLET`+" + updateData.amount + " WHERE ID=" + updateData.who;
+    return new Promise((resolve , reject) => {
+        db.con.query(updateQuery , function(err , result) {
+            if(err)
+                reject(err)
+            else
+                resolve(true)
+        })
+    })
 }
 
 var userModel = {
@@ -264,7 +310,11 @@ var userModel = {
     getUserBalance: getUserBalance,
     getReferralCode: getReferralCode,
     checkUsername: checkUsername,
-    checkReferralCode: checkReferralCode
+    checkReferralCode: checkReferralCode,
+    updateAdminBalance: updateAdminBalance,
+    updateUserBalance: updateUserBalance,
+    getParentReferralCode: getParentReferralCode,
+    getUseridByParentReferralCode: getUseridByParentReferralCode
 }
 
 module.exports = userModel;

@@ -172,4 +172,44 @@ router.post('/get_user_referralcode' , async function (req, res) {
   }
 });
 
+router.post('/get_user_referral_value' , async function (req, res) {
+  try {
+    const referral_value = await variableModel.getReferralPercentage();
+    return res.json({
+      code: 20000,
+      message: null,
+      status: 'success',
+      data: {
+        referral_value : referral_value
+      }
+    })
+  } catch (err) {
+    return res.json({
+      code: 401,
+      message: null,
+      status: 'fail',
+      data: null
+    })
+  }
+});
+
+router.post('/update_referral_value' , async function (req, res) {
+  try {
+    const referral_value = await variableModel.updateReferralPercentage(req.body.referral_value);
+    return res.json({
+      code: 20000,
+      message: null,
+      status: 'success',
+      data: null
+    })
+  } catch (err) {
+    return res.json({
+      code: 401,
+      message: null,
+      status: 'fail',
+      data: null
+    })
+  }
+});
+
 module.exports = router;

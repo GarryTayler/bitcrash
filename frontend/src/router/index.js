@@ -60,6 +60,15 @@ export const adminChildRoutes = [
     }
   },
   {
+    path: 'referral',
+    component: () => import('@/views/admin/referral'),
+    name: 'Referral',
+    meta: {
+      title: 'Referral',
+      icon: 'eye-open'
+    }
+  },
+  {
     path: 'bot',
     component: () => import('@/views/admin/bot'),
     name: 'Bot',
@@ -116,7 +125,7 @@ export const adminChildRoutes = [
     name: 'Faq',
     meta: {
       title: 'Faq',
-      icon: 'documentation'
+      icon: 'nested'
     }
   }
 ]

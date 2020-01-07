@@ -37,3 +37,25 @@ exports.insertTxn = function (insertData, callback) {
         return callback(null, return_data);
     });
 }
+
+exports.checkFirstDeposit = function(user_id) {
+    var query = "SELECT * " +
+    "FROM deposit_withdraw_log " +
+    "WHERE USER_ID = " + user_id +
+    " AND `TYPE` = 1 ";
+
+    return new Promise((resolve , reject) => {
+        db.con.query(query , function(err , result , fields) {
+            if(err)
+                reject(err);
+            else {
+                result = JSON.stringify(result);
+                result = JSON.parse(result);
+                if(result.length < 2)
+                    resolve(true)
+                else
+                    resolve(false)
+            }
+        });
+    });
+}
