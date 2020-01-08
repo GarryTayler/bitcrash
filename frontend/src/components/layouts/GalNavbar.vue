@@ -1,6 +1,6 @@
 <template>
   <b-navbar toggleable="xl" type="dark" variant="dark" sticky class="">
-    <b-navbar-brand>
+    <b-navbar-brand href="/">
       <img src="@/assets/img/brand_logo.png" class="logo mr-sm-3">
       <img src="@/assets/img/brand_text.png" class="text">
     </b-navbar-brand>
@@ -23,7 +23,7 @@
             <img src="@/assets/img/ic_leaderboard.png" class="mr-sm">
             Deposit
           </b-nav-item>
-          <b-nav-item>
+          <b-nav-item href="/#/withdraw" :class="{'link-active': isWithdrawActive}">
             <img src="@/assets/img/ic_bitcoin.png" class="mr-sm">
             Withdraw
           </b-nav-item>
@@ -87,6 +87,11 @@ export default {
     isDepositActive: {
       get() {
         return this.$route.path === '/deposit'
+      }
+    },
+    isWithdrawActive: {
+      get() {
+        return this.$route.path === '/withdraw'
       }
     },
     isFaqActive: {

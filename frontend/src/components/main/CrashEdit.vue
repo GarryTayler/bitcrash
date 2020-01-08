@@ -102,6 +102,9 @@ export default {
     &:focus{
       outline-color: transparent;
     }
+    @include media-breakpoint-down(xs) {
+      font-size: 14px;
+    }
   }
   .sup {
     font-size: 18px;

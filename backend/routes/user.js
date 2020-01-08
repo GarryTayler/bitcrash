@@ -81,13 +81,21 @@ router.post('/signup', async function (req, res) {
   const { username, email, password, referral_code_p } = req.body
   var referral_code = ''
   try {
-
-      var user_info = await model.checkUsername(username)
+    var user_info = await model.checkUsername(username)
     if(user_info.length > 0) {
       return res.json({
         code: 50000,
         status: 'fail',
         msg: 'This username is already registered.',
+        data: null
+      });
+    }
+    user_info = await model.checkEmail(email)
+    if(user_info.length > 0) {
+      return res.json({
+        code: 50000,
+        status: 'fail',
+        msg: 'This email is already registered.',
         data: null
       });
     }
@@ -192,7 +200,42 @@ router.post('/get_user_referral_value' , async function (req, res) {
     })
   }
 });
-
+router.post('/get_withdraw_page_data' , function (req, res) {
+  model.getUserBalance({who: req.body.user_id} , function (err, modelResult) {
+      if(err) {
+        return res.json({
+          code: 401,
+          message: null,
+          status: 'fail',
+          data: null
+        })
+      }
+      var wallet = 0;
+      if(modelResult.content.hasOwnProperty('WALLET')) {
+        wallet = modelResult.content.WALLET;
+      }
+      variableModel.getWithdrawalFee()
+      .then((withdraw_fee) => {
+          return res.json({
+            code: 20000,
+            message: null,
+            status: 'success',
+            data: {
+              wallet: wallet ,
+              withdraw_fee: withdraw_fee
+            }
+          })
+      })
+      .catch((err) => {
+          return res.json({
+            code: 401,
+            message: null,
+            status: 'fail',
+            data: null
+          })
+      })
+  })
+});
 router.post('/update_referral_value' , async function (req, res) {
   try {
     const referral_value = await variableModel.updateReferralPercentage(req.body.referral_value);

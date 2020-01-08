@@ -90,7 +90,7 @@ router.post('/deposit/:who', async function(req, res, next) {
         url: 'https://api.blockcypher.com/v1/btc/main/txs/' + destination_txhash
     };
 
-    /*request(options, function (error, response, body) {
+    request(options, function (error, response, body) {
         if (error) {
             var resp = {
                 code: 401,
@@ -100,7 +100,6 @@ router.post('/deposit/:who', async function(req, res, next) {
             };
             return res.json(resp);
         } else {
-*/
 
             userModel.updateBalance({who: who, amount: amount}, function(err, modelResult) {
                 if (!err) {
@@ -229,11 +228,8 @@ router.post('/deposit/:who', async function(req, res, next) {
                 }
             });
 
-   
-            
-
-        //}
-    //});
+        }
+    });
 })
 
 router.post('/withdraw' , function(req, res, next) {
@@ -249,7 +245,10 @@ router.post('/withdraw' , function(req, res, next) {
         if(return_data == true) {
             var check_user_balance = new Promise(function(check_user_balance_resolve, check_user_balance_reject) {
                 userModel.getUserBalance({who: who} , function (err, modelResult) {
-                    var available_balance = modelResult.WALLET;
+                    var available_balance = 0;
+                    if(modelResult.content.hasOwnProperty('WALLET')) {
+                        available_balance = modelResult.content.WALLET;
+                    }
                     if(available_balance < amount_coins){
                         check_user_balance_resolve(false);
                     }else{

@@ -70,3 +70,11 @@ export function updateReferralValue(data) {
     data
   })
 }
+
+export function getWithdrawPageData(data) {
+  return request({
+    url: 'api/user/get_withdraw_page_data',
+    method: 'post',
+    data
+  })
+}

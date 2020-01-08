@@ -1,5 +1,5 @@
 <template>
-  <div class="container flex-row-hl-vc">
+  <div class="container flex-row-hl-vc header-item-crash">
     <div :class="circleStyle" />
     <div class="text-container">
       <div class="val-text" :class="data.is_active ? 'is-active' : ''">{{ data.val }}</div>
@@ -44,7 +44,8 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import "~@/assets/scss/_variables.scss";
-.container {
+.header-item-crash {
+  cursor: pointer;
 }
 .circle {
   width: 35px;

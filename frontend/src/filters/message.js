@@ -10,5 +10,6 @@ export default {
   'wallet_err_msg': 'Wallet is not enough.',
   'disconnect_err_msg': 'You are disconnected now. Please check your network status.',
   'disconnect_err_msg1': 'Network Connection Error',
-  'betting_method_err_msg': 'You cannot change the betting method unless you terminate the current betting operation.'
+  'betting_method_err_msg': 'You cannot change the betting method unless you terminate the current betting operation.',
+  'coinslack_msg': 'Your balance is insufficient. You can\'t withdraw now.'
 }

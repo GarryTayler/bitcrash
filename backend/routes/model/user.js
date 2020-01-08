@@ -89,6 +89,20 @@ var checkUsername = function(username) {
         });
     });
 }
+var checkEmail = function(email) {
+    var sql = "SELECT * FROM users WHERE EMAIL = '" + email + "'"
+    return new Promise((resolve , reject) => {
+        db.con.query(sql , function(err , result , fields) {
+            if(err)
+                reject(err)
+            else {
+                result = JSON.stringify(result);
+                result = JSON.parse(result);
+                resolve(result);
+            }
+        });
+    });
+}
 var checkReferralCode = function(referralcode) {
     var sql = "SELECT * FROM users WHERE REFERRAL_CODE = '" + referralcode + "'"
     return new Promise((resolve , reject) => {
@@ -310,6 +324,7 @@ var userModel = {
     getUserBalance: getUserBalance,
     getReferralCode: getReferralCode,
     checkUsername: checkUsername,
+    checkEmail: checkEmail,
     checkReferralCode: checkReferralCode,
     updateAdminBalance: updateAdminBalance,
     updateUserBalance: updateUserBalance,

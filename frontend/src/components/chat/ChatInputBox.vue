@@ -4,7 +4,7 @@
       v-model="currentValue"
       class="text flex1"
       name="quantity"
-      placeholder="Type your message"
+      :placeholder="placeholderString"
       :disabled="disabled"
       :readonly="readonly"
       @keyup.enter="sendMsg"
@@ -42,13 +42,17 @@ export default {
   data() {
     return {
       currentValue: this.value,
-      focus: false
+      focus: false,
+      placeholderString: ''
     }
   },
   watch: {
     value(newValue) {
       this.currentValue = newValue
     }
+  },
+  created() {
+    if (this.inputtype === '0') { this.placeholderString = 'Type your message' }
   },
   methods: {
     handleInput(event) {

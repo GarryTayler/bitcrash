@@ -70,11 +70,12 @@ const actions = {
       }
       login(data).then(response => {
         const { data } = response
-
-        commit('SET_TOKEN', data.token)
-        commit('SET_ID', data.id)
-        setToken(data.token)
-        resolve()
+        if (response.code === 20000) {
+          commit('SET_TOKEN', data.token)
+          commit('SET_ID', data.id)
+          setToken(data.token)
+        }
+        resolve(response)
       }).catch(error => {
         reject(error)
       })

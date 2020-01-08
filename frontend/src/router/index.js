@@ -23,6 +23,11 @@ export const constantRoutes = [
         meta: { title: 'Deposit' }
       },
       {
+        path: '/withdraw',
+        component: () => import('../views/withdraw.vue'),
+        meta: { title: 'Withdraw' }
+      },
+      {
         path: '/referral',
         component: () => import('../views/Referral.vue'),
         meta: { title: 'Referral' }
