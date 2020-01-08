@@ -98,6 +98,7 @@ import titleMixin from '@/mixins/titleMixin'
 import global from '@/mixins/global'
 import message from '@/filters/message'
 import { getWithdrawPageData } from '@/api/user'
+import { requestWithdraw } from '@/api/bitcoin'
 
 export default {
   name: 'Home',
@@ -156,8 +157,13 @@ export default {
         this.available_wallet_coins = response.data.wallet
         this.available_wallet_btc = parseFloat(this.available_wallet_coins / Math.pow(10, 6)).toFixed(6)
         this.withdraw_fee = response.data.withdraw_fee
+      } else {
+        this.showToast('Error', response.msg, 'error')
       }
     })
+      .catch(() => {
+        this.showToast('Error', message.disconnect_err_msg1, 'error')
+      })
   },
   methods: {
     withdrawRequest() {
@@ -165,6 +171,25 @@ export default {
         this.showToast('Error', message.coinslack_msg, 'error')
         return
       }
+      if (this.withdraw_address === '') {
+        this.showToast('Error', message.withdraw_address_err_msg, 'error')
+        return
+      }
+      if (this.withdraw_coins === 0) {
+        this.showToast('Error', message.withdraw_amount_err_msg, 'error')
+        return
+      }
+      requestWithdraw({ who: this.user_id, to_address: this.withdraw_address, amount: this.withdraw_btc }).then(response => {
+        if (response.status === 'success') {
+          this.showToast('Success', message.withdraw_request_success, 'success')
+          this.$store.dispatch('user/getInfo', this.token)
+        } else {
+          this.showToast('Error', response.msg, 'error')
+        }
+      })
+        .catch(() => {
+          this.showToast('Error', message.disconnect_err_msg1, 'error')
+        })
     }
   }
 }

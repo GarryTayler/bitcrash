@@ -11,5 +11,9 @@ export default {
   'disconnect_err_msg': 'You are disconnected now. Please check your network status.',
   'disconnect_err_msg1': 'Network Connection Error',
   'betting_method_err_msg': 'You cannot change the betting method unless you terminate the current betting operation.',
-  'coinslack_msg': 'Your balance is insufficient. You can\'t withdraw now.'
+  'coinslack_msg': 'Your balance is insufficient. You can\'t withdraw now.',
+  'withdraw_address_err_msg': 'Withdrawal Address is required.',
+  'withdraw_amount_err_msg': 'The withdrawal amount should always be greater than zero.',
+  'withdraw_request_success': 'Your withdrawal request has been carried out successfully. Please wait for the manager to make the withdrawal.',
+  'withdraw_confirm_success': 'The withdrawal request is performed.'
 }

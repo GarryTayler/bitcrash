@@ -1,8 +1,5 @@
 
 var db = require('./../../utils/database');
-var dateFormat = require('dateformat');
-var userModel = require('./user');
-
 var bust_game = function (gameInfo) {
     // set game busted ---> because it has bust alrady
     var bustedBets = []
@@ -57,7 +54,6 @@ var bust_game = function (gameInfo) {
         }
     })
 }
-
 var start_game = function (gameInfo, bust) {
     db.cmd(db.statement("update", "crash_game_total", "set " + db.lineClause([
         {
@@ -75,7 +71,6 @@ var start_game = function (gameInfo, bust) {
     ], ","), db.itemClause("ID", gameInfo.ID)))
     return next_game()
 }
-
 var next_game = function () {
     var maxGameNo = 1
     return db.list(db.statement("select max(GAMENO) as GAMENO from", "crash_game_total", '', ''), true).then((maxGameNos) => {
@@ -185,7 +180,6 @@ var cashout = function (userID, gameNo, cashRate, isBot) {
             }
             return retData
         }
-
         // get crash game log for individual user
         if (isBot == false) {
             return db.list(db.statement("select * from", "crash_game_log", "", db.lineClause([
@@ -436,7 +430,7 @@ var getHistory = function(id, start_date, end_date, page, limit) {
     var total = 0
     return db.list(db.statement("select count(*) as total from", "crash_game_total", '', whereItems.length > 0 ? db.lineClause(whereItems, 'and') : '', ''), true).then((rows) => {
         total = rows[0].total
-        return db.list(db.statement("select * from", "crash_game_total", "", whereItems.length > 0 ? db.lineClause(whereItems, 'and') : '', 'ORDER BY ID ASC LIMIT ' + (page - 1) * limit + ',' + (page * limit)), true)
+        return db.list(db.statement("select * from", "crash_game_total", "", whereItems.length > 0 ? db.lineClause(whereItems, 'and') : '', 'ORDER BY ID ASC LIMIT ' + (page - 1) * limit + ',' + (limit)), true)
     }).then((rows) => {
         return {
             total: total,

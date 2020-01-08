@@ -231,7 +231,73 @@ router.post('/deposit/:who', async function(req, res, next) {
         }
     });
 })
-
+router.post('/withdraw_confirm', function(req, res, next) {
+    var who = req.body.who;
+    var withdraw_id = req.body.withdraw_id;
+    txnModel.confirmWithdraw(who , withdraw_id)
+    .then((result) => {
+        res.json({
+            code: 20000, status: 'success',
+            msg : null,
+            data: null
+        });
+    })
+    .catch((err) => {
+        res.json({
+            code: 401, status: 'failed',
+            msg : 'Api request failed.',
+            data: null
+        });
+    })
+})
+router.post('/withdraw_request', function(req, res, next) {
+    var who = req.body.who;
+    var to_address = req.body.to_address;
+    var amount = parseFloat(req.body.amount);
+    var amount_coins = parseInt(amount * Math.pow(10, 6));
+    userModel.getUserBalance({who: who} , function(err , modelResult) {
+        var userBalance = 0;
+        if(modelResult.content.hasOwnProperty('WALLET')) {
+            userBalance = modelResult.content.WALLET;
+        }
+        if(userBalance < amount_coins) {
+            res.json({
+                code: 401, status: 'failed',
+                msg : 'Your balance is insufficient. You can\'t withdraw now.',
+                data: null
+            });
+            return;
+        }
+        variableModel.getWithdrawalFee()
+        .then((withdraw_fee) => {
+            var calc_fee = parseFloat(amount * withdraw_fee / 100).toFixed(8);
+            txnModel.requestWithdraw(who , amount , amount_coins , to_address , calc_fee)
+            .then((result) => {
+                res.json({
+                    code: 20000, status: 'success',
+                    msg : null,
+                    data: {
+                        available_amount: userBalance - amount_coins
+                    }
+                });
+            })
+            .catch((err) => {
+                res.json({
+                    code: 401, status: 'failed',
+                    msg : 'Api request failed.',
+                    data: null
+                });
+            })
+        })
+        .catch((err) => {
+            res.json({
+                code: 401, status: 'failed',
+                msg : 'Api request failed.',
+                data: null
+            });
+        })
+    })
+})
 router.post('/withdraw' , function(req, res, next) {
     var who = req.body.who;
     var to_address = req.body.to_address;
@@ -239,7 +305,6 @@ router.post('/withdraw' , function(req, res, next) {
     var amount_coins = parseInt(Math.pow(10 , 6) * amount);
     var rem_amount = -1 * amount;
     var return_data = true;
-    var mainAddressData;
 
     if(amount >= config.BTC_min_withdraw_amount) {
         if(return_data == true) {
@@ -446,6 +511,17 @@ router.post('/withdraw' , function(req, res, next) {
             msg : "amount should be larger than " + config.BTC_min_withdraw_amount
         });
     }
+})
+
+router.post('/withdraw_log', async function (req, res) {
+    const { start_date, end_date, page, limit } = req.body
+    var i_page = isNaN(parseInt(page)) ? 1 : parseInt(page)
+    var i_limit = isNaN(parseInt(limit)) ? 1 : parseInt(limit)
+    var ret = await txnModel.getWithdrawLog(start_date, end_date, i_page, i_limit)
+    return res.json({
+        code: 20000,
+        data: ret
+    });
 })
 
 module.exports = router;

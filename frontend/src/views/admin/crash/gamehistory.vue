@@ -1,7 +1,6 @@
 <template>
   <div class="admin-page">
     <div class="filter-container">
-
       <b-row>
         <b-col sm="12" md="8" lg="8" xl="8" class="pt-2 pb-2">
           <el-date-picker v-model="listQuery.start_date_obj" type="datetime" format="yyyy-MM-dd" placeholder="Please pick a date" class="mr-2" @change="handleFilter" />

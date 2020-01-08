@@ -9,8 +9,8 @@ export default {
           type: type,
           progressBar: true,
           color: '#BE2739',
-          showDuration: 4000,
-          hideDuration: 6000
+          showDuration: 5000,
+          hideDuration: 7000
         })
       } else {
         this.$toast.success({
@@ -20,8 +20,8 @@ export default {
           type: type,
           progressBar: true,
           color: '#51A351',
-          showDuration: 4000,
-          hideDuration: 6000
+          showDuration: 5000,
+          hideDuration: 7000
         })
       }
     },

@@ -14,6 +14,19 @@ var crypto = require('crypto');
 var rn = require('random-number');
 var request = require('request');
 var config = require('./src/config');
+
+const cors = require('cors');
+const whitelist = ['http://localhost:4202', 'http://localhost:8080'];
+const corsOptions = {
+  credentials: true, // This is important.
+  origin: (origin, callback) => {
+    if(whitelist.includes(origin))
+      return callback(null, true)
+      callback(new Error('Not allowed by CORS'));
+  }
+}
+
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 ///////////// constant from main server
 var gameId = 1, next_gameId = 0, status = 0, firstTimerHandler, bet_max_limit = 100000, bet_min_limit = 1000, jackpot = 40778217, max_payout = 50000000, promo = true;
