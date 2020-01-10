@@ -376,8 +376,15 @@ export function getDateFormat(date) {
   var dd = String(convert_date.getDate()).padStart(2, '0')
   var hh = String(convert_date.getHours()).padStart(2, '0')
   var minute = String(convert_date.getMinutes()).padStart(2, '0')
-  var seconds = String(convert_date.getSeconds()).padStart(2, '0')
-  convert_date = yyyy + '-' + mm + '-' + dd + ' ' + hh + ':' + minute + ':' + seconds
+  convert_date = yyyy + '-' + mm + '-' + dd + ' ' + hh + ':' + minute
   return convert_date
 }
 
+export function getDateFromString(convert_date) {
+  convert_date = new Date(convert_date)
+  var yyyy = convert_date.getFullYear()
+  var mm = String(convert_date.getMonth() + 1).padStart(2, '0')
+  var dd = String(convert_date.getDate()).padStart(2, '0')
+  convert_date = yyyy + '-' + mm + '-' + dd
+  return convert_date
+}

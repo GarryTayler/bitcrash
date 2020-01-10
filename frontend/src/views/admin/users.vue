@@ -89,7 +89,7 @@
 <script>
 import { fetchList, updateUser } from '@/api/user'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
-
+import notification from '@/mixins/notification'
 export default {
   components: {
     Pagination
@@ -104,6 +104,7 @@ export default {
       return statusTextMap[status]
     }
   },
+  mixins: [notification],
   props: {},
   data() {
     return {

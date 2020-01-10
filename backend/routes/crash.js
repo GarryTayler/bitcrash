@@ -18,8 +18,8 @@ router.post('/cashout', async function (req, res) {
     return res.json(ret)
 })
 router.post('/game_start', async function (req, res) {
-    const { game_no, bust } = req.body
-    var ret = await crashModel.game_start(game_no, bust)
+    const { game_no, bust, hash } = req.body
+    var ret = await crashModel.game_start(game_no, bust, hash)
     return res.json(ret)
 })
 router.post('/game_bust', async function (req, res) {
@@ -32,8 +32,8 @@ router.post('/init', async function (req, res) {
     return res.json(ret)
 })
 router.post('/game_finish_start', async function (req, res) {
-    const { game_no, bust } = req.body
-    var ret = await crashModel.game_finish_start(game_no, bust)
+    const { game_no, bust, hash } = req.body
+    var ret = await crashModel.game_finish_start(game_no, bust, hash)
     return res.json(ret)
 })
 router.post('/game_log', async function (req, res) {

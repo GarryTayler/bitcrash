@@ -126,6 +126,7 @@
 import { getHistoryList, getLog } from '@/api/crash'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 import { getFloat2Decimal } from '@/utils/index'
+import notification from '@/mixins/notification'
 export default {
   components: {
     Pagination
@@ -135,6 +136,7 @@ export default {
       return getFloat2Decimal(profit)
     }
   },
+  mixins: [notification],
   props: {},
   data() {
     return {

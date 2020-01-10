@@ -36,6 +36,11 @@ export const constantRoutes = [
         path: '/faq',
         component: () => import('../views/faq.vue'),
         meta: { title: 'FAQ' }
+      },
+      {
+        path: '/fairness',
+        component: () => import('../views/fairness.vue'),
+        meta: { title: 'Provably Fair' }
       }
     ]
   },
@@ -65,11 +70,11 @@ export const adminChildRoutes = [
     }
   },
   {
-    path: 'referral',
-    component: () => import('@/views/admin/referral'),
-    name: 'Referral',
+    path: 'setting',
+    component: () => import('@/views/admin/setting'),
+    name: 'Setting',
     meta: {
-      title: 'Referral',
+      title: 'Setting',
       icon: 'eye-open'
     }
   },

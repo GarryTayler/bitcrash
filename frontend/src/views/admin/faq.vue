@@ -28,13 +28,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="Type">
-        <template slot-scope="scope">
-          <span>{{ scope.row.type | typeFilter }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column width="100px" align="center" label="Question">
+      <el-table-column min-width="100px" align="center" label="Question">
         <template slot-scope="scope">
           <span>{{ scope.row.question }}</span>
         </template>
@@ -51,11 +45,6 @@
 
     <el-dialog :title="dlgTextMap[dlgStatus]" :visible.sync="dlgVisible">
       <el-form ref="temp" :rules="rules" :model="temp" label-position="left" label-width="130px" style="width: 400px margin-left:50px">
-        <el-form-item label="Type" prop="type">
-          <el-select v-model="temp.type" placeholder="Type" clearable style="width: 130px">
-            <el-option v-for="item in typeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
-          </el-select>
-        </el-form-item>
         <el-form-item label="Question" prop="question">
           <el-input v-model="temp.question" placeholder="Input Question" :rows="3" type="textarea" />
         </el-form-item>
@@ -68,7 +57,7 @@
           Cancel
         </el-button>
         <el-button type="primary" @click="dlgStatus==='create'?createFaq():updateFaq()">
-          Ok
+          Add Question
         </el-button>
       </div>
     </el-dialog>
@@ -76,6 +65,7 @@
 </template>
 
 <script>
+import global from '@/mixins/global'
 import { getList, addItem } from '@/api/faq'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 const typeOptions = [
@@ -92,6 +82,7 @@ export default {
       return typeOptions[type].display_name
     }
   },
+  mixins: [global],
   props: {},
   data() {
     const validateRequire = (rule, value, callback) => {
@@ -187,8 +178,8 @@ export default {
               this.dlgVisible = false
               this.getList()
             })
-            .catch(err => {
-              console.log(err)
+            .catch(() => {
+              this.showToast('Error', 'Network connection error.', 'error')
               this.dlgVisible = false
             })
         }

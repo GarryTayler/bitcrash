@@ -183,12 +183,14 @@ router.post('/get_user_referralcode' , async function (req, res) {
 router.post('/get_user_referral_value' , async function (req, res) {
   try {
     const referral_value = await variableModel.getReferralPercentage();
+    const withdraw_fee = await variableModel.getWithdrawalFee();
     return res.json({
       code: 20000,
       message: null,
       status: 'success',
       data: {
-        referral_value : referral_value
+        referral_value : referral_value,
+        withdraw_fee : withdraw_fee
       }
     })
   } catch (err) {
@@ -254,5 +256,24 @@ router.post('/update_referral_value' , async function (req, res) {
     })
   }
 });
+
+router.post('/update_withdrawal_fee' , async function(req , res) {
+    try {
+      const return_val = await variableModel.updateWithdrawalFee(req.body.withdraw_fee);
+      return res.json({
+        code: 20000,
+        message: null,
+        status: 'success',
+        data: null
+      })
+    } catch (err) {
+      return res.json({
+        code: 401,
+        message: null,
+        status: 'fail',
+        data: null
+      })
+    }
+})
 
 module.exports = router;

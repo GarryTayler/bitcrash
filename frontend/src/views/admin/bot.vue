@@ -93,11 +93,12 @@
 <script>
 import { fetchList, updateBot, addBot } from '@/api/bot'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
-
+import notification from '@/mixins/notification'
 export default {
   components: {
     Pagination
   },
+  mixins: [notification],
   props: {},
   data() {
     const validateRequire = (rule, value, callback) => {

@@ -14,6 +14,8 @@ var crypto = require('crypto');
 var rn = require('random-number');
 var request = require('request');
 var config = require('./src/config');
+var engine = require('./game_lib');
+
 
 const cors = require('cors');
 const whitelist = ['http://localhost:4202', 'http://localhost:8080'];
@@ -36,17 +38,16 @@ var timeInterval = 10, resetGameTime = 0, stopGameG = false;
 var game_play_list = [], bots_list = [], cashout_list = [], socket_list = [], auto_bet_play_list = [];
 var startTime = Date.now(), globalVariable = 0, elapsed_time = 0; prev_time = 0;
 var crash = 283, hash = 'This is our server seed and how do you think our server seed , can you give me your opinion?';
-var clientSeed = '000000000000000007a9a31ff7f07463d91af6b5454241d5faf282e5e0fe1b3a';
+var clientSeed = '828384856628';
 var tick;
-
 // For wait time synchronize
 var wait_time_left = 0;
-
 //generate hash and get crash from hash
-var genGameHash = function (serverSeed) {
+/*var genGameHash = function (serverSeed) {
 	return crypto.createHash('sha256').update(serverSeed).digest('hex');
-};
-function gameResult(seed, salt) {
+};*/
+
+/*function gameResult(seed, salt) {
 	const nBits = 52 // number of most significant bits to use
 	// 1. HMAC_SHA256(key=salt, message=seed)
 	const hmac = crypto.createHmac("sha256", salt)
@@ -62,7 +63,7 @@ function gameResult(seed, salt) {
 	// 5. return max(trunc(X), 100)
 	const result = Math.floor(X)
 	return Math.max(1, result / 100)
-}
+}*/
 //
 app.post('/set_config', function (req, res) {
 	bet_min_limit = req.body.bet_min_limit;
@@ -85,13 +86,14 @@ request.post(
 			stopGameG = true;
 	}
 )
+
+/*
 function generateBustValue(currentHash)
 {
 	currentHash = genGameHash(currentHash);
 	finalBust = Math.floor(gameResult(clientSeed , currentHash) * 100);
-
 	return {"hash": currentHash ,  "crash": finalBust};
-}
+} */
 
 io.on('connection', function(socket){
 
@@ -465,9 +467,13 @@ function addBot(bot) {
 
 function startGame() {
 	// when game starts, we calc crash value first
-	crash_obj = generateBustValue(hash);
-	crash = crash_obj['crash'];
-	hash = crash_obj['hash'];
+	//impact
+	//crash_obj = generateBustValue(hash);
+	//crash = crash_obj['crash'];
+	//hash = crash_obj['hash'];
+	
+
+
 	if (crash == 100) {
 
 		// we don't need to start game, because it finishes when it starts
@@ -476,7 +482,7 @@ function startGame() {
 			{
 				url: mainServerUrl + 'game_finish_start',
 				form: {
-					game_no: gameId, bust: crash
+					game_no: gameId, bust: crash, hash: hash
 				}
 			},
 			function(eror, response, body) {
@@ -512,7 +518,8 @@ function startGame() {
 			url: mainServerUrl + "game_start",
 			form: {
 				game_no: gameId,
-				bust: crash
+				bust: crash,
+				hash: hash
 			}
 		},
 		function(error, response, body) {
@@ -726,32 +733,43 @@ function waitGame() {
 			}
 		}, Math.random() * 4500);
 	}
-	io.emit('onMessage',
-		{
-			code: 'WaitGame',
-			current_users: game_play_list,
-			game_id: gameId,
-			time_left: 5000
-		}
-	);
-	//For wait time synchronize
-	wait_time_left = 5000;
-	setTimeout(function() {
-		sendWaitTime();
-	}, 500);
-	setTimeout(function() {
-		startGame();
-	}, 5000);
-	//remove autobet disconnected player
-	var store_index = 0;
-	for( var i = 0; i < auto_bet_play_list.length; i ++) {
-		if(auto_bet_play_list[store_index].disconnected && (Math.round(new Date().getTime() / 1000) - auto_bet_play_list[store_index].disconnected_timestamp > 5)) {
-			auto_bet_play_list.splice(store_index , 1)
-		}
+
+	var afterDo = function(hash_value , err) {
+		if(err)
+			throw err;
 		else {
-			store_index ++;
+			hash = hash_value;
+			crash = Math.floor(engine.gameResult(clientSeed + '-' + gameId , hash) * 100);
+			//return {"hash": currentHash ,  "crash": finalBust};
+			io.emit('onMessage',
+				{
+					code: 'WaitGame',
+					current_users: game_play_list,
+					game_id: gameId,
+					time_left: 5000
+				}
+			);
+			//For wait time synchronize
+			wait_time_left = 5000;
+			setTimeout(function() {
+				sendWaitTime();
+			}, 500);
+			setTimeout(function() {
+				startGame();
+			}, 5000);
+			//remove autobet disconnected player
+			var store_index = 0;
+			for( var i = 0; i < auto_bet_play_list.length; i ++) {
+				if(auto_bet_play_list[store_index].disconnected && (Math.round(new Date().getTime() / 1000) - auto_bet_play_list[store_index].disconnected_timestamp > 5)) {
+					auto_bet_play_list.splice(store_index , 1)
+				}
+				else {
+					store_index ++;
+				}
+			}
 		}
 	}
+	engine.getGameHash('crash' , gameId , afterDo);
 }
 
 //For wait time synchronize

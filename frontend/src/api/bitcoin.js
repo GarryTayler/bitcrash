@@ -31,3 +31,19 @@ export function getWithdrawList(data) {
     data
   })
 }
+
+export function getDepositList(data) {
+  return request({
+    url: 'api/btc/deposit_log',
+    method: 'post',
+    data
+  })
+}
+
+export function isWithdrawRequest(data) {
+  return request({
+    url: 'api/btc/is_withdraw',
+    method: 'post',
+    data
+  })
+}

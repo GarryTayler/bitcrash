@@ -54,7 +54,7 @@ var bust_game = function (gameInfo) {
         }
     })
 }
-var start_game = function (gameInfo, bust) {
+var start_game = function (gameInfo, bust, hash) {
     db.cmd(db.statement("update", "crash_game_total", "set " + db.lineClause([
         {
             key: "STATE",
@@ -63,6 +63,10 @@ var start_game = function (gameInfo, bust) {
         {
             key: "BUST",
             val: db.convFloat(bust)
+        },
+        {
+            key: "HASH",
+            val: hash
         },
         {
             key: "STARTTIME",
@@ -266,7 +270,7 @@ var cashout = function (userID, gameNo, cashRate, isBot) {
         return retData
     })
 }
-var game_start = function (gameNo, gameBust) {
+var game_start = function (gameNo, gameBust, hash) {
     var retData = null
     return db.list(db.statement("select * from", "crash_game_total", "", db.itemClause('GAMENO', gameNo)), true).then((gameInfo) => {
         if (gameInfo == null || gameInfo.length <= 0 || gameInfo[0].STATE != 'WAITING') {
@@ -277,7 +281,7 @@ var game_start = function (gameNo, gameBust) {
             }
             return retData
         }
-        return start_game(gameInfo[0], gameBust)
+        return start_game(gameInfo[0], gameBust, hash)
     }).then((nextGameNo) => {
         if (retData != null) {
             return retData
@@ -370,7 +374,7 @@ var game_init = function () {
     })
 }
 
-var game_finish_start = function (gameNo, gameBust) {
+var game_finish_start = function (gameNo, gameBust, hash) {
     var retData = null
     var gameInfo = []
     return db.list(db.statement("select * from", "crash_game_total", "", db.itemClause('GAMENO', gameNo)), true).then((_gameInfo) => {
@@ -383,7 +387,7 @@ var game_finish_start = function (gameNo, gameBust) {
             return retData
         }
         gameInfo = _gameInfo
-        return start_game(gameInfo[0], gameBust)
+        return start_game(gameInfo[0], gameBust, hash)
     }).then((nextGameNo) => {
         if (retData != null) {
             return retData

@@ -1,3 +1,4 @@
+/* eslint-disable vue/require-v-for-key */
 @@ -0,0 +1,86 @@
 <template>
   <div>
@@ -8,7 +9,10 @@
         <font-awesome-icon v-if="!data.collapsed" icon="minus" />
       </button>
     </div>
-    <span v-if="data.collapsed == false" class="content-text">{{ data.answer }}</span>
+    <span v-if="data.collapsed == false" class="content-text">
+      <!-- <p v-html="data.answer" /> -->
+      <div v-for="line in data.answer.split('\n')" :key="line">{{ line }}<br></div>
+    </span>
   </div>
 </template>
 

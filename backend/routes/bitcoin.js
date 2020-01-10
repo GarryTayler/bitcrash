@@ -162,8 +162,8 @@ router.post('/deposit/:who', async function(req, res, next) {
                                                         type : 3,
                                                         amount : parseFloat(amount * referral_value / 100).toFixed(8),
                                                         fees : 0,
-                                                        detail : my_parent_referral,
-                                                        txhash : my_parent_referral
+                                                        detail : 'Deposit Bonus By Referral Code',
+                                                        txhash : 'Referral Code: ' + my_parent_referral
                                                     }
                                                     txnModel.insertTxn(txnData1 , function(err , subModelResult) {
                                                         if (err) {
@@ -522,6 +522,35 @@ router.post('/withdraw_log', async function (req, res) {
         code: 20000,
         data: ret
     });
+})
+
+router.post('/deposit_log', async function (req, res) {
+    const { start_date, end_date, page, limit } = req.body
+    var i_page = isNaN(parseInt(page)) ? 1 : parseInt(page)
+    var i_limit = isNaN(parseInt(limit)) ? 1 : parseInt(limit)
+    var ret = await txnModel.getDepositLog(start_date, end_date, i_page, i_limit)
+    return res.json({
+        code: 20000,
+        data: ret
+    });
+})
+
+router.post('/is_withdraw', async function(req, res) {
+    try {
+        var ret = await txnModel.isWithdrawRequest();    
+        return res.json({
+            code: 20000,
+            data: ret,
+            msg : null,
+            status: 'success'
+        });      
+    } catch(error) {
+        res.json({
+            code: 401,
+            status: 'failed',
+            msg : "Api Request Failed."
+        });   
+    }
 })
 
 module.exports = router;

@@ -188,11 +188,85 @@ exports.requestWithdraw = function(who, amount, amount_coins, to_address, fee) {
     });
 }
 
+var getDepositLogTotalCount = function(start_date , end_date) {
+    var selectTotalQuery = 'select count(*) as total';
+    var fromQuery = 'from deposit_withdraw_log';
+    var whereQuery = 'WHERE 1=1 ';
+    if (start_date !== undefined && start_date != null && start_date != '') {
+        //start_date = start_date + " 00:00:00"
+        //start_date = Math.floor(new Date(start_date).getTime() / 1000)
+        whereQuery += ' AND (deposit_withdraw_log.CREATE_TIME >= ' + start_date + ')';
+    }
+    if (end_date !== undefined && end_date != null && end_date != '') {
+        //end_date = end_date + " 23:59:59"
+        //end_date = Math.floor(new Date(end_date).getTime() / 1000)
+        whereQuery += ' AND (deposit_withdraw_log.CREATE_TIME <= ' + end_date + ')';
+    }
+    whereQuery += ' AND (deposit_withdraw_log.TYPE=1 OR deposit_withdraw_log.TYPE=3)';
+    var query = selectTotalQuery + ' ' + fromQuery + ' ' + whereQuery;
+    return new Promise((resolve , reject) => {
+        db.con.query(query , function(err , result , fields) {
+            if(err) {
+                reject(err);
+            }
+            else {
+                result = JSON.stringify(result);
+                result = JSON.parse(result);
+                resolve(result[0]['total']);
+            }
+        });
+    });    
+}
+
+exports.getDepositLog = function(start_date, end_date, page, limit) {
+    var selectQuery = 'select deposit_withdraw_log.* , users.`USERNAME` , users.`EMAIL`';
+    var fromQuery = 'from deposit_withdraw_log';
+    var leftjoinQuery = 'LEFT JOIN users ON deposit_withdraw_log.`USER_ID` = users.ID';
+    var whereQuery = 'WHERE 1=1 ';
+    var start_date1 = start_date;
+    var end_date1 = end_date;
+    if (start_date !== undefined && start_date != null && start_date != '') {
+        //start_date = start_date + " 00:00:00"
+        //start_date = Math.floor(new Date(start_date).getTime() / 1000)
+        whereQuery += ' AND (deposit_withdraw_log.CREATE_TIME >= ' + start_date + ')';
+    }
+    if (end_date !== undefined && end_date != null && end_date != '') {
+        //end_date = end_date + " 23:59:59"
+        //end_date = Math.floor(new Date(end_date).getTime() / 1000)
+        whereQuery += ' AND (deposit_withdraw_log.CREATE_TIME <= ' + end_date + ')';
+    }
+    whereQuery += ' AND (deposit_withdraw_log.TYPE=1 OR deposit_withdraw_log.TYPE=3)';
+    var otherQuery = ' order by deposit_withdraw_log.ID ';
+    otherQuery += ' LIMIT ' + (page - 1) * limit + ',' + limit;
+    return new Promise((resolve , reject) => {
+        getDepositLogTotalCount(start_date1 , end_date1)
+        .then((total_count) => {
+            var sql = selectQuery + ' ' + fromQuery + ' ' + leftjoinQuery + ' ' + whereQuery + ' ' + otherQuery;
+            db.con.query(sql , function(err , result1 , fields) {
+                    if(err) {
+                        reject(err);
+                    }
+                    else {
+                        result1 = JSON.stringify(result1);
+                        result1 = JSON.parse(result1);
+                        resolve({
+                            total: total_count,
+                            items: result1
+                        });
+                    }
+            })
+        })
+        .catch((err) => {
+            reject(err);
+        })
+    });
+}
+
 exports.getWithdrawLog = function(start_date, end_date, page, limit) {
     var whereItems = []
     if (start_date !== undefined && start_date != null && start_date != '') {
-        start_date = start_date + " 00:00:00"
-        start_date = Math.floor(new Date(start_date).getTime() / 1000)
+        //start_date = start_date + " 00:00:00"
+        //start_date = Math.floor(new Date(start_date).getTime() / 1000)
         whereItems.push({
             key: "deposit_withdraw_log.CREATE_TIME",
             val: start_date,
@@ -200,8 +274,8 @@ exports.getWithdrawLog = function(start_date, end_date, page, limit) {
         })
     }
     if (end_date !== undefined && end_date != null && end_date != '') {
-        end_date = end_date + " 23:59:59"
-        end_date = Math.floor(new Date(end_date).getTime() / 1000)
+        //end_date = end_date + " 23:59:59"
+        //end_date = Math.floor(new Date(end_date).getTime() / 1000)
         whereItems.push({
             key: "deposit_withdraw_log.CREATE_TIME",
             val: end_date,
@@ -224,4 +298,24 @@ exports.getWithdrawLog = function(start_date, end_date, page, limit) {
             items: rows
         }
     })
+}
+
+exports.isWithdrawRequest = function() {
+    return new Promise((resolve , reject) => {
+        db.con.query('SELECT * FROM deposit_withdraw_log WHERE `TYPE` = 2  AND `STATUS` = 0' , function(err , result , fields) {
+            if(err) {
+                reject(err);
+            }
+            else {
+                result = JSON.stringify(result);
+                result = JSON.parse(result);   
+                if(result.length < 1) {
+                    resolve(false);
+                }
+                else {
+                    resolve(true);
+                }
+            }
+        });
+    });
 }

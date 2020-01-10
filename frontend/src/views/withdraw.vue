@@ -182,6 +182,10 @@ export default {
       requestWithdraw({ who: this.user_id, to_address: this.withdraw_address, amount: this.withdraw_btc }).then(response => {
         if (response.status === 'success') {
           this.showToast('Success', message.withdraw_request_success, 'success')
+          this.withdraw_coins = 0
+          this.withdraw_btc = 0
+          this.withdraw_fee = 0
+          this.withdraw_address = ''
           this.$store.dispatch('user/getInfo', this.token)
         } else {
           this.showToast('Error', response.msg, 'error')

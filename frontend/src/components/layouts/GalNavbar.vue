@@ -35,7 +35,7 @@
             <img src="@/assets/img/ic_referral.png" class="mr-sm">
             Referral
           </b-nav-item>
-          <b-nav-item>
+          <b-nav-item href="/#/fairness" :class="{'link-active': isFairnessActive}">
             <img src="@/assets/img/ic_referral.png" class="mr-sm">
             Provably Fair
           </b-nav-item>
@@ -102,6 +102,11 @@ export default {
     isReferralActive: {
       get() {
         return this.$route.path === '/referral'
+      }
+    },
+    isFairnessActive: {
+      get() {
+        return this.$route.path === '/fairness'
       }
     }
   },

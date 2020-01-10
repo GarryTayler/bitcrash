@@ -221,6 +221,7 @@ export default {
   background: rgba(0, 0, 0, 0.2);
 }
 .chat {
+  z-index: 10000;
   width: 100%;
   width: $chat-width;
   height: 100%;

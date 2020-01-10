@@ -2,10 +2,7 @@
 <template>
   <div>
     <el-row>
-      <el-col :xs="24" :sm="24" :md="8" :lg="8" class="m-b-sm">
-        <span class="title-text">{{ data.title }}</span>
-      </el-col>
-      <el-col :xs="24" :sm="24" :md="16" :lg="16">
+      <el-col :xs="24" :sm="24" :md="24" :lg="24">
         <div v-for="item in data.items" :key="item.id" class="content">
           <faq-item :data="item" />
           <div class="seperator" />

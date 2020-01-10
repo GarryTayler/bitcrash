@@ -16,6 +16,9 @@
 import { AppMain, Navbar, Sidebar } from './components'
 import ResizeMixin from './mixin/ResizeHandler'
 import { mapState } from 'vuex'
+import { isWithdrawRequest } from '@/api/bitcoin'
+import message from '@/filters/message'
+import notification from '@/mixins/notification'
 
 export default {
   name: 'AdminLayout',
@@ -27,7 +30,7 @@ export default {
     Sidebar
     // TagsView
   },
-  mixins: [ResizeMixin],
+  mixins: [ResizeMixin, notification],
   computed: {
     ...mapState({
       sidebar: state => state.app.sidebar,
@@ -42,7 +45,24 @@ export default {
       }
     }
   },
+  created() {
+    var self = this
+    setInterval(() => {
+      self.check()
+    }, 30000)
+  },
   methods: {
+    check() {
+      if (this.$route.path === '/admin/wallet/withdraw') { return }
+      isWithdrawRequest({}).then(response => {
+        if (response.status === 'success' && response.data) {
+          this.showNotification('Notification', message.withdrawCheck, 'success')
+        }
+      })
+        .catch(() => {
+          this.showNotification('Error', message.disconnect_err_msg1, 'error')
+        })
+    },
     handleClickOutside() {
       this.$store.dispatch('app/closeSideBar', { withoutAnimation: false })
     }

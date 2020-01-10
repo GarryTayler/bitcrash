@@ -15,5 +15,6 @@ export default {
   'withdraw_address_err_msg': 'Withdrawal Address is required.',
   'withdraw_amount_err_msg': 'The withdrawal amount should always be greater than zero.',
   'withdraw_request_success': 'Your withdrawal request has been carried out successfully. Please wait for the manager to make the withdrawal.',
-  'withdraw_confirm_success': 'The withdrawal request is performed.'
+  'withdraw_confirm_success': 'The withdrawal request is performed.',
+  'withdrawCheck': 'There\'s a withdrawal request that hasn\'t been processed yet. Check it out.'
 }

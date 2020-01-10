@@ -19,7 +19,6 @@ import BitCrashCard from '@/components/crashTable/BitCrashCard.vue'
 import FaqSection from '@/components/faq/FaqSection.vue'
 import { getList } from '@/api/faq'
 // import { getNumberFormat, getFloat2Decimal } from '@/utils'
-
 export default {
   name: 'Faq',
   components: {
@@ -114,8 +113,12 @@ export default {
     width: 100%;
 }
 .card-content {
-  padding-left: 35px;
-  padding-right: 35px;
+  padding-left: 50px;
+  padding-right: 50px;
+  @include media-breakpoint-down(sm) {
+    padding-left: 30px;
+    padding-right: 30px;
+  }
   padding-top: 55px;
   padding-bottom: 55px;
 }
@@ -126,29 +129,27 @@ export default {
   padding-top: 10px;
   padding-bottom: 10px;
 }
+// responsive
 .content-padding {
-  padding-left: 20px;
+  padding-left: 50px;
   padding-top: 20px;
-  padding-right: calc(20px + #{$chat-width} + #{$scrollbar-width});
+  padding-right: calc(50px + #{$chat-width} + #{$scrollbar-width});
   @include media-breakpoint-down(md) {
     padding-left: 20px;
     padding-right: 20px;
   }
   padding-bottom: 50px;
-  .p-l {
-  }
 }
-@media (max-width: 320px)
+@media (max-width: 991.98px) and (min-width: 321px)
 {
   .content-padding {
-    padding-right: calc(20px + 260px + #{$scrollbar-width});
+    padding-right: 20px;
   }
 }
-
-@media (max-width: 1600px) and (min-width: 321px)
+@media (max-width: 1600px) and (min-width: 992px)
 {
   .content-padding {
-    padding-right: calc(20px + 300px + #{$scrollbar-width});
+    padding-right: calc(50px + 300px + #{$scrollbar-width});
   }
 }
 

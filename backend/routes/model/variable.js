@@ -43,3 +43,16 @@ exports.updateReferralPercentage = function(value) {
     })
 }
 
+exports.updateWithdrawalFee = function(value) {
+    var sql = "UPDATE variable SET VALUE = '" + value + "' WHERE VARIABLE = 'WITHDRAWAL_FEE'";
+    return new Promise((resolve , reject) => {
+        db.con.query(sql , function(err , result) {
+            if(err)
+                reject(err)
+            else {
+                resolve(true);
+            }
+        });
+    })   
+}
+
