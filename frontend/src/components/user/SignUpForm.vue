@@ -94,7 +94,7 @@ export default {
         signup(data).then(response => {
           if (response.code !== 20000) {
             this.hideOverlay(loader)
-            this.showToast('Signup Failed', response.msg, 'error')
+            this.showToast('Signup Failed', response.message, 'error')
             // Error
           } else {
             this.$store

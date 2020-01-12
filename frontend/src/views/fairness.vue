@@ -140,7 +140,6 @@ export default {
   created: function() {
   },
   mounted: function() {
-    console.log(this.code)
   },
   methods: {
   }

@@ -2,8 +2,20 @@ var express = require('express');
 var router = express.Router();
 var model = require('./model/user');
 var variableModel = require('./model/variable');
+var txnModel = require('./model/txn')
 var config = require('../src/config');
 var rn = require('random-number');
+var md5 = require('md5');
+
+//new package
+var fs = require("fs")
+var multer = require("multer")
+var path = require("path");
+const upload = multer({
+  dest: config.IMAGE_TEMP_DEST
+  // you might also want to set some limits: https://github.com/expressjs/multer#limits
+});
+
 router.post('/login', function (req, res) {
   const { search_key, password, token } = req.body
   var data = {}
@@ -77,6 +89,21 @@ var generateReferralCode = function (length = 6) {
   return randomString;
 }
 
+var generateFileName = (length = 20) => {
+   var result           = '';
+   var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+   var charactersLength = characters.length;
+   for ( var i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+   }
+   return result;
+}
+
+var getFileName = (upload_path) => {
+  var res = upload_path.split("/")
+  return res[res.length-1]
+}
+
 router.post('/signup', async function (req, res) {
   const { username, email, password, referral_code_p } = req.body
   var referral_code = ''
@@ -86,7 +113,7 @@ router.post('/signup', async function (req, res) {
       return res.json({
         code: 50000,
         status: 'fail',
-        msg: 'This username is already registered.',
+        message: 'This username is already registered.',
         data: null
       });
     }
@@ -95,7 +122,7 @@ router.post('/signup', async function (req, res) {
       return res.json({
         code: 50000,
         status: 'fail',
-        msg: 'This email is already registered.',
+        message: 'This email is already registered.',
         data: null
       });
     }
@@ -109,7 +136,7 @@ router.post('/signup', async function (req, res) {
     if (ret.code == false) {
       return res.json({
         code: 50000,
-        msg: 'Signup Failed',
+        message: 'Signup Failed',
         data: 'Signup Failed'
       });
     } else {
@@ -125,7 +152,7 @@ router.post('/signup', async function (req, res) {
     return res.json({
       code: 401,
       status: 'fail',
-      msg: null,
+      message: 'Api Request Failed.',
       data: null
     });
   }
@@ -173,7 +200,7 @@ router.post('/get_user_referralcode' , async function (req, res) {
   } catch (err) {
     return res.json({
       code: 401,
-      message: null,
+      message: 'Api Request Failed.',
       status: 'fail',
       data: null
     })
@@ -196,18 +223,49 @@ router.post('/get_user_referral_value' , async function (req, res) {
   } catch (err) {
     return res.json({
       code: 401,
-      message: null,
+      message: 'Api Request Failed.',
       status: 'fail',
       data: null
     })
   }
 });
+
+router.post('/get_profile_page_data' , async function (req, res) {
+  try {
+    const user_profile = await model.getUserProfile(req.body.user_id)
+    const deposit_sum = await txnModel.getDepositSum(req.body.user_id)
+    const withdraw_sum = await txnModel.getWithdrawSum(req.body.user_id)
+    return res.json({
+      code: 20000,
+      message: null,
+      status: 'success',
+      data: {
+        withdraw_sum : withdraw_sum,
+        deposit_sum : deposit_sum,
+        avatar: user_profile[0].AVATAR,
+        wallet: user_profile[0].WALLET,
+        join_time: user_profile[0].CREATE_TIME,
+        user_name: user_profile[0].USERNAME,
+        email: user_profile[0].EMAIL 
+      }
+    })
+
+  } catch(err) {
+      return res.json({
+        code: 401,
+        message: 'Api Request Failed.',
+        status: 'fail',
+        data: null
+      }) 
+  }
+})
+
 router.post('/get_withdraw_page_data' , function (req, res) {
   model.getUserBalance({who: req.body.user_id} , function (err, modelResult) {
       if(err) {
         return res.json({
           code: 401,
-          message: null,
+          message: 'Api Request Failed.',
           status: 'fail',
           data: null
         })
@@ -231,7 +289,7 @@ router.post('/get_withdraw_page_data' , function (req, res) {
       .catch((err) => {
           return res.json({
             code: 401,
-            message: null,
+            message: 'Api Request Failed.',
             status: 'fail',
             data: null
           })
@@ -250,7 +308,7 @@ router.post('/update_referral_value' , async function (req, res) {
   } catch (err) {
     return res.json({
       code: 401,
-      message: null,
+      message: 'Api Request Failed.',
       status: 'fail',
       data: null
     })
@@ -269,11 +327,178 @@ router.post('/update_withdrawal_fee' , async function(req , res) {
     } catch (err) {
       return res.json({
         code: 401,
-        message: null,
+        message: 'Api Request Failed.',
         status: 'fail',
         data: null
       })
     }
 })
+
+router.post('/update_username' , async function(req , res) {
+  try {
+    const { username , user_id } = req.body
+    var user_info = await model.checkUsername(username)
+    if(user_info.length > 0) {
+      return res.json({
+        code: 50000,
+        status: 'fail',
+        message: 'This username is already registered.',
+        data: null
+      });
+    }
+    else {
+      var ret_code = await model.updateUserProfile({USERNAME: username} , {ID: user_id});
+      return res.json({
+        code: 20000,
+        message: null,
+        status: 'success',
+        data: null
+      })
+    }
+  } catch(error) {
+      return res.json({
+        code: 401,
+        message: 'Api Request Failed.',
+        status: 'fail',
+        data: null
+      })
+  }
+}) 
+
+router.post('/update_useremail' , async function(req , res) {
+  try {
+    const { useremail , user_id } = req.body
+    var user_info = await model.checkEmail(useremail)
+    if(user_info.length > 0) {
+      return res.json({
+        code: 50000,
+        status: 'fail',
+        message: 'This email is already registered.',
+        data: null
+      });
+    }
+    else {
+      var ret_code = await model.updateUserProfile({EMAIL: useremail} , {ID: user_id});
+      return res.json({
+        code: 20000,
+        message: null,
+        status: 'success',
+        data: null
+      })
+    }
+  } catch(error) {
+      return res.json({
+        code: 401,
+        message: 'Api Request Failed.',
+        status: 'fail',
+        data: null
+      })
+  }
+})
+
+router.post('/update_password' , function(req , res) {
+  const {old_password , new_password , user_id} = req.body
+
+  model.getUserInfo({ password: old_password , user_id: user_id }, function (rows) {
+    if(rows.length < 1) {
+      return res.json({
+        code: 50000,
+        status: 'fail',
+        message: 'Your current password is incorrect.',
+        data: null
+      }); 
+    }
+    model.updateUserProfile({password: md5(new_password)} , {ID: user_id})
+    .then((result) => {
+        return res.json({
+          code: 20000,
+          message: null,
+          status: 'success',
+          data: null
+        })   
+    })
+    .catch((err) => {
+        return res.json({
+          code: 401,
+          message: 'Api Request Failed.',
+          status: 'fail',
+          data: null
+        })   
+    })
+  });
+})
+
+router.post('/update_avatar' , async function(req , res) {
+  try {
+    const { avatar , user_id } = req.body
+    //getFileName
+    var avatar_link = await model.getUserAvatarImage(user_id); 
+    var fileName = getFileName(avatar_link)
+    if(fileName !== 'general_profile.png') {
+      fs.unlink(config.AVATAR_STORE_PATH + fileName , (err) => {
+      });
+    }
+    var ret_code = await model.updateUserProfile({AVATAR: avatar} , {ID: user_id});
+    return res.json({
+      code: 20000,
+      message: null,
+      status: 'success',
+      data: null
+    })
+  } catch(error) {
+      return res.json({
+        code: 401,
+        message: 'Api Request Failed.',
+        status: 'fail',
+        data: null
+      })
+  }
+})
+
+router.post("/upload_avatar",
+  upload.single("file" /* name attribute of <file> element in your form */),
+  (req, res) => {
+    const tempPath = req.file.path;
+    const imageFileName = generateFileName() + path.extname(req.file.originalname).toLowerCase();
+    const targetPath = config.AVATAR_STORE_PATH + imageFileName;
+    if (path.extname(req.file.originalname).toLowerCase() === ".png" || path.extname(req.file.originalname).toLowerCase() === ".jpg") {
+      fs.rename(tempPath, targetPath, err => {
+          if (err) {
+            return res.json({
+              code: 401,
+              message: 'Api Request Failed.',
+              status: 'fail',
+              data: null
+            })         
+          } 
+          return res.json({
+            code: 20000,
+            message: null,
+            status: 'success',
+            data: {
+              avatar: config.HOST + '/img/uploads/avatar/' + imageFileName
+            }
+          })   
+      });
+    } else {
+      fs.unlink(tempPath, err => {
+        if (err)  {
+          return res.json({
+              code: 401,
+              message: 'Api Request Failed.',
+              status: 'fail',
+              data: null
+          })         
+        }
+        return res.json({
+            code: 500,
+            message: 'Only .png,jpg files are allowed!',
+            status: 'fail',
+            data: null
+        })   
+      });
+    }
+  }
+);
 
 module.exports = router;

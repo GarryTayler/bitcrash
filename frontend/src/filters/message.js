@@ -16,5 +16,12 @@ export default {
   'withdraw_amount_err_msg': 'The withdrawal amount should always be greater than zero.',
   'withdraw_request_success': 'Your withdrawal request has been carried out successfully. Please wait for the manager to make the withdrawal.',
   'withdraw_confirm_success': 'The withdrawal request is performed.',
-  'withdrawCheck': 'There\'s a withdrawal request that hasn\'t been processed yet. Check it out.'
+  'withdrawCheck': 'There\'s a withdrawal request that hasn\'t been processed yet. Check it out.',
+  'profile_username_change_success': 'Your profile username is changed successfully.',
+  'profile_useremail_change_success': 'Your profile email is changed successfully.',
+  'profile_password_err_msg1': 'You should input your old password.',
+  'profile_password_err_msg2': 'You should input your new password.',
+  'profile_password_err_msg3': 'Please confirm your new password.',
+  'profile_password_change_success': 'Your new password is changed successfully.',
+  'profile_avatar_change_success': 'Your avatar is changed successfully.'
 }

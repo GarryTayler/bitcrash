@@ -28,7 +28,10 @@ var config = {
     BLOCKCYPHER_CALLBACK_HOST_URL : "http://" + base_domain + ":" + main_port + "/",
     BTC_withdraw_fee: 0.00005,
     BTC_min_withdraw_amount: 0.0001,
-    MAIN_REFERRAL_PREFIX: "https://" + base_domain + "/#/home"
+    MAIN_REFERRAL_PREFIX: "https://" + base_domain + "/#/home",
+    HOST: "https://" + base_domain,
+    IMAGE_TEMP_DEST: "/var/www/html/bitcrash/temp",
+    AVATAR_STORE_PATH: "/var/www/html/bitcrash/img/uploads/avatar/"
 }
 
 module.exports = config

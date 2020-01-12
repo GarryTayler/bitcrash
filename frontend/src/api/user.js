@@ -86,3 +86,43 @@ export function getWithdrawPageData(data) {
     data
   })
 }
+
+export function getProfilePageData(data) {
+  return request({
+    url: 'api/user/get_profile_page_data',
+    method: 'post',
+    data
+  })
+}
+
+export function updateUsername(data) {
+  return request({
+    url: 'api/user/update_username',
+    method: 'post',
+    data
+  })
+}
+
+export function updateUseremail(data) {
+  return request({
+    url: 'api/user/update_useremail',
+    method: 'post',
+    data
+  })
+}
+
+export function updatePassword(data) {
+  return request({
+    url: 'api/user/update_password',
+    method: 'post',
+    data
+  })
+}
+
+export function updateAvatar(data) {
+  return request({
+    url: 'api/user/update_avatar',
+    method: 'post',
+    data
+  })
+}

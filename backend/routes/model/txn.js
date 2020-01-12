@@ -319,3 +319,47 @@ exports.isWithdrawRequest = function() {
         });
     });
 }
+
+exports.getDepositSum = function(user_id) {
+    var query = "SELECT SUM(AMOUNT_COINS) AS deposit_sum " + 
+                "FROM deposit_withdraw_log " + 
+                "WHERE USER_ID = " + user_id + " " + 
+                "AND TYPE = 1";
+    return new Promise((resolve , reject) => {
+        db.con.query(query , function(err , result , fields) {
+            if(err) {
+                reject(err);
+            }
+            else {
+                result = JSON.stringify(result);
+                result = JSON.parse(result);   
+                if(result[0]['deposit_sum'] == null) 
+                    resolve(0);
+                else 
+                    resolve(result[0]['deposit_sum']);
+            }
+        })
+    })               
+}
+
+exports.getWithdrawSum = function(user_id) {
+    var query = "SELECT SUM(AMOUNT_COINS) AS withdraw_sum " + 
+                "FROM deposit_withdraw_log " + 
+                "WHERE USER_ID = " + user_id + " " + 
+                "AND TYPE = 2";
+    return new Promise((resolve , reject) => {
+        db.con.query(query , function(err , result , fields) {
+            if(err) {
+                reject(err);
+            }
+            else {
+                result = JSON.stringify(result);
+                result = JSON.parse(result);   
+                if(result[0]['withdraw_sum'] == null) 
+                    resolve(0);
+                else 
+                    resolve(result[0]['withdraw_sum']);
+            }
+        })
+    })               
+}

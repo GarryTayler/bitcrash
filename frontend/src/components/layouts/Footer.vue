@@ -22,7 +22,7 @@
     </b-row>
     <b-row no-gutters align-v="end" class="content copyright1">
       <b-row class="m-auto link-list">
-        Copyright &copy; 2020 bitcrash.com. All rights reserved. This site is not associated with Blockchain.
+        Copyright &copy; 2020 www.bitcrash.io All rights reserved. This site is not associated with other bitcoin gaming platforms.
       </b-row>
     </b-row>
   </b-container>

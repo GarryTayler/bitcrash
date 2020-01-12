@@ -8,7 +8,7 @@
         <coin-label :bet="sum" />
       </div>
       <div class="card-content">
-        <bit-crash-table :fields="fields" :items="items" />
+        <bit-crash-table :fields="fields" :items="items" crash-type="1" />
       </div>
     </bit-crash-card>
   </div>

@@ -41,6 +41,11 @@ export const constantRoutes = [
         path: '/fairness',
         component: () => import('../views/fairness.vue'),
         meta: { title: 'Provably Fair' }
+      },
+      {
+        path: '/profile',
+        component: () => import('../views/profile.vue'),
+        meta: { title: 'My Profile Settings' }
       }
     ]
   },

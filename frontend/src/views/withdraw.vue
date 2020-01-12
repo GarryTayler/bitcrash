@@ -158,7 +158,7 @@ export default {
         this.available_wallet_btc = parseFloat(this.available_wallet_coins / Math.pow(10, 6)).toFixed(6)
         this.withdraw_fee = response.data.withdraw_fee
       } else {
-        this.showToast('Error', response.msg, 'error')
+        this.showToast('Error', response.message, 'error')
       }
     })
       .catch(() => {
@@ -188,7 +188,7 @@ export default {
           this.withdraw_address = ''
           this.$store.dispatch('user/getInfo', this.token)
         } else {
-          this.showToast('Error', response.msg, 'error')
+          this.showToast('Error', response.message, 'error')
         }
       })
         .catch(() => {

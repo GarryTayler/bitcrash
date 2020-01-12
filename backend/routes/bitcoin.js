@@ -16,7 +16,7 @@ router.post('/get_deposit_address', function (req, res , next) {
         var resp = {
             code: 401,
             status: 'failed',
-            msg: 'You should log in first.',
+            message: 'You should log in first.',
             res: null
         };
         return res.json(resp);
@@ -26,7 +26,7 @@ router.post('/get_deposit_address', function (req, res , next) {
             var resp = {
                 code: 401,
                 status: 'failed',
-                msg: null,
+                message: null,
                 res: null
             };
             return res.json(resp);
@@ -35,7 +35,7 @@ router.post('/get_deposit_address', function (req, res , next) {
                 var resp = {
                     code: 20000,
                     status: 'success',
-                    msg: null,
+                    message: null,
                     res: modelResult.content.INPUT_ADDRESS
                 };
                 return res.json(resp);
@@ -56,7 +56,7 @@ router.post('/get_deposit_address', function (req, res , next) {
                             var resp = {
                                 code: 401,
                                 status: 'failed',
-                                msg: null,
+                                message: null,
                                 res: null
                             };
                             return res.json(resp);
@@ -64,7 +64,7 @@ router.post('/get_deposit_address', function (req, res , next) {
                             var resp = {
                                 code: 20000,
                                 status: 'success',
-                                msg: null,
+                                message: null,
                                 address: apiResult.input_address
                             };
                             return res.json(resp);
@@ -95,7 +95,7 @@ router.post('/deposit/:who', async function(req, res, next) {
             var resp = {
                 code: 401,
                 status: 'failed',
-                msg: null,
+                message: null,
                 res: null
             };
             return res.json(resp);
@@ -116,7 +116,7 @@ router.post('/deposit/:who', async function(req, res, next) {
                             var resp = {
                                 code: 401,
                                 status: 'failed',
-                                msg: null,
+                                message: null,
                                 res: null
                             };
                             return res.json(resp);
@@ -124,7 +124,7 @@ router.post('/deposit/:who', async function(req, res, next) {
                             txnModel.checkFirstDeposit(who)
                             .then((check_result) => {
                                 if(!check_result) {
-                                    var resp = { code: 20000, status: 'success', msg: null, res: null };
+                                    var resp = { code: 20000, status: 'success', message: null, res: null };
                                     return res.json(resp);
                                 }
                                 //get my parent referral code
@@ -134,7 +134,7 @@ router.post('/deposit/:who', async function(req, res, next) {
                                         var resp = {
                                             code: 20000,
                                             status: 'success',
-                                            msg: null,
+                                            message: null,
                                             res: null
                                         };
                                         return res.json(resp);
@@ -148,7 +148,7 @@ router.post('/deposit/:who', async function(req, res, next) {
                                             var referral_amount = parseInt(amount * Math.pow(10 , 6)) * referral_value / 100
                                             referral_amount = parseInt(referral_amount)
                                             if(referral_amount == 0) {
-                                                var resp = { code: 20000, status: 'success', msg: null, res: null };
+                                                var resp = { code: 20000, status: 'success', message: null, res: null };
                                                 return res.json(resp);
                                             }
                                             //update parent-user balance
@@ -167,13 +167,13 @@ router.post('/deposit/:who', async function(req, res, next) {
                                                     }
                                                     txnModel.insertTxn(txnData1 , function(err , subModelResult) {
                                                         if (err) {
-                                                            var resp = { code: 401, status: 'failed', msg: null, res: null };
+                                                            var resp = { code: 401, status: 'failed', message: null, res: null };
                                                             return res.json(resp);
                                                         } else {
                                                             var resp = {
                                                                 code: 20000,
                                                                 status: 'success',
-                                                                msg: null,
+                                                                message: null,
                                                                 res: null
                                                             };
                                                             return res.json(resp);
@@ -181,27 +181,27 @@ router.post('/deposit/:who', async function(req, res, next) {
                                                     });
                                                 })
                                                 .catch((err) => {
-                                                    var resp = { code: 401, status: 'failed', msg: null, res: null };
+                                                    var resp = { code: 401, status: 'failed', message: null, res: null };
                                                     return res.json(resp);
                                                 })
                                             })
                                             .catch((err) => {
-                                                var resp = { code: 401, status: 'failed', msg: null, res: null };
+                                                var resp = { code: 401, status: 'failed', message: null, res: null };
                                                 return res.json(resp);
                                             })
                                         })
                                         .catch((err) => {
-                                            var resp = { code: 401, status: 'failed', msg: null, res: null };
+                                            var resp = { code: 401, status: 'failed', message: null, res: null };
                                             return res.json(resp);
                                         })
                                     })
                                     .catch((err) => {
-                                        var resp = { code: 401, status: 'failed', msg: null, res: null };
+                                        var resp = { code: 401, status: 'failed', message: null, res: null };
                                         return res.json(resp);
                                     })
                                 })
                                 .catch((err) => {
-                                    var resp = { code: 401, status: 'failed', msg: null, res: null };
+                                    var resp = { code: 401, status: 'failed', message: null, res: null };
                                     return res.json(resp);
                                 })
                             })
@@ -209,7 +209,7 @@ router.post('/deposit/:who', async function(req, res, next) {
                                 var resp = {
                                     code: 401,
                                     status: 'failed',
-                                    msg: null,
+                                    message: null,
                                     res: null
                                 };
                                 return res.json(resp);
@@ -221,7 +221,7 @@ router.post('/deposit/:who', async function(req, res, next) {
                     var resp = {
                         code: 401,
                         status: 'failed',
-                        msg: null,
+                        message: null,
                         res: null
                     };
                     return res.json(resp);
@@ -447,7 +447,7 @@ router.post('/withdraw' , function(req, res, next) {
                                                                 var resp = {
                                                                     code: 401,
                                                                     status: 'failed',
-                                                                    msg: null,
+                                                                    message: null,
                                                                     res: null
                                                                 };
                                                                 return res.json(resp);
@@ -455,7 +455,7 @@ router.post('/withdraw' , function(req, res, next) {
                                                                 var resp = {
                                                                     code: 20000,
                                                                     status: 'success',
-                                                                    msg: null,
+                                                                    message: null,
                                                                     res: txHash
                                                                 };
                                                                 return res.json(resp);

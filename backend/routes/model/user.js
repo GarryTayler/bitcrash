@@ -44,11 +44,16 @@ var getUserInfo = function (query, callback) {
         whereClause += (query_cnt != 0 ? " and " : " ") + "API_TOKEN='" + query.token + "'"
         query_cnt++
     }
+    if (query.user_id != undefined) {
+        whereClause += (query_cnt != 0 ? " and " : " ") + "ID='" + query.user_id + "'"
+        query_cnt++
+    }
     if (whereClause == '') {
         callback([])
         return;
     }
     sql = sql + (whereClause == '' ? '' : ' where ' + whereClause)
+
     db.con.query(sql, function (err, rows, fields) {
         if (err) {
             if (callback != null) {
@@ -140,8 +145,12 @@ var signup = function (data) {
         var token = generateRandomString()
         var pwdStr = "";
         data.referral_code = 'REF_' + data.referral_code
+
+        //Math.round(new Date().getTime() / 1000)
+
         pwdStr = md5(data.password);
-        var values = "(" + "'" + dateFormat(new Date(), "yyyy-mm-dd hh:MM:ss") + "'" + ", "
+        var values = "(" + Math.round(new Date().getTime() / 1000) + ", "
+        values += Math.round(new Date().getTime() / 1000) + ", "
         values += "'" + data.username + "', "
         values += "'" + pwdStr + "', "
         values += "'" + data.email + "', "
@@ -149,7 +158,7 @@ var signup = function (data) {
         values += "'" + data.referral_code + "',"
         values += "'" + data.referral_code_p + "',"
         values += "'" + token + "'" + ")"
-        var statement = db.statement("insert into", "users", "(CREATE_TIME, USERNAME, PASSWORD, EMAIL, AVATAR, REFERRAL_CODE, REFERRAL_CODE_P, API_TOKEN)", "", "VALUES " + values)
+        var statement = db.statement("insert into", "users", "(CREATE_TIME, UPDATE_TIME, USERNAME, PASSWORD, EMAIL, AVATAR, REFERRAL_CODE, REFERRAL_CODE_P, API_TOKEN)", "", "VALUES " + values)
         db.con.query(statement, function (err, results, fields) {
             if (err) {
                 reject(err)
@@ -263,6 +272,20 @@ var getReferralCode = function(user_id) {
         });
     });
 }
+var getUserAvatarImage = function(user_id) {
+    var query = "SELECT AVATAR FROM users WHERE ID=" + user_id;
+    return new Promise((resolve , reject) => {
+        db.con.query(query , function(err , result , fields) {
+            if(err)
+                reject(err);
+            else {
+                result = JSON.stringify(result);
+                result = JSON.parse(result);
+                resolve(result[0]['AVATAR'])
+            }
+        });
+    });
+}
 var getParentReferralCode = function(user_id) {
     var query = "SELECT REFERRAL_CODE_P FROM users WHERE ID=" + user_id;
     return new Promise((resolve , reject) => {
@@ -314,6 +337,38 @@ var updateUserBalance = function (updateData) {
     })
 }
 
+var getUserProfile = function(user_id) {
+    var query = "SELECT * FROM users WHERE ID = " + user_id;
+    return new Promise((resolve , reject) => {
+        db.con.query(query , function(err , result , fields) {
+            if(err)
+                reject(err)
+            else {
+                result = JSON.stringify(result);
+                result = JSON.parse(result);   
+                resolve(result)
+            }
+        })
+    })
+}
+
+var updateUserProfile = function(data = {} , filter = {}) {
+    var sql = "update users set UPDATE_TIME = " + Math.floor(Date.now() / 1000) + "  ";
+    for(let[key , value] of Object.entries(data)) 
+        sql += " , " + key + " = '" + value + "' ";
+    sql += " where 1=1 " ;
+    for(let[key , value] of Object.entries(filter)) 
+        sql += " and " + key + " = '" + value + "' ";
+    return new Promise((resolve , reject) => {
+        db.con.query(sql , function(err , result) {
+            if(err)
+                reject(err)
+            else 
+                resolve(true);
+        });
+    })
+}
+
 var userModel = {
     getUserInfo: getUserInfo,
     signup: signup,
@@ -329,7 +384,10 @@ var userModel = {
     updateAdminBalance: updateAdminBalance,
     updateUserBalance: updateUserBalance,
     getParentReferralCode: getParentReferralCode,
-    getUseridByParentReferralCode: getUseridByParentReferralCode
+    getUseridByParentReferralCode: getUseridByParentReferralCode,
+    getUserProfile: getUserProfile,
+    updateUserProfile: updateUserProfile,
+    getUserAvatarImage: getUserAvatarImage
 }
 
 module.exports = userModel;

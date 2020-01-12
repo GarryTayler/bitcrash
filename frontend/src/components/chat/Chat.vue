@@ -49,7 +49,7 @@ export default {
   },
   data() {
     return {
-      show: true,
+      show: false,
       messages: [
       ],
       current_chat: ''
@@ -187,7 +187,6 @@ export default {
 
       emit(emitData).then(response => {
         if (response.code !== 20000) {
-          console.log('loaded')
           loader.hide()
         } else {
           loader.hide()
@@ -221,7 +220,7 @@ export default {
   background: rgba(0, 0, 0, 0.2);
 }
 .chat {
-  z-index: 10000;
+  z-index: 1000;
   width: 100%;
   width: $chat-width;
   height: 100%;

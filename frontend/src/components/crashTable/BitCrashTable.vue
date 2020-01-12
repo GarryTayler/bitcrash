@@ -19,7 +19,10 @@
             <div v-if="field.type==='text' && field.key!=='bet' && field.key!=='profit'">
               {{ item[field.key] }}
             </div>
-            <div v-if="field.type==='text' && (field.key==='bet' || field.key==='profit')">
+            <div v-if="field.type==='text' && (field.key==='bet')">
+              {{ setNumberFormat(item[field.key]) }}
+            </div>
+            <div v-if="field.type==='text' && (field.key==='profit')" :class="crashType == '2' ? '' : 'green-text-label'">
               {{ setNumberFormat(item[field.key]) }}
             </div>
           </td>
@@ -52,6 +55,12 @@ export default {
       type: Array,
       default: function() {
         return []
+      }
+    },
+    crashType: {
+      type: String,
+      default: function() {
+        return '2'
       }
     }
   },
@@ -89,6 +98,10 @@ export default {
   width: 100%;
   overflow: auto;
   height: 100%;
+  .green-text-label {
+    color: #2cc49d;
+    font-weight: bold;
+  }
   .bit-crash-table {
     font-size: $user-tbl-header-text-size;
     width: 100%;

@@ -142,7 +142,7 @@ export default {
           this.showToast('Success', message.withdraw_confirm_success, 'success')
           this.handleFilter()
         } else {
-          this.showToast('Error', response.msg, 'error')
+          this.showToast('Error', response.message, 'error')
         }
         this.hideOverlay(loader)
       })
