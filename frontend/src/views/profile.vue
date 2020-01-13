@@ -169,7 +169,7 @@ import { getDateFormat, getNumberFormat } from '@/utils/index'
 import AvatarCropper from 'vue-avatar-cropper'
 export default {
   name: 'Home',
-  title: 'Deposit - Bitcrash',
+  title: 'Profile - Bitcrash',
   components: {
     BitCrashCard,
     CrashButton,

@@ -33,3 +33,18 @@ export function getToken() {
   })
 }
 
+export function getGameDetailInfo(data) {
+  return request({
+    url: 'api/crash/game_detail',
+    method: 'post',
+    data
+  })
+}
+
+export function getGameHistory(data) {
+  return request({
+    url: 'api/crash/game_history',
+    method: 'post',
+    data
+  })
+}

@@ -20,7 +20,6 @@
 <script>
 import global from '@/mixins/global'
 import { getReferralValue, updateReferralValue, updateWithdrawalFee } from '@/api/user'
-import notification from '@/mixins/notification'
 export default {
   components: {
   },
@@ -34,7 +33,7 @@ export default {
       return statusTextMap[status]
     }
   },
-  mixins: [global, notification],
+  mixins: [global],
   props: {},
   data() {
     return {

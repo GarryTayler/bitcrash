@@ -13,6 +13,7 @@ const getters = {
   is_admin_logged_in: state => state.admin.token !== undefined && state.admin.token !== '',
   user_id: state => state.user.user_id,
   crash_server_url: state => state.app.crash_server_url,
+  detail_id: state => state.app.detail_id,
   chat_server_url: state => state.app.chat_server_url,
   crash_chat: state => state.app.crash_chat,
   permission_routes: state => state.permission.routes

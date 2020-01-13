@@ -102,7 +102,7 @@ import { requestWithdraw } from '@/api/bitcoin'
 
 export default {
   name: 'Home',
-  title: 'Deposit - Bitcrash',
+  title: 'Withdraw - Bitcrash',
   components: {
     CrashEdit,
     CrashButton,

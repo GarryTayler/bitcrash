@@ -7,7 +7,7 @@ import getPageTitle from '@/utils/get-page-title'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
-const whiteList = ['/', '/home', '/faq', '/fairness'] // no redirect whitelist
+const whiteList = ['/', '/home', '/faq', '/fairness', '/history'] // no redirect whitelist
 const adminWhiteList = ['/login']
 const adminDependenceList = ['/admin/dashboard', '/admin/users', '/admin/setting', '/admin/bot', '/admin/wallet/deposit', '/admin/wallet/withdraw', '/admin/crash/gamehistory', '/admin/faq']
 const dependenceList = ['/deposit', '/withdraw', '/referral', '/profile']

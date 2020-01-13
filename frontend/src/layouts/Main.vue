@@ -13,6 +13,7 @@
 
     <log-in-form />
     <sign-up-form />
+    <crash-game-detail />
   </div>
 </template>
 
@@ -22,6 +23,7 @@ import AppFooter from '@/components/layouts/Footer.vue'
 import GalNavbar from '@/components/layouts/GalNavbar.vue'
 import LogInForm from '@/components/user/LogInForm.vue'
 import SignUpForm from '@/components/user/SignUpForm.vue'
+import CrashGameDetail from '@/components/main/CrashGameDetail.vue'
 import Chat from '@/components/chat/Chat.vue'
 
 export default {
@@ -30,7 +32,8 @@ export default {
     GalNavbar,
     LogInForm,
     SignUpForm,
-    Chat
+    Chat,
+    CrashGameDetail
   }
 }
 </script>

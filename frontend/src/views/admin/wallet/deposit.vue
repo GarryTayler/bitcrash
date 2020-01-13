@@ -74,14 +74,13 @@
 import { getDepositList } from '@/api/bitcoin'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 import { getNumberFormat, getDateFormat, getDateFromString } from '@/utils/index'
-import notification from '@/mixins/notification'
 import global from '@/mixins/global'
 import message from '@/filters/message'
 export default {
   components: {
     Pagination
   },
-  mixins: [global, notification],
+  mixins: [global],
   props: {},
   data() {
     return {

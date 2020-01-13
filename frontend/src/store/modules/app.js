@@ -11,7 +11,8 @@ const state = {
   base_domain: '45.76.180.140',
   crash_server_url: config.base_domain + ':' + config.crash_port,
   chat_server_url: config.base_domain + ':' + config.chat_port,
-  crash_chat: 'crash_chat'
+  crash_chat: 'crash_chat',
+  detail_id: 0
 }
 
 const mutations = {
@@ -35,6 +36,9 @@ const mutations = {
   SET_SIZE: (state, size) => {
     state.size = size
     Cookies.set('size', size)
+  },
+  SET_DETAILID: (state, detail_id) => {
+    state.detail_id = detail_id
   }
 }
 
@@ -50,6 +54,10 @@ const actions = {
   },
   setSize({ commit }, size) {
     commit('SET_SIZE', size)
+  },
+  setDetailId({ commit }, param) {
+    const { detail_id } = param
+    commit('SET_DETAILID', detail_id)
   }
 }
 

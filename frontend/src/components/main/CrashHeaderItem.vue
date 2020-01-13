@@ -1,5 +1,5 @@
 <template>
-  <div class="container flex-row-hl-vc header-item-crash">
+  <div class="container flex-row-hl-vc header-item-crash" @click="detailPopup">
     <div :class="circleStyle" />
     <div class="text-container">
       <div class="val-text" :class="data.is_active ? 'is-active' : ''">{{ data.val }}</div>
@@ -9,7 +9,6 @@
 </template>
 
 <script>
-
 export default {
   name: 'CrashHeaderItem',
   components: {
@@ -38,6 +37,12 @@ export default {
       get() {
         return 'circle circle-bg-' + (this.data.scale > 2.5 ? '1' : '0')
       }
+    }
+  },
+  methods: {
+    detailPopup() {
+      this.$store.dispatch('app/setDetailId', { detail_id: this.data.id })
+      this.$bvModal.show('crash-game-detail-form')
     }
   }
 }

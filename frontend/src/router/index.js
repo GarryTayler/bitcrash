@@ -46,6 +46,12 @@ export const constantRoutes = [
         path: '/profile',
         component: () => import('../views/profile.vue'),
         meta: { title: 'My Profile Settings' }
+      },
+      {
+        path: '/history',
+        component: () => import('../views/history.vue'),
+        meta: { title: 'Crash History' },
+        name: 'history'
       }
     ]
   },

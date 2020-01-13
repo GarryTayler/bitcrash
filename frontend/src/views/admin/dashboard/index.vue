@@ -16,13 +16,11 @@
 
 <script>
 import StatisticsChart from './components/StatisticsChart'
-import notification from '@/mixins/notification'
 export default {
   name: 'Dashboard',
   components: {
     StatisticsChart
   },
-  mixins: [notification],
   data() {
     return {
     }

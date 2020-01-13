@@ -410,7 +410,7 @@ var game_log = function (limit) {
 }
 var getHistory = function(id, start_date, end_date, page, limit) {
     var whereItems = []
-    if (id !== undefined && isNaN(parseInt(id)) == false && parseInt(id) >= 0) {
+    if (id !== undefined && isNaN(parseInt(id)) == false && parseInt(id) > 0) {
         whereItems.push({
             key: "ID",
             val: parseInt(id)
@@ -431,10 +431,15 @@ var getHistory = function(id, start_date, end_date, page, limit) {
             }
         }
     }
+    whereItems.push({
+        key: "STATE",
+        val: "BUSTED",
+        opt: "="
+    })
     var total = 0
     return db.list(db.statement("select count(*) as total from", "crash_game_total", '', whereItems.length > 0 ? db.lineClause(whereItems, 'and') : '', ''), true).then((rows) => {
         total = rows[0].total
-        return db.list(db.statement("select * from", "crash_game_total", "", whereItems.length > 0 ? db.lineClause(whereItems, 'and') : '', 'ORDER BY ID ASC LIMIT ' + (page - 1) * limit + ',' + (limit)), true)
+        return db.list(db.statement("select * from", "crash_game_total", "", whereItems.length > 0 ? db.lineClause(whereItems, 'and') : '', 'ORDER BY ID DESC LIMIT ' + (page - 1) * limit + ',' + (limit)), true)
     }).then((rows) => {
         return {
             total: total,
@@ -453,6 +458,23 @@ var getGameLog = function (id) {
         return gameInfo
     })
 }
+
+var getCrashGameInfo = function(id) {
+    var query = "select * from crash_game_total \
+    where ID = " + id
+    return new Promise((resolve , reject) => {
+        db.con.query(query , function(err , result , fields) {
+            if(err)
+                reject(err)
+            else {
+                result = JSON.stringify(result);
+                result = JSON.parse(result);
+                resolve(result);
+            }
+        });
+    });
+}
+
 var crashModel = {
     bust_game: bust_game,
     start_game: start_game,
@@ -465,7 +487,8 @@ var crashModel = {
     game_finish_start: game_finish_start,
     game_log: game_log,
     getHistory: getHistory,
-    getGameLog: getGameLog
+    getGameLog: getGameLog,
+    getCrashGameInfo: getCrashGameInfo
 }
 
 module.exports = crashModel
