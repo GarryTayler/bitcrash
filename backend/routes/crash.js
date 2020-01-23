@@ -1,7 +1,9 @@
 var express = require('express');
 var router = express.Router();
 var crashModel = require('./model/crash');
-var config = require('./../src/config')
+var config = require('./../src/config');
+var request = require('request');
+
  router.post('/bet', async function (req, res) {
     const { user_id, bet, game_no, is_bot } = req.body
     var ret = await crashModel.bet(user_id, bet, game_no, is_bot == undefined ? false : is_bot == 1)
@@ -166,11 +168,37 @@ router.post('/game_history', async function (req, res) {
     }
     return res.json({
         code: 20000,
-	status: 'success',
+	    status: 'success',
         data: {
             items: items
         }
     });
+})
+
+router.post('/bot_apply' , function(req, res) {
+        request.post({
+                    url:    config.crash_host_url,
+                    form: {
+                    }
+        }, function(error, response, body){
+                    var ret = JSON. parse(body);
+                    if (ret.status) {
+                        return res.json({
+                          code: 20000,
+                          status: 'success',
+                          message: null,
+                          data: null
+                        });
+                    }
+                    else {
+                        return res.json({
+                          code: 401,
+                          status: 'fail',
+                          message: 'Api Request Failed.',
+                          data: null
+                        });
+                    }
+        });
 })
 
 router.post('/get_token' , async function (req , res) {

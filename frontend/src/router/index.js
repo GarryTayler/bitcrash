@@ -15,7 +15,8 @@ export const constantRoutes = [
       {
         path: '/home',
         component: () => import('../views/Home.vue'),
-        meta: { title: '' }
+        meta: { title: '' },
+        name: 'home'
       },
       {
         path: '/deposit',
@@ -52,6 +53,12 @@ export const constantRoutes = [
         component: () => import('../views/history.vue'),
         meta: { title: 'Crash History' },
         name: 'history'
+      },
+      {
+        path: '/reset_password',
+        component: () => import('../views/Resetpassword.vue'),
+        meta: { title: 'Reset Password' },
+        name: 'reset'
       }
     ]
   },

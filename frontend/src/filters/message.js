@@ -7,7 +7,7 @@ export default {
   'signup_failed_msg5': 'Password confirm is failed. Please try again.',
   'signup_failed_msg6': 'Please tick when you agree our terms of service.',
   'bet_err_msg1': 'You can bet after you log in.',
-  'wallet_err_msg': 'Wallet is not enough.',
+  'wallet_err_msg': 'Please top-up your wallet, as the bet exceeds your balance.',
   'disconnect_err_msg': 'You are disconnected now. Please check your network status.',
   'disconnect_err_msg1': 'Network Connection Error',
   'betting_method_err_msg': 'You cannot change the betting method unless you terminate the current betting operation.',
@@ -23,5 +23,8 @@ export default {
   'profile_password_err_msg2': 'You should input your new password.',
   'profile_password_err_msg3': 'Please confirm your new password.',
   'profile_password_change_success': 'Your new password is changed successfully.',
-  'profile_avatar_change_success': 'Your avatar is changed successfully.'
+  'profile_avatar_change_success': 'Your avatar is changed successfully.',
+  'admin_reset_password_err': 'Please confirm new password.',
+  'admin_reset_password_success': 'New password is reset successfully.',
+  'forgot_password_required': 'You should fill email if you reset your password.'
 }

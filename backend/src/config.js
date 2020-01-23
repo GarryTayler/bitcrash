@@ -31,7 +31,13 @@ var config = {
     MAIN_REFERRAL_PREFIX: "https://" + base_domain + "/#/home",
     HOST: "https://" + base_domain,
     IMAGE_TEMP_DEST: "/var/www/html/bitcrash/temp",
-    AVATAR_STORE_PATH: "/var/www/html/bitcrash/img/uploads/avatar/"
+    AVATAR_STORE_PATH: "/var/www/html/bitcrash/img/uploads/avatar/",
+
+    crash_host_url : "https://" + base_domain + ":" + crash_port + "/bot_apply".toString,
+
+    EMAIL: 'no-reply@bitcrash.co.za',
+    EMAIL_PWD: 'Rpy@2010!#_',
+    EMAIL_REQUEST: 'https://cryptoonline.ml:3001/api/user/forgot_user_password'
 }
 
 module.exports = config

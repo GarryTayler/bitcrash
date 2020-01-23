@@ -226,13 +226,9 @@ exports.getDepositLog = function(start_date, end_date, page, limit) {
     var start_date1 = start_date;
     var end_date1 = end_date;
     if (start_date !== undefined && start_date != null && start_date != '') {
-        //start_date = start_date + " 00:00:00"
-        //start_date = Math.floor(new Date(start_date).getTime() / 1000)
         whereQuery += ' AND (deposit_withdraw_log.CREATE_TIME >= ' + start_date + ')';
     }
     if (end_date !== undefined && end_date != null && end_date != '') {
-        //end_date = end_date + " 23:59:59"
-        //end_date = Math.floor(new Date(end_date).getTime() / 1000)
         whereQuery += ' AND (deposit_withdraw_log.CREATE_TIME <= ' + end_date + ')';
     }
     whereQuery += ' AND (deposit_withdraw_log.TYPE=1 OR deposit_withdraw_log.TYPE=3)';
@@ -265,8 +261,6 @@ exports.getDepositLog = function(start_date, end_date, page, limit) {
 exports.getWithdrawLog = function(start_date, end_date, page, limit) {
     var whereItems = []
     if (start_date !== undefined && start_date != null && start_date != '') {
-        //start_date = start_date + " 00:00:00"
-        //start_date = Math.floor(new Date(start_date).getTime() / 1000)
         whereItems.push({
             key: "deposit_withdraw_log.CREATE_TIME",
             val: start_date,
@@ -274,8 +268,6 @@ exports.getWithdrawLog = function(start_date, end_date, page, limit) {
         })
     }
     if (end_date !== undefined && end_date != null && end_date != '') {
-        //end_date = end_date + " 23:59:59"
-        //end_date = Math.floor(new Date(end_date).getTime() / 1000)
         whereItems.push({
             key: "deposit_withdraw_log.CREATE_TIME",
             val: end_date,

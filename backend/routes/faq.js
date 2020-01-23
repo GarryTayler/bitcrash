@@ -8,12 +8,10 @@ router.post('/list', async function (req, res) {
     var i_limit = isNaN(parseInt(limit)) ? 1 : parseInt(limit)
     var i_type = type === undefined ? -1 : (isNaN(parseInt(type)) ? -1 : parseInt(type))
     var data = await model.getList(search_key, i_type, i_page, i_limit)
-
-    //console.log(data)
     for( var i = 0; i < data.items.length;i ++ ) {
-        var res = data.items[i].answer.replace("\\n" , "<br>")
+        data.items[i].answer_origin = data.items[i].answer
+        var res1 = data.items[i].answer.replace("\\n" , "<br>")
     }
-    //console.log(data)
     return res.json({
         code: 20000,
         data: data

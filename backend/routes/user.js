@@ -6,6 +6,8 @@ var txnModel = require('./model/txn')
 var config = require('../src/config');
 var rn = require('random-number');
 var md5 = require('md5');
+var request = require('request');
+var nodemailer = require('nodemailer');
 
 //new package
 var fs = require("fs")
@@ -46,14 +48,26 @@ router.post('/login', function (req, res) {
         token = rows[0]['API_TOKEN']
       }
     }
-
-    var data = rows[0]
-    data["token"] = rows[0]['API_TOKEN']
-    data["id"] = rows[0]['ID']
-    return res.json({
-      code: 20000,
-      data: data
-    });
+    model.updateUserProfile({LAST_VISIT: Math.floor(Date.now() / 1000)} , {ID: rows[0]['ID']})
+    .then((ret_code) => {
+      var data = rows[0]
+      data["token"] = rows[0]['API_TOKEN']
+      data["id"] = rows[0]['ID']
+      return res.json({
+        code: 20000,
+        data: data,
+        message: null,
+        status: 'success'
+      });
+    })
+    .catch((err) => {
+      return res.json({
+        code: 401,
+        status: 'fail',
+        message: 'Api Request Failed.',
+        data: null
+      });
+    })
   });
 });
 
@@ -102,6 +116,23 @@ var generateFileName = (length = 20) => {
 var getFileName = (upload_path) => {
   var res = upload_path.split("/")
   return res[res.length-1]
+}
+
+var generateRandomString = function (length = 25) {
+  characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  charactersLength = characters.length;
+  randomString = '';
+
+  var options = {
+      min: 0
+      , max: charactersLength - 1
+      , integer: true
+  }
+
+  for (var i = 0; i < length; i++) {
+      randomString += characters[rn(options)];
+  }
+  return randomString;
 }
 
 router.post('/signup', async function (req, res) {
@@ -406,7 +437,7 @@ router.post('/update_password' , function(req , res) {
         status: 'fail',
         message: 'Your current password is incorrect.',
         data: null
-      }); 
+      });
     }
     model.updateUserProfile({password: md5(new_password)} , {ID: user_id})
     .then((result) => {
@@ -415,7 +446,7 @@ router.post('/update_password' , function(req , res) {
           message: null,
           status: 'success',
           data: null
-        })   
+        })
     })
     .catch((err) => {
         return res.json({
@@ -423,9 +454,162 @@ router.post('/update_password' , function(req , res) {
           message: 'Api Request Failed.',
           status: 'fail',
           data: null
-        })   
+        })
     })
   });
+})
+
+router.post('/forgot_user_password', function(req, res) {
+  const {email} = req.body
+  var pass_token = generateRandomString()
+  model.updateUserProfile({PASS_TOKEN: pass_token} , {EMAIL: email})
+  .then((result) => {
+            var params = {
+              "email" : email,
+              "pass_token" : pass_token
+            };
+            var options = {
+                method: 'POST',
+                url: config.EMAIL_REQUEST,
+                body: params,
+                json: true
+            };
+            request(options , function(err, response, apiResult) {
+                if(err) {
+                  return res.json({
+                          code: 401,
+                          message: 'Api Request Failed.',
+                          status: 'fail',
+                          data: null
+                  })
+                }
+                else {
+                  if(response.body.status == 'success') {
+                      res.json({
+                        code: 20000,
+                        message: 'An email with password reset instructions has been sent to your email address, if it exists on our system.',
+                        status: 'success',
+                        data: null
+                      })
+                  }
+                  else {
+                      return res.json({
+                        code: 401,
+                        message: 'Api Request Failed.',
+                        status: 'fail',
+                        data: null
+                      })
+                  }
+                }
+            });
+      /* var transporter = nodemailer.createTransport({
+          host: 'smtp.zoho.com',
+          port: 465,
+          secure: true, // use SSL
+          auth: {
+              user: config.EMAIL,
+              pass: config.EMAIL_PWD
+          }
+      });
+      var mailOptions = {
+        from: '<' + config.EMAIL + '>', // sender address (who sends)
+        to: email, // list of receivers (who receives)
+        subject: 'Reset Password Link', // Subject line
+        text: 'Change your password', // plaintext body
+        html: '<b><h3>We have received a password change request for your bitcrash account</h3></b><br>' +
+        '<h3>If you did not ask to change your password, then you can ignore this email and your password will not be changed.</h3><br> ' +
+        '<h3><a href="https://www.bitcrash.co.za/#/reset_password?pass_token=' + pass_token + '" target="R">Reset Password</a></h3>' // html body
+      };
+      console.log(mailOptions)
+      transporter.sendMail(mailOptions, function(error, info){
+        if(error){
+            console.log(error);
+        }
+        else
+          console.log('Message sent: ' + info.response);  
+      });
+      res.json({
+        code: 20000,
+        message: 'An email with password reset instructions has been sent to your email address, if it exists on our system.',
+        status: 'success',
+        data: null
+      }) */
+
+  })
+  .catch((err) => {
+    return res.json({
+            code: 401,
+            message: 'Api Request Failed.',
+            status: 'fail',
+            data: null
+    })
+  })
+})
+
+router.post('/reset_user_password' , function(req, res) {
+  const {new_password , pass_token} = req.body
+  model.getUserInfoByPassToken(pass_token)
+  .then((result) => {
+    if(result.length > 0) {
+      model.updateUserProfile({password: md5(new_password)} , {ID: result[0]['ID']})
+      .then((result) => {
+          return res.json({
+            code: 20000,
+            message: null,
+            status: 'success',
+            data: null
+          })
+      })
+      .catch((err) => {
+          return res.json({
+            code: 401,
+            message: 'Api Request Failed.',
+            status: 'fail',
+            data: null
+          })
+      })
+    }
+    else {
+      return res.json({
+        code: 401,
+        message: 'You are not allowed to reset your password.',
+        status: 'fail',
+        data: null
+      })
+    }
+  })
+  .catch((err) => {
+    return res.json({
+      code: 401,
+      message: 'Api Request Failed.',
+      status: 'fail',
+      data: null
+    })
+  })
+})
+
+router.post('/reset_password' , function(req , res) {
+  const {new_password , user_id} = req.body
+
+  console.log(new_password , user_id)
+
+    model.updateUserProfile({password: md5(new_password)} , {ID: user_id})
+    .then((result) => {
+        return res.json({
+          code: 20000,
+          message: null,
+          status: 'success',
+          data: null
+        })
+    })
+    .catch((err) => {
+        return res.json({
+          code: 401,
+          message: 'Api Request Failed.',
+          status: 'fail',
+          data: null
+        })
+    })
 })
 
 router.post('/update_avatar' , async function(req , res) {

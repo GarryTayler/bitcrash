@@ -126,3 +126,27 @@ export function updateAvatar(data) {
     data
   })
 }
+
+export function resetPassword(data) {
+  return request({
+    url: 'api/user/reset_password',
+    method: 'post',
+    data
+  })
+}
+
+export function resetUserPassword(data) {
+  return request({
+    url: 'api/user/reset_user_password',
+    method: 'post',
+    data
+  })
+}
+
+export function forgotUserPassword(data) {
+  return request({
+    url: 'api/user/forgot_user_password',
+    method: 'post',
+    data
+  })
+}

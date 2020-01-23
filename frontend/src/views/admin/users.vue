@@ -14,20 +14,19 @@
         </template>
       </el-table-column>
 
-      <el-table-column width="80px" align="center" label="Avatar">
-        <template>
-          <img src="@/assets/img/avatar-sample.png" alt="Avatar" width="40px" height="40px">
-          <!-- <span>{{ scope.row.AVATAR }}</span> -->
+      <el-table-column width="100px" align="center" label="Avatar">
+        <template slot-scope="scope">
+          <img :src="scope.row.AVATAR" alt="Avatar" width="40px" height="40px">
         </template>
       </el-table-column>
 
-      <el-table-column width="110px" align="center" label="Username">
+      <el-table-column width="150px" align="center" label="Username">
         <template slot-scope="scope">
           <span>{{ scope.row.USERNAME }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column width="130px" align="center" label="Email">
+      <el-table-column width="150px" align="center" label="Email">
         <template slot-scope="scope">
           <span>{{ scope.row.EMAIL }}</span>
         </template>
@@ -45,13 +44,13 @@
         </template>
       </el-table-column>
 
-      <el-table-column width="80px" align="center" label="Last Visit">
+      <el-table-column width="150px" align="center" label="Last Visit">
         <template slot-scope="scope">
-          <span>{{ scope.row.last_visit | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ scope.row.LAST_VISIT == null ? '' : scope.row.LAST_VISIT | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column width="70px" align="center" label="IP Address">
+      <el-table-column width="100px" align="center" label="IP Address">
         <template slot-scope="scope">
           <span>{{ scope.row.IPADDRESS }}</span>
         </template>
@@ -70,25 +69,48 @@
           <el-button type="danger" size="small" @click="handleDel(row)">
             Delete
           </el-button>
-
           <el-button v-if="row.STATE == 0" type="primary" size="small" @click="handleBlock(row)">
             Block
           </el-button>
-
           <el-button v-if="row.STATE == 2" type="info" size="small" @click="handleActivate(row)">
             Activate
+          </el-button>
+          <el-button type="warning" size="small" @click="handleResetPassword(row)">
+            Reset Password
           </el-button>
         </template>
       </el-table-column>
     </el-table>
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+
+    <el-dialog title="Reset Password" :visible.sync="dlgVisible">
+      <el-form ref="temp" :rules="rules" :model="temp" label-position="left" label-width="160px" style="width: 400px margin-left:50px">
+        <el-form-item label="New Password" prop="new_password">
+          <el-input v-model="temp.new_password" type="password" placeholder="New Password" />
+        </el-form-item>
+        <el-form-item label="Confirm Password" prop="confirm_password">
+          <el-input v-model="temp.confirm_password" type="password" placeholder="Confirm Password" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dlgVisible = false">
+          Cancel
+        </el-button>
+        <el-button type="primary" @click="resetPassword()">
+          Reset
+        </el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
-import { fetchList, updateUser } from '@/api/user'
+import { fetchList, updateUser, resetPassword } from '@/api/user'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
+import message from '@/filters/message'
+import global from '@/mixins/global'
 export default {
   components: {
     Pagination
@@ -103,8 +125,20 @@ export default {
       return statusTextMap[status]
     }
   },
+  mixins: [global],
   props: {},
   data() {
+    const validateRequire = (rule, value, callback) => {
+      if (value === '') {
+        this.$message({
+          message: 'Content is empty.',
+          type: 'warning'
+        })
+        callback(new Error('Content is empty.'))
+      } else {
+        callback()
+      }
+    }
     return {
       list: null,
       total: 0,
@@ -113,6 +147,20 @@ export default {
         search_key: '',
         page: 1,
         limit: 20
+      },
+      dlgVisible: false,
+      temp: {
+        new_password: '',
+        confirm_password: '',
+        user_id: 0
+      },
+      rules: {
+        new_password: [
+          { required: true, trigger: 'blur', validator: validateRequire }
+        ],
+        confirm_password: [
+          { required: true, trigger: 'blur', validator: validateRequire }
+        ]
       }
     }
   },
@@ -145,6 +193,44 @@ export default {
     handleActivate(row) {
       updateUser({ id: row.ID, state: 0 }).then(response => {
         this.getList()
+      })
+    },
+    resetTemp() {
+      this.temp = {
+        new_password: '',
+        confirm_password: ''
+      }
+    },
+    handleResetPassword(row) {
+      this.resetTemp()
+      this.temp.user_id = row.ID
+      this.dlgVisible = true
+      this.$nextTick(() => {
+        this.$refs['temp'].clearValidate()
+      })
+    },
+    resetPassword() {
+      if (this.temp.new_password !== this.temp.confirm_password) {
+        this.showToast('Error', message.admin_reset_password_err, 'error')
+        return
+      }
+      this.$refs['temp'].validate(valid => {
+        if (valid) {
+          resetPassword(this.temp)
+            .then(response => {
+              this.dlgVisible = false
+              this.getList()
+              if (response.status === 'success') {
+                this.showToast('Success', message.admin_reset_password_success, 'success')
+              } else {
+                this.showToast('Error', response.message, 'error')
+              }
+            })
+            .catch(err => {
+              console.log(err)
+              this.dlgVisible = false
+            })
+        }
       })
     }
   }

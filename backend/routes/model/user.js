@@ -175,7 +175,6 @@ var signup = function (data) {
 var getList = function (search_key, page, limit) {
     var total = 0
     var whereItems = []
-
     if (search_key !== undefined && search_key != '') {
         whereItems.push(
             {
@@ -194,10 +193,9 @@ var getList = function (search_key, page, limit) {
         )
     }
     var whereClause = (whereItems.length > 0 ? "(" + db.lineClause(whereItems, "or") + ")" + " and " : '') + db.itemClause('DEL_YN', 'N')
-
     return db.list(db.statement("select count(*) as total from", "users", "", whereClause), true).then((rows) => {
         total = rows[0].total
-        return db.list(db.statement("select * from", "users", "", whereClause, 'LIMIT ' + (page - 1) * limit + ',' + (page * limit)), true)
+        return db.list(db.statement("select * from", "users", "", whereClause, 'ORDER BY ID DESC LIMIT ' + (page - 1) * limit + ',' + (limit)), true)
     }).then((rows) => {
         return {
             total: total,
@@ -242,7 +240,6 @@ var getUserBalance = function(keyData, callback) {
         }
     });
 }
-
 var updateBalance = function (updateData , callback) {
     var amount = updateData.amount * Math.pow(10 , 6);
     var updateQuery = "UPDATE users SET `WALLET`=`WALLET`+" + amount + " WHERE ID=" + updateData.who;
@@ -352,18 +349,34 @@ var getUserProfile = function(user_id) {
     })
 }
 
+var getUserInfoByPassToken = function(pass_token) {
+    var query = "SELECT * FROM users WHERE PASS_TOKEN = '" + pass_token + "'";
+    return new Promise((resolve , reject) => {
+        db.con.query(query , function(err , result , fields) {
+            if(err)
+                reject(err)
+            else {
+                result = JSON.stringify(result);
+                result = JSON.parse(result);
+                resolve(result)
+            }
+        })
+    })
+}
+
+
 var updateUserProfile = function(data = {} , filter = {}) {
     var sql = "update users set UPDATE_TIME = " + Math.floor(Date.now() / 1000) + "  ";
-    for(let[key , value] of Object.entries(data)) 
+    for(let[key , value] of Object.entries(data))
         sql += " , " + key + " = '" + value + "' ";
     sql += " where 1=1 " ;
-    for(let[key , value] of Object.entries(filter)) 
+    for(let[key , value] of Object.entries(filter))
         sql += " and " + key + " = '" + value + "' ";
     return new Promise((resolve , reject) => {
         db.con.query(sql , function(err , result) {
             if(err)
                 reject(err)
-            else 
+            else
                 resolve(true);
         });
     })
@@ -387,7 +400,8 @@ var userModel = {
     getUseridByParentReferralCode: getUseridByParentReferralCode,
     getUserProfile: getUserProfile,
     updateUserProfile: updateUserProfile,
-    getUserAvatarImage: getUserAvatarImage
+    getUserAvatarImage: getUserAvatarImage,
+    getUserInfoByPassToken: getUserInfoByPassToken
 }
 
 module.exports = userModel;

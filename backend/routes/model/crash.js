@@ -28,7 +28,7 @@ var bust_game = function (gameInfo) {
             val: 0
         }
     ], "and")), true).then((_bustedBets) => {
-        db.cmd(db.statement('update', 'crash_game_log', "set " + db.itemClause("PROFIT", "PROFIT-BET_AMOUNT"), db.lineClause([
+        db.cmd(db.statement('update', 'crash_game_log', "set " + db.itemClause("PROFIT", "PROFIT - BET_AMOUNT" , '' , 1), db.lineClause([
             {
                 key: "GAMENO",
                 val: gameInfo.GAMENO
@@ -50,7 +50,7 @@ var bust_game = function (gameInfo) {
         ], "and")), true)
     }).then((profit) => {
         if (profit.length > 0) {
-            db.cmd(db.statement('update', 'crash_game_total', "set " + db.itemClause("PROFIT", -db.convInt(profit[0].profit)), db.itemClause("GAMENO", gameInfo.GAMENO)))
+            db.cmd(db.statement('update', 'crash_game_total', "set " + db.itemClause("PROFIT", -db.convInt(profit[0].profit), '', 1), db.itemClause("GAMENO", gameInfo.GAMENO)))
         }
     })
 }
@@ -324,7 +324,16 @@ var game_init = function () {
     var retData = null
     return db.list(db.statement("select * from", "crash_game_total", "", db.itemClause('STATE', 'WAITING')), true).then((_waitingGame) => {
         waitingGame = _waitingGame
-        return db.list(db.statement("select * from", "crash_game_bot", "", db.itemClause('ENABLE', '1')), true)
+        return db.list(db.statement("select * from", "crash_game_bot", "", db.lineClause([
+        {
+            key: "deleted",
+            val: 0
+        },
+        {
+            key: "ENABLE",
+            val: '1'
+        }
+    ], "and")), true)
     }).then((_bots) => {
         bots = _bots
         if (waitingGame !== undefined && waitingGame != null && waitingGame.length > 0) {

@@ -37,7 +37,7 @@ export default {
   padding-left: 10px;
   padding-right: 10px;
   padding-top: 5px;
-  padding-bottom: 5px;
+  padding-bottom: 15px;
 }
 .bg {
   cursor: pointer;

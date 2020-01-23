@@ -1,13 +1,70 @@
 var db = require('./../../utils/database');
 var rn = require('random-number');
 var dateFormat = require('dateformat');
+var getActiveNewUsersByToday = function (today) {
+    var sql = "SELECT count(*) as today_count \
+        FROM `users` \
+        WHERE CREATE_TIME >= " + today + " \
+        and STATE = '0'"
 
-var getStatistics = function (type) {
+    return new Promise((resolve , reject) => {
+       db.con.query(sql , function(err , result , fields) {
+            if(err)
+                reject(err)
+            else {
+                result = JSON.stringify(result);
+                result = JSON.parse(result);
+                resolve(result[0]['today_count']);
+            }
+        }); 
+   });    
+}
+var getNewUsersByToday = function (today) {
+    var sql = "SELECT count(*) as today_count \
+        FROM `users` \
+        WHERE CREATE_TIME >= " + today + " \
+        "
+
+    return new Promise((resolve , reject) => {
+       db.con.query(sql , function(err , result , fields) {
+            if(err)
+                reject(err)
+            else {
+                result = JSON.stringify(result);
+                result = JSON.parse(result);
+                resolve(result[0]['today_count']);
+            }
+        }); 
+   });    
+}
+var getLoggedUsersByToday = function(today) {
+    var sql = "SELECT count(*) as today_count \
+        FROM `users` \
+        WHERE LAST_VISIT IS NOT NULL \
+                     AND   LAST_VISIT >= " + today + " \
+        "    
+
+    return new Promise((resolve , reject) => {
+       db.con.query(sql , function(err , result , fields) {
+            if(err)
+                reject(err)
+            else {
+                result = JSON.stringify(result);
+                result = JSON.parse(result);
+                resolve(result[0]['today_count']);
+            }
+        }); 
+   });           
+}
+var getStatistics = async function (type, params={}) {
     if (type === 'user') {
+        const new_users = await getNewUsersByToday(params.today)
+        const logged_users = await getLoggedUsersByToday(params.today) 
+        const active_users = await getActiveNewUsersByToday(params.today)
         return [
-            { desc: 'New users', value: '0' },
-            { desc: 'Logged users', value: '10' },
-            { desc: 'Active users', value: '10' }
+            { desc: 'New users', value:  new_users },
+            { desc: 'Logged users', value: logged_users },
+            { desc: 'Active users', value: active_users }
         ]
     } else if (type === 'betting') {
         return [

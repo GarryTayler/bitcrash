@@ -15,6 +15,9 @@
         <b-form-input id="form-password" v-model="form.password" type="password" placeholder="Your password here" />
       </b-form-group>
       <log-in-button text="LogIn" @click="onLogIn" />
+      <b-form-group label="" class="text-center" label-for="forgot-password">
+        <a href="#" @click="forgotPasswordFunc">Forgot Password?</a>
+      </b-form-group>
     </form>
   </b-modal>
 </template>
@@ -23,6 +26,7 @@
 import LogInButton from '@/components/navbar/LogInButton'
 import global from '@/mixins/global'
 import message from '@/filters/message.js'
+import { forgotUserPassword } from '@/api/user'
 export default {
   components: {
     LogInButton
@@ -30,10 +34,28 @@ export default {
   mixins: [global],
   data() {
     return {
-      form: {}
+      form: {
+        username_email: '',
+        password: ''
+      }
     }
   },
   methods: {
+    forgotPasswordFunc() {
+      if (this.form.username_email === '') {
+        this.showToast('Error', message.forgot_password_required, 'error')
+        return
+      }
+      forgotUserPassword({ email: this.form.username_email }).then(response => {
+        if (response.status === 'success') {
+          this.showToast('Success', response.message, 'success')
+        } else {
+          this.showToast('Error', response.message, 'error')
+        }
+      }).catch(() => {
+        this.showToast('Error', message.disconnect_err_msg1, 'error')
+      })
+    },
     onLogIn() {
       var valid = true
       if (valid) {

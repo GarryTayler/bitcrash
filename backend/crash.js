@@ -35,7 +35,7 @@ var gameId = 1, next_gameId = 0, status = 0, firstTimerHandler, bet_max_limit = 
 var mainServerUrl = config.main_host_url + 'crash/';
 ////////////
 var timeInterval = 10, resetGameTime = 0, stopGameG = false;
-var game_play_list = [], bots_list = [], cashout_list = [], socket_list = [], auto_bet_play_list = [];
+var game_play_list = [], bots_list = [], cashout_list = [], socket_list = [], auto_bet_play_list = [] , bots_temp_list = [];
 var startTime = Date.now(), globalVariable = 0, elapsed_time = 0; prev_time = 0;
 var crash = 283, hash = 'This is our server seed and how do you think our server seed , can you give me your opinion?';
 var clientSeed = '828384856628';
@@ -65,12 +65,29 @@ var wait_time_left = 0;
 	return Math.max(1, result / 100)
 }*/
 //
+
+app.post('/bot_apply', function (req, res) {
+	    var query = "SELECT * FROM `crash_game_bot` WHERE ENABLE = '1' and deleted = 0"    
+        engine.con.query(query , function(err , result , fields) {
+            if(err)
+           {
+           		res.json({ "status": false });
+           }
+            else {
+                result = JSON.stringify(result);
+                bots_temp_list = JSON.parse(result);
+                res.json({ "status": true });
+            }
+        });
+});
+
 app.post('/set_config', function (req, res) {
 	bet_min_limit = req.body.bet_min_limit;
 	bet_max_limit = req.body.bet_max_limit;
 	max_payout = req.body.max_payout;
 	res.json({ "status": true });
 });
+
 request.post(
     {
         url: mainServerUrl + 'init',
@@ -716,6 +733,11 @@ function waitGame() {
 	tick = 100; // start value
 	// bots bet first
 	var index = 0;
+	if(bots_temp_list.length > 0) {
+		bots_list = [];
+		bots_list = bots_temp_list;
+		bots_temp_list = [];
+	}
 	for (var i = 0; i < bots_list.length; i += 1) {
 		setTimeout(function() {
 			addBot(bots_list[index]);
