@@ -81,12 +81,12 @@
             <b-row class="profile-overview m-t-15">
               <b-col xl="2" lg="1" md="1" sm="1" class="label" />
               <b-col xl="2" lg="3" md="3" sm="3" cols="6" class="label">Deposits:</b-col>
-              <b-col xl="4" lg="5" md="6" sm="6" cols="6" class="label">{{ withdraw_sum }} coins</b-col>
+              <b-col xl="4" lg="5" md="6" sm="6" cols="6" class="label">{{ deposit_sum }} coins</b-col>
             </b-row>
             <b-row class="profile-overview m-t-15">
               <b-col xl="2" lg="1" md="1" sm="1" class="label" />
               <b-col xl="2" lg="3" md="3" sm="3" cols="6" class="label">Withdrawals:</b-col>
-              <b-col xl="4" lg="5" md="6" sm="6" cols="6" class="label">{{ deposit_sum }} coins</b-col>
+              <b-col xl="4" lg="5" md="6" sm="6" cols="6" class="label">{{ withdraw_sum }} coins</b-col>
             </b-row>
             <b-row class="profile-overview m-t-15">
               <b-col xl="2" lg="1" md="1" sm="1" class="label" />
@@ -212,22 +212,26 @@ export default {
   },
   created() {
     this.image_upload_url = config.base_domain + ':' + config.main_port + '/api/user/upload_avatar'
-    getProfilePageData({ user_id: this.user_id }).then(response => {
-      if (response.status === 'success') {
-        this.user_name = response.data.user_name
-        this.user_email = response.data.email
-        this.withdraw_sum = getNumberFormat(response.data.withdraw_sum)
-        this.deposit_sum = getNumberFormat(response.data.deposit_sum)
-        this.balance = getNumberFormat(response.data.wallet)
-        this.user_avatar = response.data.avatar
-        this.join_time = getDateFormat(parseInt(response.data.join_time))
-        this.data_loaded = true
-      } else {
-        this.showToast('Error', response.message, 'error')
-      }
-    })
-      .catch(() => {
-        this.showToast('Error', message.disconnect_err_msg1, 'error')
+
+    this.$store.dispatch('user/getInfo', this.token)
+      .then((res) => {
+        getProfilePageData({ user_id: this.user_id }).then(response => {
+          if (response.status === 'success') {
+            this.user_name = response.data.user_name
+            this.user_email = response.data.email
+            this.withdraw_sum = getNumberFormat(response.data.withdraw_sum)
+            this.deposit_sum = getNumberFormat(response.data.deposit_sum)
+            this.balance = getNumberFormat(response.data.wallet)
+            this.user_avatar = response.data.avatar
+            this.join_time = getDateFormat(parseInt(response.data.join_time))
+            this.data_loaded = true
+          } else {
+            this.showToast('Error', response.message, 'error')
+          }
+        })
+          .catch(() => {
+            this.showToast('Error', message.disconnect_err_msg1, 'error')
+          })
       })
   },
   methods: {

@@ -6,17 +6,20 @@
     modal-class="login-signup-form"
     header-class="border-bottom-0"
   >
-    <h2>LogIn</h2>
+    <h2>{{ step === 1?'LogIn':'Forgot your password?' }}</h2>
     <form ref="loginForm">
-      <b-form-group label="UserName / Email" label-for="form-username-email">
+      <b-form-group v-if="step === 1" label="UserName / Email" label-for="form-username-email">
         <b-form-input id="form-username-email" v-model="form.username_email" placeholder="Your name or email here" />
       </b-form-group>
-      <b-form-group label="Password" label-for="form-password">
+      <b-form-group v-if="step === 2" label="Enter your email address to reset your password." label-for="form-username-email">
+        <b-form-input id="form-username-email" v-model="form.username_email" placeholder="Your email here" />
+      </b-form-group>
+      <b-form-group v-if="step === 1" label="Password" label-for="form-password">
         <b-form-input id="form-password" v-model="form.password" type="password" placeholder="Your password here" />
       </b-form-group>
-      <log-in-button text="LogIn" @click="onLogIn" />
-      <b-form-group label="" class="text-center" label-for="forgot-password">
-        <a href="#" @click="forgotPasswordFunc">Forgot Password?</a>
+      <log-in-button :text="step === 1 ? 'LogIn' : 'Submit'" @click="step === 1 ? onLogIn() :forgotPasswordFunc()" />
+      <b-form-group v-if="step === 1" label="" class="text-center" label-for="forgot-password">
+        <a href="#" @click="forgotStep">Forgot Password?</a>
       </b-form-group>
     </form>
   </b-modal>
@@ -37,10 +40,14 @@ export default {
       form: {
         username_email: '',
         password: ''
-      }
+      },
+      step: 1
     }
   },
   methods: {
+    forgotStep() {
+      this.step = 2
+    },
     forgotPasswordFunc() {
       if (this.form.username_email === '') {
         this.showToast('Error', message.forgot_password_required, 'error')
@@ -49,6 +56,7 @@ export default {
       forgotUserPassword({ email: this.form.username_email }).then(response => {
         if (response.status === 'success') {
           this.showToast('Success', response.message, 'success')
+          this.step = 1
         } else {
           this.showToast('Error', response.message, 'error')
         }

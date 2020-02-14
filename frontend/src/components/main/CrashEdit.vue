@@ -19,11 +19,9 @@
       <span v-if="type==='2'" class="sup sup_label">{{ sup }}</span>
     </div>
   </div>
-
 </template>
 
 <script>
-
 export default {
   name: 'CrashEdit',
   components: {
@@ -41,6 +39,7 @@ export default {
       type: String,
       default: ''
     },
+    // eslint-disable-next-line vue/require-default-prop
     value: [String, Number],
     disabled: Boolean
   },

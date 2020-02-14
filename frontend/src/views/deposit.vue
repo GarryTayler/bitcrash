@@ -126,10 +126,13 @@ export default {
     }
   },
   created: function() {
-    get_deposit_address({ who: this.user_id }).then(response => {
-      const { res } = response
-      this.value = res
-    })
+    this.$store.dispatch('user/getInfo', this.token)
+      .then((res) => {
+        get_deposit_address({ who: this.user_id }).then(response => {
+          const { res } = response
+          this.value = res
+        })
+      })
   },
   methods: {
     payClick(type) {

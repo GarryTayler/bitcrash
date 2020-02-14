@@ -169,11 +169,14 @@ export default {
     }
   },
   created: function() {
-    getReferralData({ user_id: this.user_id }).then(response => {
-      this.referralLink = response.data.referral_link
-      this.referralCode = response.data.referral_code
-      this.referralValue = response.data.referral_value
-    })
+    this.$store.dispatch('user/getInfo', this.token)
+      .then((res) => {
+        getReferralData({ user_id: this.user_id }).then(response => {
+          this.referralLink = response.data.referral_link
+          this.referralCode = response.data.referral_code
+          this.referralValue = response.data.referral_value
+        })
+      })
   },
   methods: {
     handleInput(event) {

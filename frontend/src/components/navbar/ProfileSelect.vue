@@ -60,6 +60,9 @@ export default {
       this.activeItem = id
       if (id === 0) {
         this.$store.dispatch('user/logout')
+          .then((res) => {
+            this.$router.push({ name: 'home' })
+          })
       }
     }
   }
