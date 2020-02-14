@@ -3,26 +3,25 @@
     <b-row no-gutters align-v="end" class="content">
       <b-row no-gutters class="m-auto link-list">
         <div class="link">
-          <a href="#" class="text-link mr-lg-4 mr-xl-5 active" @click.prevent="scrollTo('section-about')">PRIVACY AND SECURITY</a>
-          <a href="#" class="text-link mr-lg-4 mr-xl-5" @click.prevent="scrollTo('section-together')">RESPONSIBLE GAMING</a>
-          <a href="#" class="text-link mr-lg-4 mr-xl-5" @click.prevent="scrollTo('section-industry')">TERMS AND SERVICE</a>
-          <a href="#" class="text-link mr-lg-4 mr-xl-5" @click.prevent="contactUs()">AFFILIATE</a>
+          <a href="/#/privacy" class="text-link mr-lg-4 mr-xl-5" :class="{'active': isPrivacyAndPolicy}">PRIVACY AND POLICY</a>
+          <a href="/#/responsible_gaming" class="text-link mr-lg-4 mr-xl-5" :class="{'active': isResponsibleGaming}">RESPONSIBLE GAMING</a>
+          <a href="/#/terms_service" class="text-link mr-lg-4 mr-xl-5" :class="{'active': isTermsAndService}">TERMS AND SERVICE</a>
         </div>
       </b-row>
     </b-row>
     <b-row no-gutters align-v="end" class="content mb-3">
       <b-row class="m-auto link-list">
         <div class="link">
-          <a href="#" class="text-link mr-lg-4 mr-xl-5" @click.prevent="scrollTo('section-about')">FAQ</a>
-          <a href="#" class="text-link mr-lg-4 mr-xl-5" @click.prevent="scrollTo('section-together')">LEGAL</a>
-          <a href="#" class="text-link mr-lg-4 mr-xl-5" @click.prevent="scrollTo('section-industry')">PROVABLY FAIR</a>
-          <a href="#" class="text-link mr-lg-4 mr-xl-5" @click.prevent="contactUs()">ABOUT</a>
+          <a href="/#/faq" class="text-link mr-lg-4 mr-xl-5" :class="{'active': isFaq}">FAQ</a>
+          <a href="/#/legal" class="text-link mr-lg-4 mr-xl-5" :class="{'active': isLegal}">LEGAL</a>
+          <a href="/#/fairness" class="text-link mr-lg-4 mr-xl-5" :class="{'active': isProvablyFair}">PROVABLY FAIR</a>
+          <a href="/#/about" class="text-link mr-lg-4 mr-xl-5" :class="{'active': isAbout}">ABOUT</a>
         </div>
       </b-row>
     </b-row>
     <b-row no-gutters align-v="end" class="content copyright1">
       <b-row class="m-auto link-list">
-        Copyright &copy; 2020 www.bitcrash.io All rights reserved. This site is not associated with other bitcoin gaming platforms.
+        Copyright &copy; 2020 www.bitcrash.co.za All rights reserved. This site is not associated with other bitcoin gaming platforms.
       </b-row>
     </b-row>
   </b-container>
@@ -32,7 +31,44 @@
 import navigation from '@/mixins/navigation'
 
 export default {
-  mixins: [navigation]
+  mixins: [navigation],
+  computed: {
+    isPrivacyAndPolicy: {
+      get() {
+        return this.$route.path === '/privacy'
+      }
+    },
+    isResponsibleGaming: {
+      get() {
+        return this.$route.path === '/responsible_gaming'
+      }
+    },
+    isTermsAndService: {
+      get() {
+        return this.$route.path === '/terms_service'
+      }
+    },
+    isFaq: {
+      get() {
+        return this.$route.path === '/faq'
+      }
+    },
+    isLegal: {
+      get() {
+        return this.$route.path === '/legal'
+      }
+    },
+    isProvablyFair: {
+      get() {
+        return this.$route.path === '/fairness'
+      }
+    },
+    isAbout: {
+      get() {
+        return this.$route.path === '/about'
+      }
+    }
+  }
 }
 </script>
 

@@ -59,6 +59,36 @@ export const constantRoutes = [
         component: () => import('../views/Resetpassword.vue'),
         meta: { title: 'Reset Password' },
         name: 'reset'
+      },
+      {
+        path: '/privacy',
+        component: () => import('../views/privacy.vue'),
+        meta: { title: 'Privacy and Policy' },
+        name: 'Privacy'
+      },
+      {
+        path: '/terms_service',
+        component: () => import('../views/terms_and_service.vue'),
+        meta: { title: 'Terms And Service' },
+        name: 'Terms'
+      },
+      {
+        path: '/responsible_gaming',
+        component: () => import('../views/responsible_gaming.vue'),
+        meta: { title: 'Responsible Gaming' },
+        name: 'Responsible'
+      },
+      {
+        path: '/legal',
+        component: () => import('../views/legal.vue'),
+        meta: { title: 'Legal' },
+        name: 'Legal'
+      },
+      {
+        path: '/about',
+        component: () => import('../views/about.vue'),
+        meta: { title: 'About' },
+        name: 'About'
       }
     ]
   },
@@ -148,6 +178,63 @@ export const adminChildRoutes = [
     ]
   },
   {
+    path: 'pages',
+    component: () => import('@/views/admin/pages/index'), // Parent router-view
+    name: 'Pages',
+    meta: { title: 'Pages', icon: 'nested' },
+    redirect: '/admin/pages/faq',
+    children: [
+      {
+        path: 'privacy',
+        component: () => import('@/views/admin/pages/privacy'),
+        name: 'Privacy',
+        meta: {
+          title: 'Privacy and Policy'
+        }
+      },
+      {
+        path: 'responsible_gaming',
+        component: () => import('@/views/admin/pages/responsible_gaming'),
+        name: 'Responsible',
+        meta: {
+          title: 'Responsible Gaming'
+        }
+      },
+      {
+        path: 'terms_service',
+        component: () => import('@/views/admin/pages/terms_service'),
+        name: 'Terms',
+        meta: {
+          title: 'Terms And Service'
+        }
+      },
+      {
+        path: 'faq',
+        component: () => import('@/views/admin/pages/faq'),
+        name: 'Faq',
+        meta: {
+          title: 'Faq'
+        }
+      },
+      {
+        path: 'legal',
+        component: () => import('@/views/admin/pages/legal'),
+        name: 'Legal',
+        meta: {
+          title: 'Legal'
+        }
+      },
+      {
+        path: 'about',
+        component: () => import('@/views/admin/pages/about'),
+        name: 'About',
+        meta: {
+          title: 'About'
+        }
+      }
+    ]
+  }/*
+  {
     path: 'faq',
     component: () => import('@/views/admin/faq'),
     name: 'Faq',
@@ -155,7 +242,7 @@ export const adminChildRoutes = [
       title: 'Faq',
       icon: 'nested'
     }
-  }
+  } */
 ]
 export const adminRoutes = [
   {

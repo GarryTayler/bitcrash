@@ -150,3 +150,21 @@ export function forgotUserPassword(data) {
     data
   })
 }
+
+export function getUserVariable(data) {
+  return request({
+    url: 'api/user/get_user_variable',
+    method: 'post',
+    data
+  })
+}
+
+export function updateUserVariable(data) {
+  return request({
+    url: 'api/user/update_user_variable',
+    method: 'post',
+    data
+  })
+}
+
+

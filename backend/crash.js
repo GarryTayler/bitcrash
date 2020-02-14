@@ -80,14 +80,12 @@ app.post('/bot_apply', function (req, res) {
             }
         });
 });
-
 app.post('/set_config', function (req, res) {
 	bet_min_limit = req.body.bet_min_limit;
 	bet_max_limit = req.body.bet_max_limit;
 	max_payout = req.body.max_payout;
 	res.json({ "status": true });
 });
-
 request.post(
     {
         url: mainServerUrl + 'init',
@@ -103,7 +101,6 @@ request.post(
 			stopGameG = true;
 	}
 )
-
 /*
 function generateBustValue(currentHash)
 {
@@ -111,12 +108,9 @@ function generateBustValue(currentHash)
 	finalBust = Math.floor(gameResult(clientSeed , currentHash) * 100);
 	return {"hash": currentHash ,  "crash": finalBust};
 } */
-
 io.on('connection', function(socket){
-
 	console.log('a new user connected');
 	var i;
-
     if(globalVariable == 0) {
         clearInterval(firstTimerHandler);
 		next_gameId = gameId;
@@ -153,9 +147,7 @@ io.on('connection', function(socket){
 			// we should change if you want to show something. ^0^
 		}
     }
-
     globalVariable = 1;
-
     socket.on('disconnect', function(){
 		for( var i = 0; i < auto_bet_play_list.length; i ++) {
 			if(auto_bet_play_list[i].socket == socket) {
@@ -165,7 +157,6 @@ io.on('connection', function(socket){
 			}
 		}
     });
-
     socket.on('onMessage' , function(data) {
 		// this is where we process client - server communication
         switch(data.code) {
@@ -483,14 +474,6 @@ function addBot(bot) {
 }
 
 function startGame() {
-	// when game starts, we calc crash value first
-	//impact
-	//crash_obj = generateBustValue(hash);
-	//crash = crash_obj['crash'];
-	//hash = crash_obj['hash'];
-	
-
-
 	if (crash == 100) {
 
 		// we don't need to start game, because it finishes when it starts
@@ -773,9 +756,11 @@ function waitGame() {
 			);
 			//For wait time synchronize
 			wait_time_left = 5000;
-			setTimeout(function() {
+
+			/*setTimeout(function() {
 				sendWaitTime();
-			}, 500);
+			}, 500);*/
+
 			setTimeout(function() {
 				startGame();
 			}, 5000);

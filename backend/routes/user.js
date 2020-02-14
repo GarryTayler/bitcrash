@@ -364,6 +364,52 @@ router.post('/update_withdrawal_fee' , async function(req , res) {
       })
     }
 })
+/*
+new
+*/
+router.post('/get_user_variable' , async function (req, res) {
+  try {
+    const { variable } = req.body
+    const value = await variableModel.getVariable(variable);
+    return res.json({
+      code: 20000,
+      message: null,
+      status: 'success',
+      data: {
+        value : value
+      }
+    })
+  } catch (err) {
+    return res.json({
+      code: 401,
+      message: 'Api Request Failed.',
+      status: 'fail',
+      data: null
+    })
+  }
+});
+router.post('/update_user_variable' , async function (req, res) {
+    try {
+      const { variable , value } = req.body
+      const return_val = await variableModel.updateUserVariable(variable , value);
+      return res.json({
+        code: 20000,
+        message: null,
+        status: 'success',
+        data: null
+      })
+    } catch (err) {
+      return res.json({
+        code: 401,
+        message: 'Api Request Failed.',
+        status: 'fail',
+        data: null
+      })
+    }
+});
+/*
+new
+*/
 
 router.post('/update_username' , async function(req , res) {
   try {

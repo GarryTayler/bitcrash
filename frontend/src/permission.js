@@ -7,9 +7,9 @@ import getPageTitle from '@/utils/get-page-title'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
-const whiteList = ['/', '/home', '/faq', '/fairness', '/history', '/reset_password'] // no redirect whitelist
+const whiteList = ['/', '/home', '/faq', '/fairness', '/history', '/reset_password', '/privacy', '/terms_service', '/responsible_gaming', '/legal', '/about'] // no redirect whitelist
 const adminWhiteList = ['/login']
-const adminDependenceList = ['/admin/dashboard', '/admin/users', '/admin/setting', '/admin/bot', '/admin/wallet/deposit', '/admin/wallet/withdraw', '/admin/crash/gamehistory', '/admin/faq']
+const adminDependenceList = ['/admin/dashboard', '/admin/users', '/admin/setting', '/admin/bot', '/admin/wallet/deposit', '/admin/wallet/withdraw', '/admin/crash/gamehistory', '/admin/pages/faq', '/admin/pages/privacy', '/admin/pages/responsible_gaming', '/admin/pages/terms_service', '/admin/pages/legal', '/admin/pages/about']
 const dependenceList = ['/deposit', '/withdraw', '/referral', '/profile']
 router.beforeEach(async(to, from, next) => {
   // start progress bar
