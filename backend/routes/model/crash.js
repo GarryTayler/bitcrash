@@ -74,7 +74,7 @@ var start_game = function (gameInfo, bust, hash) {
         }
     ], ","), db.itemClause("ID", gameInfo.ID)))
     return next_game()
-}
+}  
 var next_game = function () {
     var maxGameNo = 1
     return db.list(db.statement("select max(GAMENO) as GAMENO from", "crash_game_total", '', ''), true).then((maxGameNos) => {

@@ -11,7 +11,7 @@
         <div class="p-15">
           <span>1</span><br>
           <span>Share your referral link or code</span><br>
-          <span class="description">Everyone who registers through your link or uses your code becomes your referral. The Code will give your referrals + 5% on their first deposit.</span>
+          <span class="description">Everyone who registers through your link or uses your code becomes your referral. The Code will give your referrals + {{ referralValue }}% on their first deposit.</span>
         </div>
       </b-col>
       <b-col sm="12" md="6" lg="6" xl="4" class="manual">
@@ -19,7 +19,7 @@
         <div class="p-15">
           <span>2</span><br>
           <span>Earn Money and Rank Points</span><br>
-          <span class="description">You will get up to 40% of our revenue(House Edge) from bets placed by your referrals and Rank Points equal to their first deposit.</span>
+          <span class="description">You will get up to {{ referralValue }}% of our revenue(House Edge) from bets placed by your referrals and Rank Points equal to their first deposit.</span>
         </div>
       </b-col>
       <b-col sm="12" md="6" lg="6" xl="4" class="manual">

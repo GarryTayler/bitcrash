@@ -65,7 +65,6 @@ var wait_time_left = 0;
 	return Math.max(1, result / 100)
 }*/
 //
-
 app.post('/bot_apply', function (req, res) {
 	    var query = "SELECT * FROM `crash_game_bot` WHERE ENABLE = '1' and deleted = 0"    
         engine.con.query(query , function(err , result , fields) {
@@ -756,14 +755,12 @@ function waitGame() {
 			);
 			//For wait time synchronize
 			wait_time_left = 5000;
-
 			/*setTimeout(function() {
 				sendWaitTime();
 			}, 500);*/
-
 			setTimeout(function() {
 				startGame();
-			}, 5000);
+			}, 5400);
 			//remove autobet disconnected player
 			var store_index = 0;
 			for( var i = 0; i < auto_bet_play_list.length; i ++) {

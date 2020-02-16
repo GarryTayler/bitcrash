@@ -4,7 +4,8 @@
       <hamburger v-if="device=='mobile'" id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
       <a href="/" style="margin-left: 30px;">
         <img src="@/assets/img/brand_logo.png" class="logo-img">
-        <h1 class="logo-title">BitCrash </h1>
+        <img src="@/assets/img/brand_text.png" class="text logo-text">
+        <!-- <h1 class="logo-title">BitCrash </h1> -->
       </a>
       <log-in-button v-if="is_admin_logged_in" text="LogOut" :size="true" class="logout" @click="logout" />
     </div>
@@ -169,7 +170,9 @@ export default {
   vertical-align: middle;
   margin-right: 12px;
 }
-
+.logo-text{
+  height: 32px;
+}
 .logo-title {
   display: inline-block;
   margin: 0;
