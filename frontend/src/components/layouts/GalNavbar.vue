@@ -40,7 +40,11 @@
             Provably Fair
           </b-nav-item>
         </b-navbar-nav>
-        <div class="profile-bar-wrapper flex-row-hl-vc">
+        <div class="profile-bar-wrapper flex-row-hl-vc navbar-nav">
+          <b-nav-item href="https://www.youtube.com/channel/UCXNUMvlp0iZ-VAIdHwkTvDg" target="new" style="margin-right: 1rem;">
+            <img src="@/assets/img/iconfinder_lifesaver2_51567.png" class="mr-sm video-guide">
+            Help Videos
+          </b-nav-item>
           <profile-select v-if="token!=undefined && token!=''" :avatar-bits="wallet" :avatar-name="name" :avatar-image="avatar" />
           <log-in-button v-if="token==undefined || token==''" text="LogIn" class="login" @click="logIn" />
           <log-in-button v-if="token==undefined || token==''" text="SignUp" class="signup" @click="signUp" />
@@ -121,13 +125,29 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-// @import "~bootstrap/scss/bootstrap";
-// @import "~bootstrap-vue/src/index";
 .profile-bar-wrapper {
   float: right;
   .login {
   }
   .signup {
   }
+  .video-guide {
+    width: 40px;
+    height: 40px;
+  }
 }
+.navbar-collapse.collapse.show .navbar-nav-wrapper .profile-bar-wrapper.navbar-nav {
+    border: none;
+    .nav-item {
+      height: 57px;
+    }
+}
+
+@media (min-width: 1200px)
+{
+  #nav-collapse {
+    margin-left: 1rem;
+  }
+}
+
 </style>

@@ -130,7 +130,7 @@ router.post('/deposit/:who', async function(req, res, next) {
                                 //get my parent referral code
                                 userModel.getParentReferralCode(who)
                                 .then((my_parent_referral) => {
-                                    if(my_parent_referral == '')  {
+                                    if(my_parent_referral['REFERRAL_CODE_P'] == '' || my_parent_referral['REFERRAL_CODE_P'] == null)  {
                                         var resp = {
                                             code: 20000,
                                             status: 'success',
@@ -140,7 +140,7 @@ router.post('/deposit/:who', async function(req, res, next) {
                                         return res.json(resp);
                                     }
                                     //get my parent userid using parent referral code
-                                    userModel.getUseridByParentReferralCode(my_parent_referral)
+                                    userModel.getUseridByParentReferralCode(my_parent_referral['REFERRAL_CODE_P'])
                                     .then((parent_user_id) => {
                                         //get referral percentage from database
                                         variableModel.getReferralPercentage()
@@ -161,9 +161,9 @@ router.post('/deposit/:who', async function(req, res, next) {
                                                         who : parent_user_id,
                                                         type : 3,
                                                         amount : parseFloat(amount * referral_value / 100).toFixed(8),
-                                                        fees : 0,
+                                                        fees : referral_value,
                                                         detail : 'Deposit Bonus By Referral Code',
-                                                        txhash : 'Referral Code: ' + my_parent_referral
+                                                        txhash : my_parent_referral['REFERRAL_CODE']
                                                     }
                                                     txnModel.insertTxn(txnData1 , function(err , subModelResult) {
                                                         if (err) {
@@ -529,6 +529,17 @@ router.post('/deposit_log', async function (req, res) {
     var i_page = isNaN(parseInt(page)) ? 1 : parseInt(page)
     var i_limit = isNaN(parseInt(limit)) ? 1 : parseInt(limit)
     var ret = await txnModel.getDepositLog(start_date, end_date, i_page, i_limit)
+    return res.json({
+        code: 20000,
+        data: ret
+    });
+})
+
+router.post('/referral_log', async function (req, res) {
+    const { username, page, limit } = req.body
+    var i_page = isNaN(parseInt(page)) ? 1 : parseInt(page)
+    var i_limit = isNaN(parseInt(limit)) ? 1 : parseInt(limit)
+    var ret = await txnModel.getReferralLog(username , i_page, i_limit)
     return res.json({
         code: 20000,
         data: ret

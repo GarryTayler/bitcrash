@@ -202,7 +202,7 @@ var getDepositLogTotalCount = function(start_date , end_date) {
         //end_date = Math.floor(new Date(end_date).getTime() / 1000)
         whereQuery += ' AND (deposit_withdraw_log.CREATE_TIME <= ' + end_date + ')';
     }
-    whereQuery += ' AND (deposit_withdraw_log.TYPE=1 OR deposit_withdraw_log.TYPE=3)';
+    whereQuery += ' AND (deposit_withdraw_log.TYPE=1)';
     var query = selectTotalQuery + ' ' + fromQuery + ' ' + whereQuery;
     return new Promise((resolve , reject) => {
         db.con.query(query , function(err , result , fields) {
@@ -236,6 +236,73 @@ exports.getDepositLog = function(start_date, end_date, page, limit) {
     otherQuery += ' LIMIT ' + (page - 1) * limit + ',' + limit;
     return new Promise((resolve , reject) => {
         getDepositLogTotalCount(start_date1 , end_date1)
+        .then((total_count) => {
+            var sql = selectQuery + ' ' + fromQuery + ' ' + leftjoinQuery + ' ' + whereQuery + ' ' + otherQuery;
+            db.con.query(sql , function(err , result1 , fields) {
+                    if(err) {
+                        reject(err);
+                    }
+                    else {
+                        result1 = JSON.stringify(result1);
+                        result1 = JSON.parse(result1);
+                        resolve({
+                            total: total_count,
+                            items: result1
+                        });
+                    }
+            })
+        })
+        .catch((err) => {
+            reject(err);
+        })
+    });
+}
+
+var getReferralLogTotalCount = function(username) {
+    var selectTotalQuery = 'select count(*) as total';
+    var fromQuery = 'from deposit_withdraw_log';
+    var joinQuery = 'left join users ON deposit_withdraw_log.`USER_ID` = users.ID'
+    var whereQuery = 'WHERE 1=1 ';
+    if (username !== undefined && username != null && username != '') {
+        whereQuery += ' AND (users.USERNAME like "%' + username + '%" OR users.EMAIL like "%' + username + '%")';
+    }
+    whereQuery += ' AND (deposit_withdraw_log.TYPE=3)';
+    var query = selectTotalQuery + ' ' + fromQuery + ' ' + joinQuery + ' ' + whereQuery;
+
+    return new Promise((resolve , reject) => {
+        db.con.query(query , function(err , result , fields) {
+            if(err) {
+                reject(err);
+            }
+            else {
+                result = JSON.stringify(result);
+                result = JSON.parse(result);
+                resolve(result[0]['total']);
+            }
+        });
+    });        
+}
+
+exports.getReferralLog = function(username , page , limit) {
+    var selectQuery = 'SELECT deposit_withdraw_log.* , \
+users.`USERNAME` , users.`EMAIL` ,\
+A.`USERNAME` AS REF_USERNAME , A.`EMAIL` AS REF_EMAIL , users.AVATAR , users.REFERRAL_CODE';
+
+    var fromQuery = 'FROM deposit_withdraw_log';
+
+    var leftjoinQuery = 'LEFT JOIN users ON users.ID = deposit_withdraw_log.`USER_ID` \
+                         LEFT JOIN users A ON A.REFERRAL_CODE = deposit_withdraw_log.`TXHASH`';
+
+    var whereQuery = 'WHERE 1=1 ';
+    if (username !== undefined && username != null && username != '') {
+        whereQuery += ' AND (users.USERNAME like "%' + username + '%" OR users.EMAIL like "%' + username + '%")';
+    }
+    whereQuery += ' AND (deposit_withdraw_log.TYPE=3)';
+    var otherQuery = ' order by deposit_withdraw_log.ID ';
+    otherQuery += ' LIMIT ' + (page - 1) * limit + ',' + limit;
+
+    return new Promise((resolve , reject) => {
+        getReferralLogTotalCount(username)
         .then((total_count) => {
             var sql = selectQuery + ' ' + fromQuery + ' ' + leftjoinQuery + ' ' + whereQuery + ' ' + otherQuery;
             db.con.query(sql , function(err , result1 , fields) {

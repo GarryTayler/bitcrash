@@ -3,8 +3,9 @@
     <div class="flex-row root">
       <b-row align-v="start" class="flex1 content-padding main-content">
         <b-col sm="12" md="8" lg="8" xl="8" class="p-none p-l">
-          <bit-crash-card class="m-b">
+          <bit-crash-card class="m-b" style="position:relative;">
             <div slot="header" class="card-header">
+              <font-awesome-icon id="history_info" :icon="['fa', 'info-circle']" v-b-tooltip.hover title="Game History - click on a game that has ended to view more info" />
               <b-row align-v="center">
                 <b-col v-for="element in headerList" :key="element.id" class="c_col2" style="padding-left: 0px !important; padding-right: 0px !important;">
                   <div>
@@ -908,6 +909,11 @@ export default {
 
 .betting-row {
   align-items: flex-end;
+}
+
+#history_info {
+  position:absolute; right: 10px; top: 10px; color: #f2f4f6; z-index: 10001;
+  width: 18px; height: 18px;
 }
 
 </style>

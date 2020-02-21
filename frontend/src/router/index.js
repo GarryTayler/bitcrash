@@ -118,6 +118,15 @@ export const adminChildRoutes = [
     }
   },
   {
+    path: 'referral',
+    component: () => import('@/views/admin/referral'),
+    name: 'Referral',
+    meta: {
+      title: 'Referral',
+      icon: 'form'
+    }
+  },
+  {
     path: 'setting',
     component: () => import('@/views/admin/setting'),
     name: 'Setting',

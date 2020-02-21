@@ -9,7 +9,7 @@ import './assets/scss/element-variables.scss'
 import BootstrapVue from 'bootstrap-vue'
 import { VLazyImagePlugin } from 'v-lazy-image'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faCaretRight, faChevronDown, faChevronLeft, faChevronRight, faChevronUp, faPaperPlane, faPlus, faMinus } from '@fortawesome/free-solid-svg-icons'
+import { faCaretRight, faChevronDown, faChevronLeft, faChevronRight, faChevronUp, faPaperPlane, faPlus, faMinus, faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 import App from './App.vue'
@@ -35,6 +35,7 @@ library.add(faChevronRight)
 library.add(faPaperPlane)
 library.add(faPlus)
 library.add(faMinus)
+library.add(faInfoCircle)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Vue.use(Element, {

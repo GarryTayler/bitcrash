@@ -15,7 +15,10 @@
         </div>
       </b-col>
       <b-col sm="12" md="6" lg="6" xl="4" class="manual">
-        <img src="@/assets/img/referral_2.png">
+        <div class="position:relative;">
+          <img src="@/assets/img/referral_2.png">
+          <span v-if="referralValue > 0" class="referral_2_profit">{{ referralValue }}%</span>
+        </div>
         <div class="p-15">
           <span>2</span><br>
           <span>Earn Money and Rank Points</span><br>
@@ -326,6 +329,27 @@ export default {
 {
   .content-padding {
     padding-right: calc(20px + 300px + #{$scrollbar-width});
+  }
+}
+.referral_2_profit {
+  position: absolute;
+  font-size: 2.1rem;
+  font-weight: 900;
+  letter-spacing: 0.2rem;
+  color: #c9d6e4;
+}
+@media (max-width: 1200px)
+{
+  .referral_2_profit {
+    left: 32%;
+    top: 15%;
+  }
+}
+@media (min-width: 1200px)
+{
+  .referral_2_profit {
+    left: 32%;
+    top: 15%;
   }
 }
 

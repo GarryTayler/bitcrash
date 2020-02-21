@@ -70,12 +70,14 @@ export default {
     },
     sendMsg() {
       if (this.inputtype === '0') {
-        this.$emit('sendMsg', this.currentValue)
-        this.currentValue = ''
+        if (this.currentValue !== '') {
+          this.$emit('sendMsg', this.currentValue)
+          this.currentValue = ''
+        }
       } else {
         var self = this
         this.$copyText(this.currentValue).then(function(e) {
-          self.showToast('Success', 'The token has been copied to the clipboard.', 'success')
+          self.showToast('Success', 'Okay great stuff, your Bitcrash BTC wallet address has been copied to the clipboard.', 'success')
         }, function(e) {
           self.showToast('Error', 'Can not copy to the clipboard', 'error')
         })

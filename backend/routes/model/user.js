@@ -284,7 +284,7 @@ var getUserAvatarImage = function(user_id) {
     });
 }
 var getParentReferralCode = function(user_id) {
-    var query = "SELECT REFERRAL_CODE_P FROM users WHERE ID=" + user_id;
+    var query = "SELECT REFERRAL_CODE_P , REFERRAL_CODE FROM users WHERE ID=" + user_id;
     return new Promise((resolve , reject) => {
         db.con.query(query , function(err , result , fields) {
             if(err)
@@ -292,7 +292,7 @@ var getParentReferralCode = function(user_id) {
             else {
                 result = JSON.stringify(result);
                 result = JSON.parse(result);
-                resolve(result[0]['REFERRAL_CODE_P'])
+                resolve(result[0])
             }
         });
     });

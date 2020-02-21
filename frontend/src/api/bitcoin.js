@@ -47,3 +47,11 @@ export function isWithdrawRequest(data) {
     data
   })
 }
+
+export function getReferralList(data) {
+  return request({
+    url: 'api/btc/referral_log',
+    method: 'post',
+    data
+  })
+}
