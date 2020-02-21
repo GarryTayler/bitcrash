@@ -5,7 +5,11 @@
         <b-col sm="12" md="8" lg="8" xl="8" class="p-none p-l">
           <bit-crash-card class="m-b" style="position:relative;">
             <div slot="header" class="card-header">
-              <font-awesome-icon id="history_info" :icon="['fa', 'info-circle']" v-b-tooltip.hover title="Game History - click on a game that has ended to view more info" />
+              <font-awesome-icon id="history_info" :icon="['fa', 'info-circle']"/>
+              <b-tooltip target="history_info" triggers="hover">
+                Game History <br>
+                click on a game that has ended to view more info
+              </b-tooltip>
               <b-row align-v="center">
                 <b-col v-for="element in headerList" :key="element.id" class="c_col2" style="padding-left: 0px !important; padding-right: 0px !important;">
                   <div>
