@@ -916,7 +916,7 @@ export default {
 }
 
 #history_info {
-  position:absolute; right: 10px; top: 10px; color: #f2f4f6; z-index: 10001;
+  position:absolute; right: 10px; top: 10px; color: #f2f4f6; z-index: 1000;
   width: 18px; height: 18px;
 }
 
