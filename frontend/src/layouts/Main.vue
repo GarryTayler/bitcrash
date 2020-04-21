@@ -10,7 +10,6 @@
       </div>
       <app-footer />
     </div>
-
     <log-in-form />
     <sign-up-form />
     <crash-game-detail />

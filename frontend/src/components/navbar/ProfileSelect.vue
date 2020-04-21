@@ -7,7 +7,7 @@
         <div class="bit-text">{{ avatarBits }}</div>
       </div>
     </template>
-    <b-dropdown-item v-for="item in items" :key="item.id" :href="item.id===0?'#':'/#/profile'" @click="onItemClick(item.id)">
+    <b-dropdown-item v-for="item in items" :key="item.id" :href="'#'+item.url" @click="onItemClick(item.id)">
       {{ item.lbl }}
     </b-dropdown-item>
   </b-nav-item-dropdown>
@@ -43,11 +43,18 @@ export default {
       items: [
         {
           id: 0,
-          lbl: 'Log Out'
+          lbl: 'Log Out',
+          url: ''
         },
         {
           id: 1,
-          lbl: 'My Profile'
+          lbl: 'My Profile',
+          url: '/profile'
+        },
+        {
+          id: 2,
+          url: '/my_referral',
+          lbl: 'My Referrals'
         }
       ]
     }

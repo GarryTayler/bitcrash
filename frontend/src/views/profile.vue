@@ -174,7 +174,6 @@ export default {
     BitCrashCard,
     CrashButton,
     AvatarCropper
-    // MenuBar
   },
   mixins: [titleMixin, global],
   data() {

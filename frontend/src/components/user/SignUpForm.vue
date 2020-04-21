@@ -22,6 +22,9 @@
       <b-form-group label="Password Confirm" label-for="form-password-confirm">
         <b-form-input id="form-password-confirm" v-model="form.password_confirm" type="password" placeholder="Type your password again" />
       </b-form-group>
+      <b-form-group label="Referral" label-for="form-referral">
+        <b-form-input id="form-referral" v-model="form.referral_code_p" placeholder="Your referral here" />
+      </b-form-group>
       <b-form-checkbox-group class="form-group">
         <b-form-checkbox id="form-agree" v-model="form.agree">I agree to the terms of service</b-form-checkbox>
       </b-form-checkbox-group>
@@ -43,13 +46,22 @@ export default {
   mixins: [global],
   data() {
     return {
-      form: {},
-      referral_code_p: ''
+      form: {
+        username: '',
+        email: '',
+        password: '',
+        password_confirm: '',
+        agree: false,
+        referral_code_p: ''
+      }
     }
   },
-  created: function() {
+  created() {
   },
-  mounted: function() {
+  mounted() {
+    if (this.$route.query.r != undefined && this.$route.query.r != '') {
+      this.form.referral_code_p = this.$route.query.r
+    }
   },
   methods: {
     isValid() {
@@ -80,7 +92,7 @@ export default {
       return true
     },
     onSignup() {
-      this.referral_code_p = this.$route.query.r
+      // this.referral_code_p = this.$route.query.r
       var valid = this.isValid()
       if (valid) {
         this.loading = true
@@ -88,7 +100,7 @@ export default {
           username: this.form.username,
           email: this.form.email,
           password: this.form.password,
-          referral_code_p: ((this.referral_code_p === undefined || this.referral_code_p === null) ? '' : this.referral_code_p)
+          referral_code_p: this.form.referral_code_p
         }
         const loader = this.showOverlay(null)
         signup(data).then(response => {

@@ -77,6 +77,7 @@ export default {
               this.$store.dispatch('user/getInfo', this.token)
               this.loading = false
               this.$bvModal.hide('login-form')
+
               this.$toast.success({
                 title: 'Login Success',
                 message: message.login_success_msg,
@@ -112,7 +113,7 @@ export default {
               showDuration: 4000,
               hideDuration: 6000
             })
-            // loader.hide()
+            loader.hide()
             this.hideOverlay(loader)
             this.loading = false
           })

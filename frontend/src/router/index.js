@@ -34,6 +34,11 @@ export const constantRoutes = [
         meta: { title: 'Referral' }
       },
       {
+        path: '/my_referral',
+        component: () => import('../views/my_referral.vue'),
+        meta: { title: 'My Referral' }
+      },
+      {
         path: '/faq',
         component: () => import('../views/faq.vue'),
         meta: { title: 'FAQ' }
@@ -121,6 +126,7 @@ export const adminChildRoutes = [
     path: 'referral',
     component: () => import('@/views/admin/referral'),
     name: 'Referral',
+    props: true,
     meta: {
       title: 'Referral',
       icon: 'form'
@@ -259,6 +265,7 @@ export const adminRoutes = [
     component: AdminLayout,
     redirect: '/admin/dashboard',
     alwaysShow: true,
+    props: true,
     name: 'Admin',
     meta: {
       title: 'Admin'

@@ -11,8 +11,10 @@
 </template>
 
 <script>
+
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import VueCkeditor from 'vue-ckeditor5'
+
 import global from '@/mixins/global'
 import { getUserVariable, updateUserVariable } from '@/api/user'
 const typeOptions = [

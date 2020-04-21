@@ -1,7 +1,7 @@
 var config = {
   crash_port: 4202,
   chat_port: 4204,
-  // base_domain: 'http://localhost',
+  // base_domain: 'http://192.168.92.102',
   // base_domain: 'https://cryptoonline.ml',
   base_domain: 'https://bitcrash.co.za',
   main_port: 3001,

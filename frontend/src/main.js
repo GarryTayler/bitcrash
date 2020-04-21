@@ -8,16 +8,20 @@ import './assets/scss/element-variables.scss'
 
 import BootstrapVue from 'bootstrap-vue'
 import { VLazyImagePlugin } from 'v-lazy-image'
+
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faCaretRight, faChevronDown, faChevronLeft, faChevronRight, faChevronUp, faPaperPlane, faPlus, faMinus, faInfoCircle } from '@fortawesome/free-solid-svg-icons'
+import { faCaretRight, faChevronDown, faChevronLeft, faChevronRight, faChevronUp, faPaperPlane, faPlus, faMinus, faInfoCircle, faCross, faLink } from '@fortawesome/free-solid-svg-icons'
+
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 import App from './App.vue'
+
 import CxltToastr from 'cxlt-vue2-toastr'
 import VueClipboard from 'vue-clipboard2'
 import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/vue-loading.css'
 import 'cxlt-vue2-toastr/dist/css/cxlt-vue2-toastr.css'
+
 import './assets/scss/main.scss'
 // import './registerServiceWorker'
 import router from './router'
@@ -32,10 +36,11 @@ library.add(faChevronDown)
 library.add(faChevronUp)
 library.add(faChevronLeft)
 library.add(faChevronRight)
+library.add(faLink)
 library.add(faPaperPlane)
 library.add(faPlus)
 library.add(faMinus)
-library.add(faInfoCircle)
+library.add(faInfoCircle, faCross)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Vue.use(Element, {

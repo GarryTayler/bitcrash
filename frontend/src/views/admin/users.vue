@@ -64,6 +64,18 @@
         </template>
       </el-table-column>
 
+      <el-table-column width="100px" align="center" label="Referral code">
+        <template slot-scope="scope">
+          <span>{{ scope.row.REFERRAL_CODE }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column width="150px" align="center" label="Referral Users">
+        <template slot-scope="{row}">
+          <el-button size="small" @click="handleReferal(row)">Referral Users</el-button>
+        </template>
+      </el-table-column>
+
       <el-table-column align="left" label="Actions">
         <template slot-scope="{row}">
           <el-button type="danger" size="small" @click="handleDel(row)">
@@ -175,6 +187,9 @@ export default {
         this.total = response.data.total
         this.listLoading = false
       })
+    },
+    handleReferal(row) {
+      this.$router.push({ path: '/admin/referral', query: { item: row.ID }})
     },
     handleFilter() {
       this.listQuery.page = 1

@@ -1,7 +1,11 @@
 <template>
-  <div class="root">
-    <div class="bg flex-row-hc-vc" :class="{ 'disabled' : disabled, 'non-disabled' : !disabled, 'right-half': rightHalf }" @click="btnClick">
-      <font-awesome-icon v-if="icon != ''" :icon="icon" />
+  <div :class="{ 'root right-half': rightHalf , 'root': !rightHalf }">
+    <div v-if="color != ''" class="bg flex-row-hc-vc" :class="color" @click="btnClick">
+      <font-awesome-icon v-if="icon != ''" :icon="icon" :flip="'both'" :transform="transform" />
+      <span v-if="text != ''" class="text">{{ text }}</span>
+    </div>
+    <div v-else class="bg flex-row-hc-vc" :class="{ 'disabled' : disabled, 'non-disabled' : !disabled }" @click="btnClick">
+      <font-awesome-icon v-if="icon != ''" :icon="icon" :flip="'both'" :transform="transform" />
       <span v-if="text != ''" class="text">{{ text }}</span>
     </div>
   </div>
@@ -10,7 +14,7 @@
 <script>
 
 export default {
-  name: 'CrashButton',
+  name: 'RoundButton',
   components: {
   },
   props: {
@@ -18,7 +22,15 @@ export default {
       type: String,
       default: ''
     },
+    transform: {
+      type: String,
+      default: ''
+    },
     icon: {
+      type: String,
+      default: ''
+    },
+    color: {
       type: String,
       default: ''
     },
@@ -53,7 +65,7 @@ export default {
 
   cursor: pointer;
   height: $crash-button-height;
-  border-radius: $control-border-radius;
+  border-radius: $round-border-radius;
   text-align: center;
 
   .text {
@@ -75,5 +87,26 @@ export default {
   &:hover {
     background: linear-gradient(90deg,#4245c9, #4f82c9);
   }
+}
+.right-half {
+  .bg {
+    border-radius: 0 25px 25px 0;
+  }
+}
+.yellow {
+  background: #ffa001;
+}
+.white {
+  background: #fff;
+  color: #000;
+}
+.facebook {
+  background: #345d9f;
+}
+.twitter {
+  background: #25b0f5;
+}
+.email {
+  background: #007db9;
 }
 </style>
