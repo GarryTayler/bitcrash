@@ -258,13 +258,19 @@ exports.getDepositLog = function(start_date, end_date, page, limit) {
     });
 }
 
-var getReferralLogTotalCount = function(username) {
+exports.getReferralLogTotalCount = function(user_id, date_from, date_to) {
     var selectTotalQuery = 'select count(*) as total';
     var fromQuery = 'from deposit_withdraw_log';
     var joinQuery = 'left join users ON deposit_withdraw_log.`USER_ID` = users.ID'
     var whereQuery = 'WHERE 1=1 ';
-    if (username !== undefined && username != null && username != '') {
-        whereQuery += ' AND (users.USERNAME like "%' + username + '%" OR users.EMAIL like "%' + username + '%")';
+    if (user_id !== undefined && user_id != null && user_id != '') {
+        whereQuery += ' AND users.ID = ' + user_id;
+    }
+    if (date_from !== undefined && date_from != null && date_from != '') {
+        whereQuery += ' AND (deposit_withdraw_log.CREATE_TIME >= ' + date_from + ')';
+    }
+    if (date_to !== undefined && date_to != null && date_to != '') {
+        whereQuery += ' AND (deposit_withdraw_log.CREATE_TIME <= ' + date_to + ')';
     }
     whereQuery += ' AND (deposit_withdraw_log.TYPE=3)';
     var query = selectTotalQuery + ' ' + fromQuery + ' ' + joinQuery + ' ' + whereQuery;
@@ -282,41 +288,54 @@ var getReferralLogTotalCount = function(username) {
         });
     });        
 }
-
-exports.getReferralLog = function(username , page , limit) {
+exports.getReferralLog = function(user_id ,txhash, date_from, date_to, page , limit) {
     var selectQuery = 'SELECT deposit_withdraw_log.* , \
-users.`USERNAME` , users.`EMAIL` ,\
-A.`USERNAME` AS REF_USERNAME , A.`EMAIL` AS REF_EMAIL , users.AVATAR , users.REFERRAL_CODE';
+        users.`USERNAME` , users.`EMAIL` ,\
+        A.`USERNAME` AS REF_USERNAME , A.`EMAIL` AS REF_EMAIL , users.AVATAR as avatar, users.REFERRAL_CODE, B.AMOUNT_COINS as AMOUNT_DEPOSIT, A.`ID` AS REF_ID';
+    var selectSumQuery= 'SELECT NULL as ID, NULL as USER_ID , NULL as TYPE, NULL as AMOUNT_BTC, SUM(deposit_withdraw_log.AMOUNT_COINS) as AMOUNT_COINS, NULL as FEE, NULL as DETAIL,NULL as TXHASH, NULL as STATUS, "TOTAL" as CREATE_TIME, NULL as UPDATE_TIME, \
+        NULL AS USERNAME , NULL AS EMAIL ,\
+        NULL AS REF_USERNAME , NULL AS REF_EMAIL , NULL AS avatar , NULL AS REFERRAL_CODE, SUM(B.AMOUNT_COINS) as AMOUNT_DEPOSIT, NULL AS REF_ID';
 
     var fromQuery = 'FROM deposit_withdraw_log';
 
     var leftjoinQuery = 'LEFT JOIN users ON users.ID = deposit_withdraw_log.`USER_ID` \
-                         LEFT JOIN users A ON A.REFERRAL_CODE = deposit_withdraw_log.`TXHASH`';
+                         LEFT JOIN deposit_withdraw_log B ON B.ID = deposit_withdraw_log.`DETAIL` \
+                         LEFT JOIN users A ON A.REFERRAL_CODE = deposit_withdraw_log.`TXHASH` ';
 
     var whereQuery = 'WHERE 1=1 ';
-    if (username !== undefined && username != null && username != '') {
-        whereQuery += ' AND (users.USERNAME like "%' + username + '%" OR users.EMAIL like "%' + username + '%")';
+    if (user_id !== undefined && user_id != null && user_id != '') {
+        whereQuery += ' AND users.ID =' + user_id ;
+    }
+    if (txhash !== undefined && txhash != null && txhash != '') {
+        whereQuery += ' AND deposit_withdraw_log.TXHASH ="' + txhash+'"' ;
+    }
+    if (date_from !== undefined && date_from != null && date_from != '') {
+        whereQuery += ' AND (deposit_withdraw_log.CREATE_TIME >= ' + date_from + ')';
+    }
+    if (date_to !== undefined && date_to != null && date_to != '') {
+        whereQuery += ' AND (deposit_withdraw_log.CREATE_TIME <= ' + date_to + ')';
     }
     whereQuery += ' AND (deposit_withdraw_log.TYPE=3)';
-    var otherQuery = ' order by deposit_withdraw_log.ID ';
+    var otherQuery = ' order by ID ';
     otherQuery += ' LIMIT ' + (page - 1) * limit + ',' + limit;
-
     return new Promise((resolve , reject) => {
-        getReferralLogTotalCount(username)
+        this.getReferralLogTotalCount(user_id, date_from, date_to)
         .then((total_count) => {
-            var sql = selectQuery + ' ' + fromQuery + ' ' + leftjoinQuery + ' ' + whereQuery + ' ' + otherQuery;
+            var sql = selectQuery + ' ' + fromQuery + ' ' + leftjoinQuery + ' ' + whereQuery;
+            sql += ' UNION ' + selectSumQuery + ' ' + fromQuery + ' ' + leftjoinQuery + ' '+ whereQuery+ otherQuery;
+            console.log(sql);
             db.con.query(sql , function(err , result1 , fields) {
-                    if(err) {
-                        reject(err);
-                    }
-                    else {
-                        result1 = JSON.stringify(result1);
-                        result1 = JSON.parse(result1);
-                        resolve({
-                            total: total_count,
-                            items: result1
-                        });
-                    }
+                if(err) {
+                    reject(err);
+                }
+                else {
+                    result1 = JSON.stringify(result1);
+                    result1 = JSON.parse(result1);
+                    resolve({
+                        total: total_count,
+                        items: result1
+                    });
+                }
             })
         })
         .catch((err) => {

@@ -85,12 +85,16 @@ app.post('/set_config', function (req, res) {
 	max_payout = req.body.max_payout;
 	res.json({ "status": true });
 });
+
+console.log(mainServerUrl + 'init');
+
 request.post(
     {
         url: mainServerUrl + 'init',
         form: {}
     },
     function (error, response, body) {
+
         var ret = JSON.parse(body);
         if (ret.status) {
             gameId = ret.game_no;

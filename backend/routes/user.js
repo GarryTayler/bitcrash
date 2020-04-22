@@ -8,7 +8,6 @@ var rn = require('random-number');
 var md5 = require('md5');
 var request = require('request');
 var nodemailer = require('nodemailer');
-
 //new package
 var fs = require("fs")
 var multer = require("multer")
@@ -73,17 +72,20 @@ router.post('/login', function (req, res) {
 
 router.post('/info', function (req, res) {
   const { token } = req.body
-  model.getUserInfo({ token: token }, function (rows) {
+  model.getUserInfo({ token: token }, async function (rows) {
     if(rows.length < 1 || rows[0]['STATE'] != 0) {
       return res.json({
         code: 50008,
         message: 'Login failed, unable to get user details.'
       })
     }
-
+    var success_referrals = await txnModel.getReferralLogTotalCount(rows[0].ID);
     return res.json({
       code: 20000,
-      data: rows[0]
+      data: {
+        ...rows[0],
+        success_referrals: success_referrals
+      },
     });
   });
 });
@@ -159,11 +161,11 @@ router.post('/signup', async function (req, res) {
     }
     while(1) {
       referral_code = generateReferralCode();
-	    const return_val = await model.checkReferralCode(referral_code)
+      const return_val = await model.checkReferralCode(referral_code)
       if(return_val.length < 1)
         break;
     }
-    var ret = await model.signup({ username: username, email: email, password: password, referral_code: referral_code, referral_code_p: referral_code_p })
+    var ret = await model.signup({ username: username, email: email, password: password, referral_code: 'REF_' + referral_code, referral_code_p: referral_code_p })
     if (ret.code == false) {
       return res.json({
         code: 50000,
@@ -195,10 +197,10 @@ router.post('/logout', function (req, res) {
   });
 });
 router.post('/list', async function (req, res) {
-  const { search_key, page, limit } = req.body
+  const { search_key, page, limit, referralCode } = req.body
   var i_page = isNaN(parseInt(page)) ? 1 : parseInt(page)
   var i_limit = isNaN(parseInt(limit)) ? 1 : parseInt(limit)
-  var data = await model.getList(search_key, i_page, i_limit)
+  var data = await model.getList(search_key, referralCode, i_page, i_limit)
   return res.json({
       code: 20000,
       data: data
@@ -638,7 +640,6 @@ router.post('/reset_password' , function(req , res) {
   const {new_password , user_id} = req.body
 
   console.log(new_password , user_id)
-
     model.updateUserProfile({password: md5(new_password)} , {ID: user_id})
     .then((result) => {
         return res.json({
@@ -730,5 +731,6 @@ router.post("/upload_avatar",
     }
   }
 );
+
 
 module.exports = router;

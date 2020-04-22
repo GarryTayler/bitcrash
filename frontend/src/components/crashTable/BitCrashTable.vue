@@ -11,38 +11,36 @@
           <td colspan="20" style="text-align: center;line-height: 40px;">Empty</td>
         </tr>
       </tbody>
-      <transition-group v-else name="fade" tag="tbody">
-        <tbody v-else>
-          <tr v-for="item in items" :key="'tr-'+item.ID" :class="{'active-background':item.name===name}">
-            <td v-for="field in fields" :key="field.ID">
-              <user-profile v-if="field.type == 'profile'" :user="item" :avatar="item.avatar ? item.avatar : item.AVATAR" />
-              <coin-label v-if="field.type=='bet'" :bet="setNumberFormat(item[field.key])" />
-              <div v-if="field.type==='text' && field.key!=='bet' && field.key!=='profit'">
+      <transition-group v-if="items.length > 0" name="fade" tag="tbody">
+        <tr v-for="item in items" :key="'tr-'+item.ID" :class="{'active-background':item.name===name}">
+          <td v-for="field in fields" :key="field.ID">
+            <user-profile v-if="field.type == 'profile'" :user="item" :avatar="item.avatar ? item.avatar : item.AVATAR" />
+            <coin-label v-if="field.type=='bet'" :bet="setNumberFormat(item[field.key])" />
+            <div v-if="field.type==='text' && field.key!=='bet' && field.key!=='profit'">
+              {{ item[field.key] }}
+            </div>
+            <div v-if="field.type==='text' && (field.key==='bet')">
+              {{ setNumberFormat(item[field.key]) }}
+            </div>
+            <div v-if="field.type==='text' && (field.key==='profit')" :class="crashType == '2' ? '' : 'green-text-label'">
+              {{ setNumberFormat(item[field.key]) }}
+            </div>
+            <div v-if="field.type==='plain'">
+              {{ item[field.key] }}
+            </div>
+            <div v-if="field.type==='date'">
+              <span v-if="isNaN(parseInt(item[field.key]))">
                 {{ item[field.key] }}
-              </div>
-              <div v-if="field.type==='text' && (field.key==='bet')">
-                {{ setNumberFormat(item[field.key]) }}
-              </div>
-              <div v-if="field.type==='text' && (field.key==='profit')" :class="crashType == '2' ? '' : 'green-text-label'">
-                {{ setNumberFormat(item[field.key]) }}
-              </div>
-              <div v-if="field.type==='plain'">
-                {{ item[field.key] }}
-              </div>
-              <div v-if="field.type==='date'">
-                <span v-if="isNaN(parseInt(item[field.key]))">
-                  {{ item[field.key] }}
-                </span>
-                <span v-else>
-                  {{ item[field.key] | parseTime('{y}-{m}-{d}') }}
-                </span>
-              </div>
-              <div v-if="field.type==='link'" class="link" @click="onItemClick(item)">
-                View Referral Earnings
-              </div>
-            </td>
-          </tr>
-        </tbody>
+              </span>
+              <span v-else>
+                {{ item[field.key] | parseTime('{y}-{m}-{d}') }}
+              </span>
+            </div>
+            <div v-if="field.type==='link'" class="link" @click="onItemClick(item)">
+              View Referral Earnings
+            </div>
+          </td>
+        </tr>
       </transition-group>
     </table>
   </div>

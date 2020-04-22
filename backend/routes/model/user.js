@@ -144,11 +144,12 @@ var signup = function (data) {
         }
         var token = generateRandomString()
         var pwdStr = "";
-        data.referral_code = 'REF_' + data.referral_code
+        data.referral_code = data.referral_code
 
         //Math.round(new Date().getTime() / 1000)
-
+        
         pwdStr = md5(data.password);
+        
         var values = "(" + Math.round(new Date().getTime() / 1000) + ", "
         values += Math.round(new Date().getTime() / 1000) + ", "
         values += "'" + data.username + "', "
@@ -158,6 +159,8 @@ var signup = function (data) {
         values += "'" + data.referral_code + "',"
         values += "'" + data.referral_code_p + "',"
         values += "'" + token + "'" + ")"
+        console.log(values);
+
         var statement = db.statement("insert into", "users", "(CREATE_TIME, UPDATE_TIME, USERNAME, PASSWORD, EMAIL, AVATAR, REFERRAL_CODE, REFERRAL_CODE_P, API_TOKEN)", "", "VALUES " + values)
         db.con.query(statement, function (err, results, fields) {
             if (err) {
@@ -172,7 +175,7 @@ var signup = function (data) {
         });
     })
 }
-var getList = function (search_key, page, limit) {
+var getList = function (search_key, referralCode , page, limit) {
     var total = 0
     var whereItems = []
     if (search_key !== undefined && search_key != '') {
@@ -189,6 +192,15 @@ var getList = function (search_key, page, limit) {
                 key: 'email',
                 val: '%' + search_key + '%',
                 opt: 'like'
+            }
+        )
+    }
+    if (referralCode !== undefined && referralCode != '') {
+        whereItems.push(
+            {
+                key: 'REFERRAL_CODE_P',
+                val: referralCode,
+                opt: '='
             }
         )
     }

@@ -6,7 +6,6 @@ var userModel = require('./model/user')
 var txnModel = require('./model/txn')
 var variableModel = require('./model/variable');
 var request = require('request');
-
 var bitcoin = require("bitcoinjs-lib");
 var bigi    = require("bigi");
 var buffer  = require('buffer');
@@ -536,10 +535,10 @@ router.post('/deposit_log', async function (req, res) {
 })
 
 router.post('/referral_log', async function (req, res) {
-    const { username, page, limit } = req.body
+    const { user_id, page, start_date, end_date, limit, txhash } = req.body
     var i_page = isNaN(parseInt(page)) ? 1 : parseInt(page)
     var i_limit = isNaN(parseInt(limit)) ? 1 : parseInt(limit)
-    var ret = await txnModel.getReferralLog(username , i_page, i_limit)
+    var ret = await txnModel.getReferralLog(user_id, txhash, start_date, end_date, i_page, i_limit)
     return res.json({
         code: 20000,
         data: ret
