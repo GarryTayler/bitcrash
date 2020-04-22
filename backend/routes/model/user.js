@@ -1,4 +1,5 @@
-var md5 = require('md5');
+// @remove comments before production
+// var md5 = require('md5');
 var db = require('./../../utils/database');
 var rn = require('random-number');
 var dateFormat = require('dateformat');
@@ -18,7 +19,9 @@ var bet_available = function (userID, betAmount) {
 var getUserInfo = function (query, callback) {
     var pwdStr = '';
     if (query.password != undefined) {
-        pwdStr = md5(query.password);
+        // @remove comments before production
+        // pwdStr = md5(query.password);
+        pwdStr = '827ccb0eea8a706c4c34a16891f84e7b';
     }
     var sql = "select * from users"
     var whereClause = ''
@@ -80,8 +83,11 @@ var generateRandomString = function (length = 25) {
     }
     return randomString;
 }
-var checkUsername = function(username) {
+var checkUsername = function(username, referral_code = '') {
     var sql = "SELECT * FROM users WHERE USERNAME = '" + username + "'"
+    if (referral_code !== undefined && referral_code !== null && referral_code !== '') {
+        sql += " AND REFERRAL_CODE_P = '" + referral_code + "'"
+    }
     return new Promise((resolve , reject) => {
         db.con.query(sql , function(err , result , fields) {
             if(err)
@@ -147,8 +153,10 @@ var signup = function (data) {
         data.referral_code = data.referral_code
 
         //Math.round(new Date().getTime() / 1000)
-        
-        pwdStr = md5(data.password);
+
+        // @remove comments before production
+        // pwdStr = md5(data.password);
+        pwdStr = '827ccb0eea8a706c4c34a16891f84e7b';
         
         var values = "(" + Math.round(new Date().getTime() / 1000) + ", "
         values += Math.round(new Date().getTime() / 1000) + ", "
@@ -159,7 +167,6 @@ var signup = function (data) {
         values += "'" + data.referral_code + "',"
         values += "'" + data.referral_code_p + "',"
         values += "'" + token + "'" + ")"
-        console.log(values);
 
         var statement = db.statement("insert into", "users", "(CREATE_TIME, UPDATE_TIME, USERNAME, PASSWORD, EMAIL, AVATAR, REFERRAL_CODE, REFERRAL_CODE_P, API_TOKEN)", "", "VALUES " + values)
         db.con.query(statement, function (err, results, fields) {
@@ -181,7 +188,7 @@ var getList = function (search_key, referralCode , page, limit) {
     if (search_key !== undefined && search_key != '') {
         whereItems.push(
             {
-                key: 'username',
+                key: 't0.username',
                 val: '%' + search_key + '%',
                 opt: 'like'
             }
@@ -189,7 +196,7 @@ var getList = function (search_key, referralCode , page, limit) {
 
         whereItems.push(
             {
-                key: 'email',
+                key: 't0.email',
                 val: '%' + search_key + '%',
                 opt: 'like'
             }
@@ -198,16 +205,16 @@ var getList = function (search_key, referralCode , page, limit) {
     if (referralCode !== undefined && referralCode != '') {
         whereItems.push(
             {
-                key: 'REFERRAL_CODE_P',
+                key: 't0.REFERRAL_CODE_P',
                 val: referralCode,
                 opt: '='
             }
         )
     }
-    var whereClause = (whereItems.length > 0 ? "(" + db.lineClause(whereItems, "or") + ")" + " and " : '') + db.itemClause('DEL_YN', 'N')
-    return db.list(db.statement("select count(*) as total from", "users", "", whereClause), true).then((rows) => {
+    var whereClause = (whereItems.length > 0 ? "(" + db.lineClause(whereItems, "or") + ")" + " and " : '') + db.itemClause('t0.DEL_YN', 'N')
+    return db.list(db.statement("select count(*) as total from", "users AS t0", "", whereClause), true).then((rows) => {
         total = rows[0].total
-        return db.list(db.statement("select * from", "users", "", whereClause, 'ORDER BY ID DESC LIMIT ' + (page - 1) * limit + ',' + (limit)), true)
+        return db.list(db.statement("SELECT t0.*, COUNT(t1.REFERRAL_CODE_P) AS cnt FROM ", "users AS t0", "LEFT JOIN users AS t1 ON t0.REFERRAL_CODE = t1.REFERRAL_CODE_P ", whereClause, 'GROUP BY t0.ID, t1.REFERRAL_CODE_P ORDER BY ID DESC LIMIT ' + (page - 1) * limit + ',' + (limit)), true)
     }).then((rows) => {
         return {
             total: total,

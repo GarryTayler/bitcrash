@@ -1,7 +1,9 @@
 <template>
   <div class="d-flex align-items-center">
     <div class="icon p-r-15">
-      <v-lazy-image :src="avatar" />
+      <img :src="avatar" :class="size">
+      <!-- // @remove comments before production -->
+      <!-- <v-lazy-image :src="avatar" /> -->
     </div>
     {{ user.name }}
   </div>
@@ -21,6 +23,10 @@ export default {
     avatar: {
       type: String,
       default: ''
+    },
+    size: {
+      type: String,
+      default: 'sm'
     }
   }
 }
@@ -34,6 +40,9 @@ export default {
   img {
     width: $user-tbl-profile-size;
     border-radius: $navbar-profile-border-radius;
+  }
+  img.lg{
+    width: 55px
   }
   .v-lazy-image {
     filter: blur(10px);

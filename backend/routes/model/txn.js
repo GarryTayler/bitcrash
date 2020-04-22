@@ -323,7 +323,6 @@ exports.getReferralLog = function(user_id ,txhash, date_from, date_to, page , li
         .then((total_count) => {
             var sql = selectQuery + ' ' + fromQuery + ' ' + leftjoinQuery + ' ' + whereQuery;
             sql += ' UNION ' + selectSumQuery + ' ' + fromQuery + ' ' + leftjoinQuery + ' '+ whereQuery+ otherQuery;
-            console.log(sql);
             db.con.query(sql , function(err , result1 , fields) {
                 if(err) {
                     reject(err);

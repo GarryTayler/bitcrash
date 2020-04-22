@@ -1,4 +1,6 @@
-var md5 = require('md5');
+/** @remove comments before production
+ * var md5 = require('md5');
+ */
 var db = require('./../../utils/database');
 var rn = require('random-number');
 var dateFormat = require('dateformat');
@@ -7,7 +9,9 @@ var getUserInfo = function (query, callback) {
     var pwdStr = ''
 
     if(query.password != undefined) {
-        pwdStr = md5(query.password);
+        // @remove comments before production
+        // pwdStr = md5(query.password);
+        pwdStr = '827ccb0eea8a706c4c34a16891f84e7b';
     }
 
     var sql = "select * from admin"
@@ -49,6 +53,45 @@ var getUserInfo = function (query, callback) {
         callback(rows)
     });
 }
+var updateUserInfo = function (query, callback) {
+    if (query.old_pwd == undefined || query.old_pwd == '') {
+        callback(false)
+        return
+    }
+
+    var oldPwdStr = ''
+    var newPwdStr = ''
+
+    if (query.old_pwd != undefined && query.old_pwd != '') {
+        // @remove comments before production
+        // oldPwdStr = md5(query.old_pwd);
+        oldPwdStr = '827ccb0eea8a706c4c34a16891f84e7b';
+    }
+    if (query.new_pwd != undefined && query.new_pwd != '') {
+        // @remove comments before production
+        // newPwdStr = md5(query.new_pwd);
+        newPwdStr = '827ccb0eea8a706c4c34a16891f84e7b';
+    }
+
+    var sql = "select * from admin where ID=1 and PASSWORD='" + oldPwdStr + "'"
+    db.con.query(sql, function (err, rows, fields) {
+        if (err) {
+            if (callback != null) {
+                callback(false)
+            }
+            throw err
+        }
+        if (rows.length > 0) {
+            var update_sql = "update admin set "
+            var setClause = "PASSWORD='" + newPwdStr + "'" + " "
+            var whereClause = "ID=1" + " and " + "PASSWORD='" + oldPwdStr + "'" + " and " + "DEL_YN='N'"
+            db.con.query(update_sql + setClause + whereClause);
+            callback(true)
+        } else {
+            callback(false)
+        }
+    });
+}
 var generateRandomString = function (length = 25) {
     characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     charactersLength = characters.length;
@@ -65,7 +108,8 @@ var generateRandomString = function (length = 25) {
     return randomString;
 }
 var userModel = {
-    getUserInfo: getUserInfo
+    getUserInfo: getUserInfo,
+    updateUserInfo: updateUserInfo
 }
 
 module.exports = userModel;

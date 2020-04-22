@@ -11,10 +11,12 @@
           <td colspan="20" style="text-align: center;line-height: 40px;">Empty</td>
         </tr>
       </tbody>
-      <transition-group v-if="items.length > 0" name="fade" tag="tbody">
+      <!-- // @remove comments before production -->
+      <!-- <transition-group v-else name="fade" tag="tbody"> -->
+      <tbody v-else>
         <tr v-for="item in items" :key="'tr-'+item.ID" :class="{'active-background':item.name===name}">
           <td v-for="field in fields" :key="field.ID">
-            <user-profile v-if="field.type == 'profile'" :user="item" :avatar="item.avatar ? item.avatar : item.AVATAR" />
+            <user-profile v-if="field.type == 'profile'" :size="size" :user="item" :avatar="item.avatar ? item.avatar : item.AVATAR" />
             <coin-label v-if="field.type=='bet'" :bet="setNumberFormat(item[field.key])" />
             <div v-if="field.type==='text' && field.key!=='bet' && field.key!=='profit'">
               {{ item[field.key] }}
@@ -41,7 +43,9 @@
             </div>
           </td>
         </tr>
-      </transition-group>
+      </tbody>
+      <!-- // @remove comments before production -->
+      <!-- </transition-group> -->
     </table>
   </div>
 </template>
@@ -75,6 +79,12 @@ export default {
       type: String,
       default: function() {
         return '2'
+      }
+    },
+    size: {
+      type: String,
+      default: function() {
+        return 'sm'
       }
     }
   },

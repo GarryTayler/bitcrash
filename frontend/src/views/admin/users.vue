@@ -22,7 +22,7 @@
 
       <el-table-column width="150px" align="center" label="Username">
         <template slot-scope="scope">
-          <span>{{ scope.row.USERNAME }}</span>
+          <span class="cursor-pointer" @click="handleReferal(scope.row)">{{ scope.row.USERNAME }}</span>
         </template>
       </el-table-column>
 
@@ -44,18 +44,6 @@
         </template>
       </el-table-column>
 
-      <el-table-column width="150px" align="center" label="Last Visit">
-        <template slot-scope="scope">
-          <span>{{ scope.row.LAST_VISIT == null ? '' : scope.row.LAST_VISIT | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column width="100px" align="center" label="IP Address">
-        <template slot-scope="scope">
-          <span>{{ scope.row.IPADDRESS }}</span>
-        </template>
-      </el-table-column>
-
       <el-table-column width="100px" align="center" label="Status">
         <template slot-scope="scope">
           <el-tag :type="scope.row.STATE | statusFilter">
@@ -72,7 +60,9 @@
 
       <el-table-column width="150px" align="center" label="Referral Users">
         <template slot-scope="{row}">
-          <el-button size="small" @click="handleReferal(row)">Referral Users</el-button>
+          <el-tag>
+            {{ row.cnt }}
+          </el-tag>
         </template>
       </el-table-column>
 
@@ -262,5 +252,8 @@ export default {
 }
 .m-t {
     margin-top: $page-margin-top;
+}
+.cursor-pointer {
+  cursor: pointer
 }
 </style>

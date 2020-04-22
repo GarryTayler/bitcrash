@@ -8,6 +8,7 @@
         <div class="bg-link flex-space-between-vc" style="margin-top: 10px">
           <input
             class="text"
+            :value="'https://www.dermotmcdonagh.com/?channel='+referralCode"
           >
           <div class="copy-btn">
             <round-button text="Copy" :icon="'link'" :color="'yellow'" :right-half="true" :transform="'left-10 rotate-45'" />
@@ -15,7 +16,10 @@
         </div>
         <b-row class="m-t-15">
           <b-col sm="12" md="6" lg="6" xl="6">
-            <round-button text="Import Contacts" :icon="'link'" :color="'white'" />
+            <b-row>
+              <pay-btn :type="'signup'" :value="referal_data.total_users" />
+              <pay-btn :type="'success'" :value="success_refs" />
+            </b-row>
           </b-col>
           <b-col sm="4" md="2" lg="2" xl="2">
             <round-button text="Facebook" :icon="'facebook'" :color="'facebook'" />
@@ -31,10 +35,6 @@
     </div>
     <b-row class="ml-1 top-bar" />
     <b-row align-v="start" class="top-content">
-      <b-row>
-        <pay-btn :type="'signup'" :value="referal_data.total_users" />
-        <pay-btn :type="'success'" :value="success_refs" />
-      </b-row>
       <div class="w-h m-b-sm">
         <b-row>
           <b-col sm="12" md="4" lg="4" xl="4">
@@ -44,17 +44,17 @@
         <bit-crash-card :body-style="1" :no-header="false" class="m-t-30">
           <div slot="header" class="card-header flex-space-between-vc cashout-user">
             <span>
-              Total number of referral users: {{ referal_data.total_users }}
+              Total number of referral users: {{referal_data.total_users}}
             </span>
             <coin-label :bet="referralCode" />
           </div>
           <div class="card-content">
-            <bit-crash-table :fields="tbl_fields" :items="referal_data.users" crash-type="1" @click="showReferal" />
+            <bit-crash-table :fields="tbl_fields" :items="referal_data.users" crash-type="1" size="lg" @click="showReferal" />
           </div>
         </bit-crash-card>
       </div>
     </b-row>
-    <referral-modal :users="referal_data.users" :my-id="user_id" :user-id="selected_user_id" :show="refModalShow" @visibleChanged="refModalVisibleChanged" />
+    <referral-modal :users="referal_data.users" :my-id="user_id" :user-id="selected_user_id" />
   </div>
 </template>
 <script>
@@ -79,18 +79,13 @@ export default {
     ReferralModal,
     PayBtn
   },
-  computed: {
-    ...mapGetters([
-      'token'
-    ])
-  },
   data() {
     return {
-      refModalShow: false,
+      // refModalShow: false,
       user_id: 0,
-      selected_user_id: 0,
-      referralCode: '',
-      success_refs: 0,
+      selected_user_id:0,
+      referralCode:'',
+      success_refs:0,
       referal_data: {
         my_referral: '',
         users: [
@@ -125,36 +120,42 @@ export default {
       ]
     }
   },
+  computed: {
+    ...mapGetters([
+      'token'
+    ])
+  },
   mounted() {
     this.$store.dispatch('user/getInfo', this.token)
       .then((res) => {
         this.user_id = res.ID
-        this.success_refs = res.success_referrals
+        this.success_refs= res.success_referrals
         getReferralData({ user_id: res.ID }).then(response => {
           this.referralCode = response.data.referral_code
           this.getUserList()
         })
       })
+
   },
   created() {
   },
   methods: {
     showReferal(user_item) {
-      this.selected_user_id = user_item == null ? this.user_id : user_item.ID
-      this.refModalShow = true
-      // this.$bvModal.show('referral-modal')
+      this.selected_user_id = user_item == null ? this.user_id : user_item.ID;
+      // this.refModalShow = true
+      this.$bvModal.show('referral-modal')
     },
     getUserList() {
       fetchList({ limit: 999999, referralCode: this.referralCode }).then(response => {
         this.referal_data.users = response.data.items
         this.referal_data.total_users = response.data.total
       })
-    },
-    refModalVisibleChanged(state) {
-      if (this.refModalShow != state) {
-        this.refModalShow = state
-      }
     }
+    // refModalVisibleChanged(state) {
+    //   if (this.refModalShow != state) {
+    //     this.refModalShow = state
+    //   }
+    // }
   }
 }
 </script>

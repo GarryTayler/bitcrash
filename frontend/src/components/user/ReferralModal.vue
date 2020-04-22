@@ -7,42 +7,43 @@
     modal-class="login-signup-form"
     size="lg"
     header-class="border-bottom-0"
+    :static="true"
   >
     <h2>Referrals</h2>
     <b-row>
-      <b-col sm="12" md="4" lg="4" xl="4" class="pt-2 pb-2">
-        <el-select v-model="listQuery.user_id" class="mr-2" @change="handleFilter">
-          <el-option :key="userId" :value="myId" label="All">
-            All
-          </el-option>
-          <el-option v-for="user in users" :key="user.ID" :value="user.ID" :label="user.USERNAME">
-            {{ user.USERNAME }}
-          </el-option>
-        </el-select>
+      <b-col sm="12" md="12" lg="4" xl="4" class="pt-2 pb-2">
+        <model-list-select
+          v-model="listQuery.user_id"
+          class="mr-2"
+          :list="user_list"
+          option-value="ID"
+          option-text="USERNAME"
+          placeholder="select name"
+          @input="handleFilter"
+        />
       </b-col>
-      <b-col sm="12" md="4" lg="4" xl="4" class="pt-2 pb-2">
-        <el-date-picker v-model="listQuery.date_from" type="date" format="yyyy-MM-dd" placeholder="Please pick a start date" class="mr-2" @change="handleFilter" />
+      <b-col sm="12" md="12" lg="4" xl="4" class="pt-2 pb-2">
+        <el-date-picker v-model="listQuery.date_from" type="date" format="yyyy-MM-dd" placeholder="Please pick a start date" class="mr-2" @input="handleFilter" />
       </b-col>
-      <b-col sm="12" md="4" lg="4" xl="4" class="pt-2 pb-2">
-        <el-date-picker v-model="listQuery.date_to" type="date" format="yyyy-MM-dd" placeholder="Please pick a end date" class="mr-2" @change="handleFilter" />
+      <b-col sm="12" md="12" lg="4" xl="4" class="pt-2 pb-2">
+        <el-date-picker v-model="listQuery.date_to" type="date" format="yyyy-MM-dd" placeholder="Please pick a end date" class="mr-2" @input="handleFilter" />
       </b-col>
     </b-row>
-    <bit-crash-table :fields="tbl_fields" :items="list" crash-type="1" class="mt-2" />
+    <bit-crash-table :fields="tbl_fields" :items="list" crash-type="1" class="mt-2"/>
   </b-modal>
 </template>
 <script>
 import BitCrashTable from '@/components/crashTable/BitCrashTable.vue'
 import { getReferralList } from '@/api/bitcoin'
 import { getDateFromString } from '@/utils/index'
+import { ModelListSelect } from 'vue-search-select'
+import 'vue-search-select/dist/VueSearchSelect.css'
 export default {
   components: {
-    BitCrashTable
+    BitCrashTable,
+    ModelListSelect
   },
   props: {
-    show: {
-      type: Boolean,
-      default: false
-    },
     users: {
       type: Array,
       default: function() {
@@ -53,15 +54,17 @@ export default {
       type: Number,
       default: 0
     },
-    myId: {
+    myId:{
       type: Number,
       default: 0
     }
   },
   data() {
     return {
+      show: false,
       list: [],
       total: 0,
+      user_list: [],
       listQuery: {
         date_from: null,
         date_to: null,
@@ -107,6 +110,16 @@ export default {
   },
   watch: {
     show(newVal) {
+      this.user_list = []
+      for (let i = 0; i < this.users.length; i++) {
+        this.user_list.push({
+          ...this.users[i]
+        })
+      }
+      this.user_list.unshift({
+        'ID': this.userId,
+        'USERNAME': 'All'
+      })
       this.$emit('visibleChanged', newVal)
       if (newVal) {
         this.listQuery.user_id = this.userId
@@ -123,7 +136,10 @@ export default {
       this.getList()
     },
     getList() {
-      var filtered_list = this.users.filter(item => item.ID == this.listQuery.user_id)
+      if (!this.listQuery.user_id) {
+        this.listQuery.user_id = this.myId
+      }
+      var filtered_list = this.users.filter(item => item.ID === this.listQuery.user_id)
       if (filtered_list.length) {
         this.listQuery.txhash = filtered_list[0].REFERRAL_CODE
       } else {
@@ -139,11 +155,10 @@ export default {
         this.listQuery.end_date = this.listQuery.end_date + ' 23:59:59'
         this.listQuery.end_date = Math.floor(new Date(this.listQuery.end_date).getTime() / 1000)
       }
-
       var query = {
         ...this.listQuery
       }
-      if (filtered_list.length) {
+      if(filtered_list.length){
         query.user_id = 0
       }
       getReferralList(query).then(response => {

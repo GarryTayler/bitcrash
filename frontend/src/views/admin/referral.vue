@@ -2,13 +2,24 @@
   <div class="admin-page">
     <b-row>
       <b-col sm="12" md="8" lg="8" xl="8" class="pt-2 pb-2">
-        <el-select v-model="listQuery.user_id" class="mr-2" @change="handleFilter">
-          <el-option v-for="user in users" :key="user.ID" :value="user.ID" :label="user.USERNAME">
-            {{ user.USERNAME }}
-          </el-option>
-        </el-select>
-        <el-date-picker v-model="listQuery.date_from" type="date" format="yyyy-MM-dd" placeholder="Please pick a start date" class="mr-2" @change="handleFilter" />
-        <el-date-picker v-model="listQuery.date_to" type="date" format="yyyy-MM-dd" placeholder="Please pick a end date" class="mr-2" @change="handleFilter" />
+        <b-row>
+          <b-col sm="12" md="4" lg="4" xl="4" class="custom-model-select">
+            <model-list-select
+              v-model="listQuery.user_id"
+              :list="users"
+              option-value="ID"
+              option-text="USERNAME"
+              placeholder="select name"
+              @input="handleFilter"
+            />
+          </b-col>
+          <b-col sm="12" md="4" lg="4" xl="4">
+            <el-date-picker v-model="listQuery.date_from" type="date" format="yyyy-MM-dd" placeholder="Please pick a start date" class="mr-2" @change="handleFilter" />
+          </b-col>
+          <b-col sm="12" md="4" lg="4" xl="4">
+            <el-date-picker v-model="listQuery.date_to" type="date" format="yyyy-MM-dd" placeholder="Please pick a end date" class="mr-2" @change="handleFilter" />
+          </b-col>
+        </b-row>
       </b-col>
     </b-row>
     <el-table v-loading="listLoading" class="m-t" :data="list" border fit highlight-current-row style="width: 100%">
@@ -21,13 +32,13 @@
 
       <el-table-column width="200px" align="center" label="Username">
         <template slot-scope="scope">
-          <span>{{ scope.row.REF_USERNAME }}</span>
+          <span>{{ scope.row.USERNAME }}</span>
         </template>
       </el-table-column>
 
       <el-table-column width="240px" align="center" label="Email">
         <template slot-scope="scope">
-          <span>{{ scope.row.REF_EMAIL }}</span>
+          <span>{{ scope.row.EMAIL }}</span>
         </template>
       </el-table-column>
 
@@ -45,13 +56,13 @@
 
       <el-table-column width="150px" align="center" label="Referral Code">
         <template slot-scope="scope">
-          <span>{{ scope.row.TXHASH }}</span>
+          <span>{{ scope.row.REFERRAL_CODE }}</span>
         </template>
       </el-table-column>
 
       <el-table-column align="center" label="Referral Username">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.REF_ID" size="small" @click="handleReferal(scope.row.REF_ID)">Referral Users</el-button>
+          <span>{{ scope.row.REF_USERNAME }}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -61,16 +72,17 @@
 
 <script>
 import { getReferralList } from '@/api/bitcoin'
+import { ModelListSelect } from 'vue-search-select'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 import global from '@/mixins/global'
-import UserSelect from '@/components/user/UserSelect.vue'
-
 import { fetchList } from '@/api/user'
 import { getDateFromString } from '@/utils/index'
+import 'vue-search-select/dist/VueSearchSelect.css'
 
 export default {
   components: {
-    Pagination
+    Pagination,
+    ModelListSelect
   },
   mixins: [global],
   data() {

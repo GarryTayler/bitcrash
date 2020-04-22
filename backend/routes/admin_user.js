@@ -3,7 +3,11 @@ var router = express.Router();
 
 var userModel = require('./model/admin_user');
 router.post('/login', function (req, res) {
-  const { search_key, password, token } = req.body
+  const {
+    search_key,
+    password,
+    token
+  } = req.body
   var data = {}
   if (token !== undefined && token != null && token.length > 0) {
     data = {
@@ -17,13 +21,13 @@ router.post('/login', function (req, res) {
   }
   userModel.getUserInfo(data, function (rows) {
     var token = null
-    if(rows.length < 1) {
+    if (rows.length < 1) {
       return res.json({
         code: 60204,
         message: 'Incorrect Username or Password. Please try again.'
       })
     } else {
-      if(rows[0]['DEL_YN'] != 'N') {
+      if (rows[0]['DEL_YN'] != 'N') {
         return res.json({
           code: 60204,
           message: 'You are not allowed to use this account. Do you need support?'
@@ -44,9 +48,13 @@ router.post('/login', function (req, res) {
 });
 
 router.post('/info', function (req, res) {
-  const { token } = req.body
-  userModel.getUserInfo({ token: token }, function (rows) {
-    if(rows.length < 1 || rows[0]['DEL_YN'] != 'N') {
+  const {
+    token
+  } = req.body
+  userModel.getUserInfo({
+    token: token
+  }, function (rows) {
+    if (rows.length < 1 || rows[0]['DEL_YN'] != 'N') {
       return res.json({
         code: 50008,
         message: 'Login failed, unable to get user details.'
@@ -59,6 +67,36 @@ router.post('/info', function (req, res) {
     });
   });
 });
+
+router.post('/update', function (req, res) {
+  const {
+    old_pwd,
+    new_pwd
+  } = req.body
+
+  var update_data = {}
+  if (old_pwd != undefined && old_pwd != '') {
+    update_data['old_pwd'] = old_pwd
+  }
+  if (new_pwd != undefined && new_pwd != '') {
+    update_data['new_pwd'] = new_pwd
+  }
+
+  userModel.updateUserInfo(update_data, function (result) {
+    if (result == false) {
+      return res.json({
+        code: 50008,
+        message: 'Updating info failed'
+      })
+    }
+
+    return res.json({
+      code: 20000,
+      data: null
+    });
+  });
+});
+
 // router.post('/signup', async function (req, res) {
 //   const { username, email, password } = req.body
 

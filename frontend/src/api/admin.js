@@ -23,6 +23,14 @@ export function logout() {
   })
 }
 
+export function updateInfo(data) {
+  return request({
+    url: 'api/admin_user/update',
+    method: 'post',
+    data
+  })
+}
+
 // export function signup(data) {
 //   return request({
 //     url: 'api/admin/signup',
