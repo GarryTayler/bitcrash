@@ -7,11 +7,11 @@
         </span><br>
         <div class="bg-link flex-space-between-vc" style="margin-top: 10px">
           <input
+            v-model="referralLink"
             class="text"
-            :value="'https://www.dermotmcdonagh.com/?channel='+referralCode"
           >
           <div class="copy-btn">
-            <round-button text="Copy" :icon="'link'" :color="'yellow'" :right-half="true" :transform="'left-10 rotate-45'" />
+            <round-button text="Copy" :icon="'link'" :color="'yellow'" :right-half="true" :transform="'left-10 rotate-45'" @click="referralCopy" />
           </div>
         </div>
         <b-row class="m-t-15">
@@ -21,6 +21,56 @@
               <pay-btn :type="'success'" :value="success_refs" />
             </b-row>
           </b-col>
+          <b-col sm="12" md="6" lg="6" xl="6">
+            <social-sharing
+              :url="referralLink"
+              title="Bitcrash Referral Link"
+              description="Bitcrash Referral Link"
+              quote="Bitcrash Referral Link"
+              hashtags="bitcrash,referrallink,referralcode"
+              twitter-user="bitcrash"
+              inline-template
+            >
+              <div>
+                <network network="facebook">
+                  <button
+                    class="social_button"
+                    style="width: 32%;
+                    margin-right: 2%;
+    background: #44619d;
+    border: 0;
+    padding: 10px;
+    color: #fff;
+    border-radius: 30px;"
+                  >Facebook</button>
+                </network>
+                <network network="twitter">
+                  <button
+                    class="social_button"
+                    style="width: 32%;
+    background: rgb(29, 161, 242);
+    border: 0;
+    padding: 10px;
+    color: #fff;
+    border-radius: 30px;"
+                  >Twitter</button>
+                </network>
+                <network network="whatsapp">
+                  <button
+                    class="social_button"
+                    style="width: 32%;
+    background: #1ebea5;
+    margin-left: 2%;
+    border: 0;
+    padding: 10px;
+    color: #fff;
+    border-radius: 30px;"
+                  >Whatsapp</button>
+                </network>
+              </div>
+            </social-sharing>
+          </b-col>
+          <!--
           <b-col sm="4" md="2" lg="2" xl="2">
             <round-button text="Facebook" :icon="'facebook'" :color="'facebook'" />
           </b-col>
@@ -30,6 +80,7 @@
           <b-col sm="4" md="2" lg="2" xl="2">
             <round-button text="Email" :icon="'email'" :color="'email'" />
           </b-col>
+           -->
         </b-row>
       </div>
     </div>
@@ -44,7 +95,7 @@
         <bit-crash-card :body-style="1" :no-header="false" class="m-t-30">
           <div slot="header" class="card-header flex-space-between-vc cashout-user">
             <span>
-              Total number of referral users: {{referal_data.total_users}}
+              Total number of referral users: {{ referal_data.total_users }}
             </span>
             <coin-label :bet="referralCode" />
           </div>
@@ -68,7 +119,7 @@ import ReferralModal from '@/components/user/ReferralModal.vue'
 import { fetchList } from '@/api/user'
 import { mapGetters } from 'vuex'
 import { getReferralData } from '@/api/user'
-
+import global from '@/mixins/global'
 export default {
   components: {
     BitCrashTable,
@@ -79,13 +130,15 @@ export default {
     ReferralModal,
     PayBtn
   },
+  mixins: [global],
   data() {
     return {
       // refModalShow: false,
       user_id: 0,
-      selected_user_id:0,
-      referralCode:'',
-      success_refs:0,
+      referralLink: '',
+      selected_user_id: 0,
+      referralCode: '',
+      success_refs: 0,
       referal_data: {
         my_referral: '',
         users: [
@@ -129,21 +182,29 @@ export default {
     this.$store.dispatch('user/getInfo', this.token)
       .then((res) => {
         this.user_id = res.ID
-        this.success_refs= res.success_referrals
+        this.success_refs = res.success_referrals
         getReferralData({ user_id: res.ID }).then(response => {
           this.referralCode = response.data.referral_code
+          this.referralLink = 'https://bitcrash.co.za/#/home?r=' + this.referralCode
           this.getUserList()
         })
       })
-
   },
   created() {
   },
   methods: {
     showReferal(user_item) {
-      this.selected_user_id = user_item == null ? this.user_id : user_item.ID;
+      this.selected_user_id = user_item == null ? this.user_id : user_item.ID
       // this.refModalShow = true
       this.$bvModal.show('referral-modal')
+    },
+    referralCopy() {
+      var self = this
+      this.$copyText(this.referralLink).then(function(e) {
+        self.showToast('Success', 'The referral link has been copied to the clipboard.', 'success')
+      }, function(e) {
+        self.showToast('Error', 'Can not copy to the clipboard.', 'error')
+      })
     },
     getUserList() {
       fetchList({ limit: 999999, referralCode: this.referralCode }).then(response => {
@@ -163,11 +224,12 @@ export default {
 @import "~@/assets/scss/_variables.scss";
 @import "~bootstrap/scss/bootstrap";
 @import "~bootstrap-vue/src/index";
-
+button:hover{
+  opacity: .8;
+}
 .root {
   color: #ffffff;
 }
-
 .bg-link {
   width: 100%;
   padding-left: $control-padding-left-right;
@@ -332,7 +394,6 @@ export default {
   padding-top: 30px;
   padding-bottom: 30px;
 }
-
 // responsive
 .content-padding {
   padding-left: 50px;

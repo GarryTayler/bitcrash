@@ -128,7 +128,7 @@ export const adminChildRoutes = [
     name: 'AdminUser',
     meta: {
       title: 'Admin',
-      icon: 'user'
+      icon: 'password'
     }
   },
   {

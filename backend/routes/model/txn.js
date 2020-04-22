@@ -54,7 +54,7 @@ exports.checkFirstDeposit = function(user_id) {
                 if(result.length < 2)
                     resolve(true)
                 else
-                    resolve(false)
+                    resolve(true)
             }
         });
     });

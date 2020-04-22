@@ -60,7 +60,6 @@ router.post('/info', function (req, res) {
         message: 'Login failed, unable to get user details.'
       })
     }
-
     return res.json({
       code: 20000,
       data: rows[0]

@@ -62,15 +62,16 @@ export default {
   padding-right: $crash-button-padding-left-right;
   padding-top: $crash-button-padding-top-bottom;
   padding-bottom: $crash-button-padding-top-bottom;
-
   cursor: pointer;
   height: $crash-button-height;
   border-radius: $round-border-radius;
   text-align: center;
-
   .text {
     font-size: $control-label-text-size;
     font-weight: bold;
+  }
+  &:hover {
+    opacity: .8;
   }
 }
 .disabled {

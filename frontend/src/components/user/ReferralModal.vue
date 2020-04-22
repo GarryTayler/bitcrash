@@ -29,7 +29,7 @@
         <el-date-picker v-model="listQuery.date_to" type="date" format="yyyy-MM-dd" placeholder="Please pick a end date" class="mr-2" @input="handleFilter" />
       </b-col>
     </b-row>
-    <bit-crash-table :fields="tbl_fields" :items="list" crash-type="1" class="mt-2"/>
+    <bit-crash-table :fields="tbl_fields" :items="list" crash-type="1" class="mt-2" />
   </b-modal>
 </template>
 <script>
@@ -54,7 +54,7 @@ export default {
       type: Number,
       default: 0
     },
-    myId:{
+    myId: {
       type: Number,
       default: 0
     }
@@ -158,7 +158,7 @@ export default {
       var query = {
         ...this.listQuery
       }
-      if(filtered_list.length){
+      if (filtered_list.length) {
         query.user_id = 0
       }
       getReferralList(query).then(response => {

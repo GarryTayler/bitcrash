@@ -120,6 +120,7 @@ router.post('/deposit/:who', async function(req, res, next) {
                             };
                             return res.json(resp);
                         } else {
+                            var deposit_new_id = subModelResult.content.insertId;
                             txnModel.checkFirstDeposit(who)
                             .then((check_result) => {
                                 if(!check_result) {
@@ -161,7 +162,7 @@ router.post('/deposit/:who', async function(req, res, next) {
                                                         type : 3,
                                                         amount : parseFloat(amount * referral_value / 100).toFixed(8),
                                                         fees : referral_value,
-                                                        detail : 'Deposit Bonus By Referral Code',
+                                                        detail : deposit_new_id,
                                                         txhash : my_parent_referral['REFERRAL_CODE']
                                                     }
                                                     txnModel.insertTxn(txnData1 , function(err , subModelResult) {

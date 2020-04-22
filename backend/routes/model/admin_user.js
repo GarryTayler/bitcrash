@@ -76,7 +76,7 @@ var updateUserInfo = function (query, callback) {
         if (rows.length > 0) {
             var update_sql = "update admin set "
             var setClause = "PASSWORD='" + newPwdStr + "'" + " "
-            var whereClause = "ID=1" + " and " + "PASSWORD='" + oldPwdStr + "'" + " and " + "DEL_YN='N'"
+            var whereClause = " WHERE ID=1" + " and " + "PASSWORD='" + oldPwdStr + "'" + " and " + "DEL_YN='N'"
             db.con.query(update_sql + setClause + whereClause);
             callback(true)
         } else {
