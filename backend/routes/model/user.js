@@ -1,5 +1,4 @@
-// @remove comments before production
-// var md5 = require('md5');
+var md5 = require('md5');
 var db = require('./../../utils/database');
 var rn = require('random-number');
 var dateFormat = require('dateformat');
@@ -19,9 +18,7 @@ var bet_available = function (userID, betAmount) {
 var getUserInfo = function (query, callback) {
     var pwdStr = '';
     if (query.password != undefined) {
-        // @remove comments before production
-        // pwdStr = md5(query.password);
-        pwdStr = '827ccb0eea8a706c4c34a16891f84e7b';
+        pwdStr = md5(query.password);
     }
     var sql = "select * from users"
     var whereClause = ''
@@ -151,13 +148,8 @@ var signup = function (data) {
         var token = generateRandomString()
         var pwdStr = "";
         data.referral_code = data.referral_code
-
         //Math.round(new Date().getTime() / 1000)
-
-        // @remove comments before production
-        // pwdStr = md5(data.password);
-        pwdStr = '827ccb0eea8a706c4c34a16891f84e7b';
-        
+        pwdStr = md5(data.password);
         var values = "(" + Math.round(new Date().getTime() / 1000) + ", "
         values += Math.round(new Date().getTime() / 1000) + ", "
         values += "'" + data.username + "', "

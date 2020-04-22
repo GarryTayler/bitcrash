@@ -1,6 +1,4 @@
-/** @remove comments before production
- * var md5 = require('md5');
- */
+var md5 = require('md5');
 var db = require('./../../utils/database');
 var rn = require('random-number');
 var dateFormat = require('dateformat');
@@ -9,9 +7,7 @@ var getUserInfo = function (query, callback) {
     var pwdStr = ''
 
     if(query.password != undefined) {
-        // @remove comments before production
-        // pwdStr = md5(query.password);
-        pwdStr = '827ccb0eea8a706c4c34a16891f84e7b';
+        pwdStr = md5(query.password);
     }
 
     var sql = "select * from admin"
@@ -63,14 +59,10 @@ var updateUserInfo = function (query, callback) {
     var newPwdStr = ''
 
     if (query.old_pwd != undefined && query.old_pwd != '') {
-        // @remove comments before production
-        // oldPwdStr = md5(query.old_pwd);
-        oldPwdStr = '827ccb0eea8a706c4c34a16891f84e7b';
+        oldPwdStr = md5(query.old_pwd);
     }
     if (query.new_pwd != undefined && query.new_pwd != '') {
-        // @remove comments before production
-        // newPwdStr = md5(query.new_pwd);
-        newPwdStr = '827ccb0eea8a706c4c34a16891f84e7b';
+        newPwdStr = md5(query.new_pwd);
     }
 
     var sql = "select * from admin where ID=1 and PASSWORD='" + oldPwdStr + "'"

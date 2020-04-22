@@ -5,23 +5,19 @@ var variableModel = require('./model/variable');
 var txnModel = require('./model/txn')
 var config = require('../src/config');
 var rn = require('random-number');
-// @remove comments before production
-// var md5 = require('md5');
+var md5 = require('md5');
 var request = require('request');
-/** @remove comments before production
 var nodemailer = require('nodemailer');
-*/
 //new package
 var fs = require("fs")
 
-/** @remove comments before production
+
 var multer = require("multer")
 var path = require("path");
 const upload = multer({
   dest: config.IMAGE_TEMP_DEST
   // you might also want to set some limits: https://github.com/expressjs/multer#limits
 });
- */
 router.post('/login', function (req, res) {
   const { search_key, password, token } = req.body
   var data = {}
@@ -511,9 +507,7 @@ router.post('/update_password' , function(req , res) {
         data: null
       });
     }
-    // @remove comments before production
-    // model.updateUserProfile({password: md5(new_password)} , {ID: user_id})
-    model.updateUserProfile({password: '827ccb0eea8a706c4c34a16891f84e7b'} , {ID: user_id})
+    model.updateUserProfile({password: md5(new_password)} , {ID: user_id})
     .then((result) => {
         return res.json({
           code: 20000,
@@ -625,9 +619,7 @@ router.post('/reset_user_password' , function(req, res) {
   model.getUserInfoByPassToken(pass_token)
   .then((result) => {
     if(result.length > 0) {
-      // @remove comments before production
-      // model.updateUserProfile({password: md5(new_password)} , {ID: result[0]['ID']})
-      model.updateUserProfile({password: '827ccb0eea8a706c4c34a16891f84e7b'} , {ID: result[0]['ID']})
+      model.updateUserProfile({password: md5(new_password)} , {ID: result[0]['ID']})
       .then((result) => {
           return res.json({
             code: 20000,
@@ -666,12 +658,7 @@ router.post('/reset_user_password' , function(req, res) {
 
 router.post('/reset_password' , function(req , res) {
   const {new_password , user_id} = req.body
-
-  console.log(new_password , user_id)
-    // @remove comments before production
-    // model.updateUserProfile({password: md5(new_password)} , {ID: user_id})
-    
-    model.updateUserProfile({password: '827ccb0eea8a706c4c34a16891f84e7b'} , {ID: user_id})
+    model.updateUserProfile({password: md5(new_password)} , {ID: user_id})
     .then((result) => {
         return res.json({
           code: 20000,
@@ -716,52 +703,52 @@ router.post('/update_avatar' , async function(req , res) {
       })
   }
 })
-// @remove comments before production
-// router.post("/upload_avatar",
-//   upload.single("file" /* name attribute of <file> element in your form */),
-//   (req, res) => {
-//     const tempPath = req.file.path;
-//     const imageFileName = generateFileName() + path.extname(req.file.originalname).toLowerCase();
-//     const targetPath = config.AVATAR_STORE_PATH + imageFileName;
-//     if (path.extname(req.file.originalname).toLowerCase() === ".png" || path.extname(req.file.originalname).toLowerCase() === ".jpg") {
-//       fs.rename(tempPath, targetPath, err => {
-//           if (err) {
-//             return res.json({
-//               code: 401,
-//               message: 'Api Request Failed.',
-//               status: 'fail',
-//               data: null
-//             })         
-//           } 
-//           return res.json({
-//             code: 20000,
-//             message: null,
-//             status: 'success',
-//             data: {
-//               avatar: config.HOST + '/img/uploads/avatar/' + imageFileName
-//             }
-//           })   
-//       });
-//     } else {
-//       fs.unlink(tempPath, err => {
-//         if (err)  {
-//           return res.json({
-//               code: 401,
-//               message: 'Api Request Failed.',
-//               status: 'fail',
-//               data: null
-//           })         
-//         }
-//         return res.json({
-//             code: 500,
-//             message: 'Only .png,jpg files are allowed!',
-//             status: 'fail',
-//             data: null
-//         })   
-//       });
-//     }
-//   }
-// );
+
+router.post("/upload_avatar",
+  upload.single("file" /* name attribute of <file> element in your form */),
+  (req, res) => {
+    const tempPath = req.file.path;
+    const imageFileName = generateFileName() + path.extname(req.file.originalname).toLowerCase();
+    const targetPath = config.AVATAR_STORE_PATH + imageFileName;
+    if (path.extname(req.file.originalname).toLowerCase() === ".png" || path.extname(req.file.originalname).toLowerCase() === ".jpg") {
+      fs.rename(tempPath, targetPath, err => {
+          if (err) {
+            return res.json({
+              code: 401,
+              message: 'Api Request Failed.',
+              status: 'fail',
+              data: null
+            })
+          }
+          return res.json({
+            code: 20000,
+            message: null,
+            status: 'success',
+            data: {
+              avatar: config.HOST + '/img/uploads/avatar/' + imageFileName
+            }
+          })
+      });
+    } else {
+      fs.unlink(tempPath, err => {
+        if (err)  {
+          return res.json({
+              code: 401,
+              message: 'Api Request Failed.',
+              status: 'fail',
+              data: null
+          })
+        }
+        return res.json({
+            code: 500,
+            message: 'Only .png,jpg files are allowed!',
+            status: 'fail',
+            data: null
+        })
+      });
+    }
+  }
+);
 
 
 module.exports = router;

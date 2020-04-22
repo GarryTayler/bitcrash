@@ -1,14 +1,11 @@
 <template>
   <div class="d-flex align-items-center">
     <div class="icon p-r-15">
-      <img :src="avatar" :class="size">
-      <!-- // @remove comments before production -->
-      <!-- <v-lazy-image :src="avatar" /> -->
+      <v-lazy-image :src="avatar" />
     </div>
     {{ user.name }}
   </div>
 </template>
-
 <script>
 export default {
   name: 'UserProfile',
@@ -31,7 +28,6 @@ export default {
   }
 }
 </script>
-
 <style lang="scss" scoped>
 @import "~@/assets/scss/_variables.scss";
   .p-r-15 {

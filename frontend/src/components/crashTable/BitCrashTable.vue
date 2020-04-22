@@ -11,9 +11,7 @@
           <td colspan="20" style="text-align: center;line-height: 40px;">Empty</td>
         </tr>
       </tbody>
-      <!-- // @remove comments before production -->
-      <!-- <transition-group v-else name="fade" tag="tbody"> -->
-      <tbody v-else>
+      <transition-group v-else name="fade" tag="tbody">
         <tr v-for="item in items" :key="'tr-'+item.ID" :class="{'active-background':item.name===name}">
           <td v-for="field in fields" :key="field.ID">
             <user-profile v-if="field.type == 'profile'" :size="size" :user="item" :avatar="item.avatar ? item.avatar : item.AVATAR" />
@@ -43,9 +41,7 @@
             </div>
           </td>
         </tr>
-      </tbody>
-      <!-- // @remove comments before production -->
-      <!-- </transition-group> -->
+      </transition-group>
     </table>
   </div>
 </template>
